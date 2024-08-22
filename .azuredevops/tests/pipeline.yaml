@@ -12,7 +12,7 @@ trigger:
 resources:
   repositories:
     - repository: templates
-      type: git
+      type: github
       name: 'casa-de-vops/terraform-code-standards'
       ref: 'refs/heads/azdopipeline'
       endpoint: 'GitHub'
