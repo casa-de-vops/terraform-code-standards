@@ -28,7 +28,7 @@ stages:
     jobs:
       - job: TerraformValidateJob
         displayName: 'Terraform Validate'
-        ${{ if environment.vmImage }}:
+        ${{ if eq(environment.vmImage, null) : default }}:
           pool:
             vmImage: ${{ environment.vmImage }}
         ${{ else }}:
