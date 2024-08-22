@@ -189,5 +189,4 @@ stages:
                     command_option_args: ${{ environment.step_apply_command_option_args }}
                     destroy_mode: ${{ parameters.tf_destroy_mode }}
                     plan_file_name: ${{ parameters.plan_file_name }}
-                    securevars_file: ${{ parameters.securevars_file }}
                     # log_level: '${{ parameters.tf_log_level }}'
