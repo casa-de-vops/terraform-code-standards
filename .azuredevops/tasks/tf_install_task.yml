@@ -31,6 +31,6 @@ parameters:
 
 steps:
 - task: TerraformInstaller@1
-  displayName: 'Install Terraform'
+  displayName: 'Install Terraform ${{ parameters.tf_version }}'
   inputs:
     terraformVersion: '${{ parameters.tf_version }}'
