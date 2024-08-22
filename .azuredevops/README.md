@@ -51,8 +51,8 @@ The pipeline is structured into three main stages:
 
 ## Required Azure DevOps Extensions
 
-- **Terraform CLI Tasks**: Required to execute Terraform commands (`init`, `plan`, `apply`, etc.).
-- **Token Replacement Tasks**: Needed to replace tokens within the Terraform configuration files.
+- **Terraform CLI Tasks**: Required to execute Terraform commands (`init`, `plan`, `apply`, etc.). [Get Terraform CLI task](https://marketplace.visualstudio.com/items?itemName=JasonBJohnson.azure-pipelines-tasks-terraform)
+- **Token Replacement Tasks**: Needed to replace tokens within the Terraform configuration files. [Get Replace Token task](https://marketplace.visualstudio.com/items?itemName=qetza.replacetokens&targetId=630e9553-f888-491d-b723-4e77b2b0602a&utm_source=vstsproduct&utm_medium=ExtHubManageList)
 
 ## Usage
 
