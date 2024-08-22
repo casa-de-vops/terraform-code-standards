@@ -28,7 +28,7 @@ stages:
     jobs:
       - job: TerraformValidateJob
         displayName: 'Terraform Validate'
-        ${{ if not eq(variables['environment.vmImage'], '') }}:
+        ${{ if eq(variables['environment.vmImage'], '') }}:
           pool:
             vmImage: Ubuntu-20.04
         ${{ if variables['environment.vmImage'] }}:
@@ -71,7 +71,7 @@ stages:
     jobs:
       - job: TerraformPlanJob
         displayName: 'Terraform Plan'
-        ${{ if not eq(variables['environment.vmImage'], '') }}:
+        ${{ if eq(variables['environment.vmImage'], '') }}:
           pool:
             vmImage: Ubuntu-20.04
         ${{ if variables['environment.vmImage'] }}:
@@ -132,7 +132,7 @@ stages:
         timeoutInMinutes: 180
         displayName: 'Terraform Apply'
         environment: '${{ parameters.workload }}-${{ environment.environment }}'
-        ${{ if not eq(variables['environment.vmImage'], '') }}:
+        ${{ if eq(variables['environment.vmImage'], '') }}:
           pool:
             vmImage: Ubuntu-20.04
         ${{ if variables['environment.vmImage'] }}:
