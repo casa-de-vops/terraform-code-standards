@@ -1,0 +1,20 @@
+# Azure YAML Pipeline Template Documentation
+#
+# Overview:
+#
+# This template runs security tools against the Terraform files in the specified working directory.
+#
+# Assumptions:
+#
+# This template assumes that the necessary Terraform files are present in the working directory.
+#
+
+parameters:
+  - name: working_directory
+    type: string
+
+steps:
+  - task: MicrosoftSecurityDevOps
+    displayName: 'Run Defender for AzureDevOps'
+    inputs:
+      workingDirectory: ${{ parameters.working_directory }}
