@@ -12,6 +12,9 @@
 parameters:
   - name: working_directory
     type: string
+  - name: command_option_args
+    type: string
+    default: ''
 
 steps:
   - task: MicrosoftSecurityDevOps@1
@@ -21,3 +24,4 @@ steps:
   - task: tfsec@1
     inputs:
       dir: ${{ parameters.working_directory }}
+      args: ${{ parameters.command_option_args }}
