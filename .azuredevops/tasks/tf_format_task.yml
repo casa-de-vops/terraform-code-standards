@@ -1,0 +1,26 @@
+# Azure YAML Pipeline Template Documentation
+#
+# Overview:
+#
+# This template formats the Terraform files in the specified working directory.
+# The formatting is performed using the terraform fmt command.
+#
+# Assumptions:
+#
+# This template assumes that the necessary Terraform files are present in the working directory.
+#
+
+parameters:
+  - name: working_directory
+    type: string
+  - name: fmtOptions
+    type: string
+    default: "--check --diff"
+
+steps:
+  - task: TerraformClI@0
+    displayName: 'Verify formatting'
+    inputs:
+      command: 'fmt'
+      commandOptions: ${{ parameters.fmtOptions }}
+      workingDirectory: ${{ parameters.working_directory }}

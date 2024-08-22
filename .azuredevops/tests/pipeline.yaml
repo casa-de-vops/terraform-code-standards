@@ -1,0 +1,33 @@
+name: $(SourceBranchName)-$(Date:yyyyMMdd)-$(Rev:rrr)
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - .azuredevops/environments/dev.tfvars
+      - .azuredevops/tests/*.tf
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: 'common/azure-pipeline-templates'
+      ref: 'refs/heads/main'
+
+variables:
+  - template: '../variables/variables.nonprod.yml'
+
+stages:
+  - template: .azuredevops/stages.deploy.yml@templates
+    parameters:
+      workload: terraform-pipeline
+      working_directory: .azuredevops/tests/terraform
+      environments: 
+      - stage: Test_Global
+        tfvars_file: ../environments/dev.tfvars
+        environment: test
+        ado_environment: ado-test
+        command_option_args: '-var command_option_args="$(input_variable)"'
+        # step_apply_command_option_args: '-destroy'

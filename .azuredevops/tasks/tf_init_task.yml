@@ -1,0 +1,58 @@
+# Azure YAML Pipeline Template Documentation
+#
+# Overview:
+#
+# This template includes steps for installing an SSH key, replacing tokens in Terraform
+# files, and initializing Terraform with a specified backend configuration.
+#
+# Assumptions:
+#
+# This template assumes that the necessary Terraform files are present in the
+# working directory and that the Azure backend storage details are correctly
+# provided.
+
+parameters:
+  - name: working_directory
+    type: string
+  - name: install_ssh
+    type: boolean
+    default: true
+  - name: azure_service_connection
+    type: string
+  - name: securevars_file
+    type: string
+  - name: backend_service_connection
+    type: string
+  - name: backend_azure_rm_resource_group_name
+    type: string
+  - name: backend_azure_rm_storage_account_name
+    type: string
+  - name: backend_azure_rm_container_name
+    type: string
+  - name: backend_azure_rm_key
+    type: string
+
+steps:
+  - task: InstallSSHKey@0
+    displayName: 'Install the SSH key info used to clone terraform modules'
+    condition: and(succeeded(), ne('${{ parameters.install_ssh }}', false))
+    inputs:
+      knownHostsEntry: $(knownHostsEntry)
+      sshPublicKey: $(sshPublicKey)
+      sshPassphrase: $(sshPassphrase)
+      sshKeySecureFile: $(sshKeySecureFile)
+
+  - task: TerraformCLI@1
+    displayName: 'Initialize terraform with the tfstate backend and download all remote modules being used'
+    inputs:
+      command: 'init'
+      backendType: 'azurerm'
+      workingDirectory: '${{ parameters.working_directory }}'
+      azureServiceConnection: ${{ parameters.azure_service_connection }}
+      secureVarsFile : ${{ parameters.securevars_file }}
+      backendServiceArm: '${{ parameters.backend_service_connection }}'
+      backendAzureRmResourceGroupName: '${{ parameters.backend_azure_rm_resource_group_name }}'
+      backendAzureRmStorageAccountName: '${{ parameters.backend_azure_rm_storage_account_name }}'
+      backendAzureRmContainerName: '${{ parameters.backend_azure_rm_container_name }}'
+      backendAzureRmKey: '${{ parameters.backend_azure_rm_key }}'
+

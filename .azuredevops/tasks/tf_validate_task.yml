@@ -1,0 +1,48 @@
+# Azure YAML Pipeline Template Documentation
+#
+# Overview:
+#
+# This template performs several tasks related to Terraform validation. It checks 
+# the formatting and syntax of Terraform files, retrieves a specific business app ID from the 
+# Terraform configuration, and adds tags to the build.
+#
+# Assumptions:
+#
+# The template assumes that the necessary Terraform files are present in the 
+# working directory.
+#
+
+parameters:
+  - name: working_directory
+    type: string
+  - name: fmtOptions
+    type: string
+    default: '--check --diff'
+  - name: azurerm_service_connection
+    type: string
+  - name: tfvars_file
+    type: string
+  - name: securevars_file
+    type: string
+
+steps:
+  - task: TerraformClI@0
+    displayName: 'Verify formatting'
+    inputs:
+      command: 'fmt'
+      commandOptions: ${{ parameters.fmtOptions }}
+      workingDirectory: ${{ parameters.working_directory }}
+      
+  - task: TerraformCLI@0
+    displayName: 'Validate the terraform config'
+    inputs:
+      command: 'validate'
+      workingDirectory: ${{ parameters.working_directory }}
+      azureServiceConnection: ${{ parameters.azurerm_service_connection }}
+      secureVarsFile: ${{ parameters.securevars_file }}
+      # backendServiceArm: '${{ parameters.backend_service_connection }}'
+      # backendAzureRmResourceGroupName: '${{ parameters.backend_azure_rm_resource_group_name }}'
+      # backendAzureRmStorageAccountName: '${{ parameters.backend_azure_rm_storage_account_name }}'
+      # backendAzureRmContainerName: '${{ parameters.backend_azure_rm_container_name }}'
+      # backendAzureRmKey: '${{ parameters.backend_azure_rm_key }}'
+      additionalArgs: '-var-file=${{ parameters.tfvars_file }}'
