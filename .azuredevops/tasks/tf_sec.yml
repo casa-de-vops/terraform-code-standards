@@ -15,13 +15,21 @@ parameters:
   - name: command_option_args
     type: string
     default: ''
+  - name: run_msdefender
+    type: boolean
+    default: true
+  - name: run_tfsec
+    type: boolean
+    default: true
 
 steps:
   - task: MicrosoftSecurityDevOps@1
+    condition: and(succeeded(), ne('${{ parameters.run_msdefender }}', false))
     displayName: 'Run Defender for AzureDevOps'
     inputs:
       workingDirectory: ${{ parameters.working_directory }}
   - task: tfsec@1
+    condition: and(succeeded(), ne('${{ parameters.run_tfsec }}', false))
     displayName: 'Run tfsec'
     inputs:
       dir: ${{ parameters.working_directory }}
