@@ -1,4 +1,4 @@
-# Terraform Coding Standards for Enterprise Projects
+# Terraform Coding Standards for Azure Infrastructure Projects
 
 ## Overview
 
