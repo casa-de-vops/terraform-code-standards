@@ -39,7 +39,7 @@ steps:
       sshKeySecureFile: '$(sshKeySecureFile)'
 
   - task: TerraformCLI@0
-    displayName: 'Initialize terraform with the tfstate backend and download all remote modules being used'
+    displayName: 'Initialize TF with the tfstate backend and download all remote modules being used'
     inputs:
       command: 'init'
       backendType: 'azurerm'

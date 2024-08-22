@@ -43,7 +43,7 @@ parameters:
 
 steps:
 - task: TerraformCLI@0
-  displayName: 'Run a terraform plan for ${{ parameters.workload }}-${{ parameters.environment }}'
+  displayName: 'Run a TF Plan for ${{ parameters.workload }}-${{ parameters.environment }}'
   inputs:
     command: 'plan'
     ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
@@ -58,11 +58,11 @@ steps:
       secureVarsFile: ${{ parameters.securevars_file }}
 
 - script: echo "##vso[task.setvariable variable=hasChanges;isOutput=true]$(TERRAFORM_PLAN_HAS_CHANGES)"
+  displayName: Record TF Plan status as stage output
   name: terraformPlanStatus
-  displayName: record terraform plan status in stage outputs
 
 - task: Bash@3
-  displayName: 'Clean up stuff before publishing'
+  displayName: Clean up directory before publishing'
   condition: and(succeeded(), eq(variables['TERRAFORM_PLAN_HAS_CHANGES'], 'true'), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))
   inputs:
     targetType: 'inline'
@@ -70,7 +70,7 @@ steps:
     workingDirectory: '$(System.DefaultWorkingDirectory)'
 
 - task: PublishPipelineArtifact@1
-  displayName: 'Store plan as an artifact'
+  displayName: Store TF Plan as a pipeline artifact
   condition: and(succeeded(), eq(variables['TERRAFORM_PLAN_HAS_CHANGES'], 'true'), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))
   inputs:
     targetPath: '$(System.DefaultWorkingDirectory)'

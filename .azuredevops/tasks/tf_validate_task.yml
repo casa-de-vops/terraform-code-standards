@@ -35,7 +35,7 @@ steps:
       workingDirectory: ${{ parameters.working_directory }}
       
   - task: TerraformCLI@0
-    displayName: 'Validate the terraform config'
+    displayName: 'Validate the TF config'
     inputs:
       command: 'validate'
       workingDirectory: ${{ parameters.working_directory }}
