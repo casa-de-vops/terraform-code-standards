@@ -1,4 +1,18 @@
-### Testing and Validation
+## Table of Contents
+
+- [Overview](../README.md)
+- Coding Standards
+  - [Directory Structure](./directory_structure.md)
+  - [Domain Specific Files](./domain_specific_files.md)
+  - [Naming Conventions](./naming_conventions.md#naming-conventions)
+  - [Resource and State Management](./resource_and_state_management.md)
+  - [Modules](./module.md)
+  - [Variables and Outputs](./variables_and_outputs.md)
+  - [Version Control](./version_control.md)
+  - [Documentation](./documentation.md)
+  - [Testing and Validation](./testing_and_validation.md)
+
+## Testing and Validation
 
 - Avoid hardcoding sensitive data in Terraform configurations.
 - Use `terraform validate` and `terraform fmt` to check for syntax and style issues.

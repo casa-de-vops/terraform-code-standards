@@ -1,4 +1,18 @@
-### Resource and State Management
+## Table of Contents
+
+- [Overview](../README.md)
+- Coding Standards
+  - [Directory Structure](./directory_structure.md)
+  - [Domain Specific Files](./domain_specific_files.md)
+  - [Naming Conventions](./naming_conventions.md#naming-conventions)
+  - [Resource and State Management](./resource_and_state_management.md)
+  - [Modules](./module.md)
+  - [Variables and Outputs](./variables_and_outputs.md)
+  - [Version Control](./version_control.md)
+  - [Documentation](./documentation.md)
+  - [Testing and Validation](./testing_and_validation.md)
+
+## Resource and State Management
 
 - **Define *resource module* within your organization** as the most atomic definition of a single Azure Resource or tightly coupled resources. A resource module encapsulates the creation, management, and configuration of a specific Azure resource, such as a virtual network, storage account, or SQL database. These modules are reusable and serve as building blocks for more complex infrastructure deployments.
 

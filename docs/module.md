@@ -1,4 +1,18 @@
-### Modules
+## Table of Contents
+
+- [Overview](../README.md)
+- Coding Standards
+  - [Directory Structure](./directory_structure.md)
+  - [Domain Specific Files](./domain_specific_files.md)
+  - [Naming Conventions](./naming_conventions.md#naming-conventions)
+  - [Resource and State Management](./resource_and_state_management.md)
+  - [Modules](./module.md)
+  - [Variables and Outputs](./variables_and_outputs.md)
+  - [Version Control](./version_control.md)
+  - [Documentation](./documentation.md)
+  - [Testing and Validation](./testing_and_validation.md)
+
+## Modules
 
 - **Write reusable modules with clear input and output definitions** to ensure that your Terraform configurations are modular, maintainable, and easy to understand. Reusable modules help in standardizing infrastructure deployments across different projects and environments.
 

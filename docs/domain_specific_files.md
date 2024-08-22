@@ -1,4 +1,18 @@
-### Domain Specific Files
+## Table of Contents
+
+- [Overview](../README.md)
+- Coding Standards
+  - [Directory Structure](./directory_structure.md)
+  - [Domain Specific Files](./domain_specific_files.md)
+  - [Naming Conventions](./naming_conventions.md#naming-conventions)
+  - [Resource and State Management](./resource_and_state_management.md)
+  - [Modules](./module.md)
+  - [Variables and Outputs](./variables_and_outputs.md)
+  - [Version Control](./version_control.md)
+  - [Documentation](./documentation.md)
+  - [Testing and Validation](./testing_and_validation.md)
+
+## Domain Specific Files
 
 - Organize Terraform files based on specific domains within your infrastructure, such as networking, compute, and security, or align them with specific solutions like Key Vault, AKS, or App Services. This approach ensures that related configurations are grouped together, making it easier to manage, troubleshoot, and scale individual components or solutions.
 - Utilize a structured directory layout that reflects the separation of concerns or solution alignment, ensuring that each domain or solution's files are logically grouped. This organization enhances maintainability and provides clarity when navigating the codebase, especially in complex enterprise environments.

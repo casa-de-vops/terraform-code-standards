@@ -1,4 +1,18 @@
-### Version Control
+## Table of Contents
+
+- [Overview](../README.md)
+- Coding Standards
+  - [Directory Structure](./directory_structure.md)
+  - [Domain Specific Files](./domain_specific_files.md)
+  - [Naming Conventions](./naming_conventions.md#naming-conventions)
+  - [Resource and State Management](./resource_and_state_management.md)
+  - [Modules](./module.md)
+  - [Variables and Outputs](./variables_and_outputs.md)
+  - [Version Control](./version_control.md)
+  - [Documentation](./documentation.md)
+  - [Testing and Validation](./testing_and_validation.md)
+
+## Version Control
 
 - Version all Terraform code using Git or another version control system. This includes tracking changes to the `versions` folder, where environment-specific module manifests are stored.
 - Commit changes frequently and provide meaningful commit messages. When updating module versions, clearly document changes in the commit messages to maintain an audit trail of version changes across environments.
