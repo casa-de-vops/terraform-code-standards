@@ -29,13 +29,12 @@ stages:
       - job: TerraformValidateJob
         displayName: 'Terraform Validate'
 
-        ${{ if eq(variables['environment.vmImage'], '') }}:
-          Ubuntu-20.04
-        ${{ else }}:
-          ${{ variables['environment.vmImage'] }}
-        ${{ if not variables['environment.vmImage'] }}:
-          ${{ environment.pool }
-        # ${{ if eq(variables['environment.vmImage'], '') }}:
+        ${{ if variables['environment.pool'] }}:
+          name: ${{ variables['environment.pool'] }}
+        ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
+          vmImage: 'Ubuntu-20.04'
+        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
+          vmImage: ${{ variables['environment.vmImage'] }}        # ${{ if eq(variables['environment.vmImage'], '') }}:
         #   pool:
         #     vmImage: Ubuntu-20.04
         # ${{ if variables['environment.vmImage'] }}:
