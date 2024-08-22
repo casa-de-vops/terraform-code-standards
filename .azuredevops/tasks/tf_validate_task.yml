@@ -26,7 +26,7 @@ parameters:
     type: string
 
 steps:
-  - task: TerraformClI@0
+  - task: TerraformCLI@0
     displayName: 'Verify formatting'
     inputs:
       command: 'fmt'
