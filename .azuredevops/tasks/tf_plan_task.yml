@@ -27,6 +27,7 @@ parameters:
     type: string
   - name: securevars_file
     type: string
+    default: ''
   - name: parallelism
     type: number
     default: 10
@@ -52,8 +53,9 @@ steps:
     ${{ else }}:
       commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -out=${{ parameters.plan_file_name }} -detailed-exitcode'
     workingDirectory: ${{ parameters.working_directory }}
-    secureVarsFile: ${{ parameters.securevars_file }}
     environmentServiceName: ${{ parameters.azurerm_service_connection }}
+    ${{ if not(eq(parameters.securevars_file, '')) }}:
+      secureVarsFile: ${{ parameters.securevars_file }}
 
 - script: echo "##vso[task.setvariable variable=hasChanges;isOutput=true]$(TERRAFORM_PLAN_HAS_CHANGES)"
   name: terraformPlanStatus

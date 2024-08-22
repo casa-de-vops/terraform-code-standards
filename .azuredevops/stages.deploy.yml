@@ -95,16 +95,16 @@ stages:
               backend_azure_rm_storage_account_name: '${{ environment.backend_azure_rm_storage_account_name }}'
               backend_azure_rm_container_name: '${{ environment.backend_azure_rm_container_name }}'
               backend_azure_rm_key: '${{ environment.backend_azure_rm_key }}' 
-#           - template: ./tasks/tf_plan_task.yml
-#             parameters:
-#               azurerm_service_connection: ${{ environment.azure_service_connection }}
-#               working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
-#               workload: '${{ parameters.workload }}'
-#               environment: '${{ environment.environment }}'
-#               securevars_file: ${{ parameters.securevars_file }}
-#               tfvars_file: '${{ environment.tfvars_file }}'
-#               destroy_mode: '${{ environment.destroy_mode }}'
-#               command_option_args: '${{ environment.command_option_args }}'
+          - template: ./tasks/tf_plan_task.yml
+            parameters:
+              azurerm_service_connection: ${{ environment.azure_service_connection }}
+              working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
+              workload: '${{ parameters.workload }}'
+              environment: '${{ environment.environment }}'
+              securevars_file: ${{ parameters.securevars_file }}
+              tfvars_file: '${{ environment.tfvars_file }}'
+              destroy_mode: '${{ environment.destroy_mode }}'
+              command_option_args: '${{ environment.command_option_args }}'
 
 # ## TF Apply
 # - ${{ each environment in parameters.environments }}:
