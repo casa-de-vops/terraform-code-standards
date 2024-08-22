@@ -30,11 +30,13 @@ stages:
         displayName: 'Terraform Validate'
 
         ${{ if variables['environment.pool'] }}:
-          name: ${{ variables['environment.pool'] }}
+          pool: ${{ variables['environment.pool'] }}
         ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
-          vmImage: 'Ubuntu-20.04'
+          pool:
+            vmImage: Ubuntu-20.04
         ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
-          vmImage: ${{ variables['environment.vmImage'] }}        # ${{ if eq(variables['environment.vmImage'], '') }}:
+          pool:
+            vmImage: ${{ variables['environment.vmImage'] }}
         #   pool:
         #     vmImage: Ubuntu-20.04
         # ${{ if variables['environment.vmImage'] }}:
