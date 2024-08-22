@@ -40,7 +40,7 @@ steps:
       knownHostsEntry: '$(knownHostsEntry)'
       sshPublicKey: '$(sshPublicKey)'
       sshPassphrase: '$(sshPassphrase)'
-      sshKeySecureFile: '$(sshKeySecureFile )'
+      sshKeySecureFile: '$(sshKeySecureFile)'
 
   - task: TerraformTaskV4@4
     displayName: 'Initialize terraform with the tfstate backend and download all remote modules being used'
