@@ -16,7 +16,7 @@ parameters:
     type: string
   - name: install_ssh
     type: boolean
-    default: false
+    default: true
   - name: azure_service_connection
     type: string
   - name: securevars_file
