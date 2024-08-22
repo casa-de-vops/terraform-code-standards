@@ -11,6 +11,7 @@ parameters:
     default: 'latest'
   - name: securevars_file
     type: string
+    default: null
   - name: install_ssh
     type: boolean
     default: true
