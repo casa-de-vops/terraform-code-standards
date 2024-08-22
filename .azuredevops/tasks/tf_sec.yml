@@ -14,7 +14,7 @@ parameters:
     type: string
 
 steps:
-  - task: MicrosoftSecurityDevOps
+  - task: MicrosoftSecurityDevOps@0
     displayName: 'Run Defender for AzureDevOps'
     inputs:
       workingDirectory: ${{ parameters.working_directory }}
