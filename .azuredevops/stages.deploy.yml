@@ -31,7 +31,7 @@ stages:
         ${{ if eq(environment.vmImage, null) }}:
           pool:
             vmImage: Ubuntu-20.04
-        ${{ else if environment.vmImage }}:
+        ${{ if environment.vmImage }}:
           pool:
             vmImage: ${{ environment.vmImage }}
         ${{ else }}:
