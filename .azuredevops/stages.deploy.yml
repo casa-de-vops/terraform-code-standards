@@ -57,7 +57,7 @@ stages:
               azure_service_connection: '${{ environment.azure_service_connection }}'
               working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
               install_ssh: '${{ parameters.install_ssh }}'
-              securevars_file: '${{ parameters.securevars_file }}'
+              securevars_file: ${{ parameters.securevars_file }}
               backend_service_connection: '${{ coalesce(environment.backend_service_connection, environment.azure_service_connection) }}'
               backend_azure_rm_resource_group_name: '${{ environment.backend_azure_rm_resource_group_name }}'
               backend_azure_rm_storage_account_name: '${{ environment.backend_azure_rm_storage_account_name }}'
