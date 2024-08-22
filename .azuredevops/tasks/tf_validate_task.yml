@@ -24,6 +24,7 @@ parameters:
     type: string
   - name: securevars_file
     type: string
+    default: null
 
 steps:
   - task: TerraformCLI@0
