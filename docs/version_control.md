@@ -19,4 +19,4 @@
 - The `versions` YAML files allow you to pin specific versions of modules in different environments, which can be crucial for ensuring that production environments use stable and tested versions while development environments may use newer, experimental versions.
 - During the CI/CD pipeline execution, these module versions can be replaced or updated based on the environment-specific YAML manifest, ensuring that each environment uses the correct versions of modules as defined in its corresponding YAML file.
 
-[^ back to overview ^](../README.md)
+[^ back to overview ^](#table-of-contents)

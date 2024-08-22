@@ -31,4 +31,4 @@
   
 - For more details on integrating these tools into your Azure DevOps workflows, refer to the [Microsoft documentation](https://learn.microsoft.com/en-us/azure/defender-for-cloud/azure-devops-extension).
 
-[^ back to overview ^](../README.md)
+[^ back to overview ^](#table-of-contents)

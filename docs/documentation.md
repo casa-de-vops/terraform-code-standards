@@ -18,4 +18,4 @@
 - Use **`tfdocs`** (Terraform Docs) to automatically generate documentation for your Terraform modules. This tool extracts information about resources, variables, outputs, and more from your Terraform files and formats it into a Markdown file.
 - Provide a `README.md` for each module explaining its purpose, inputs, and outputs. By using `tfdocs`, you can ensure that your documentation is consistent, up-to-date, and includes all necessary details about your Terraform modules.
 
-[^ back to overview ^](../README.md)
+[^ back to overview ^](#table-of-contents)

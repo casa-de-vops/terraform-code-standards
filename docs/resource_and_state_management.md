@@ -32,4 +32,4 @@
   
 By defining clear resource and pattern modules, and adopting a structured levels hierarchy for state management, your organization can manage complex Azure environments more effectively, enhance security, and enable team autonomy.
 
-[^ back to overview ^](../README.md)
+[^ back to overview ^](#table-of-contents)
