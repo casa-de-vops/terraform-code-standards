@@ -17,10 +17,6 @@ parameters:
   - name: install_ssh
     type: boolean
     default: true
-  - name: azure_service_connection
-    type: string
-  - name: securevars_file
-    type: string
   - name: backend_service_connection
     type: string
   - name: backend_azure_rm_resource_group_name
@@ -48,8 +44,6 @@ steps:
       command: 'init'
       backendType: 'azurerm'
       workingDirectory: '${{ parameters.working_directory }}'
-      # azureServiceConnection: ${{ parameters.azure_service_connection }}
-      # secureVarsFile : ${{ parameters.securevars_file }}
       backendServiceArm: '${{ parameters.backend_service_connection }}'
       backendAzureRmResourceGroupName: '${{ parameters.backend_azure_rm_resource_group_name }}'
       backendAzureRmStorageAccountName: '${{ parameters.backend_azure_rm_storage_account_name }}'

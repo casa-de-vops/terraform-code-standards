@@ -40,11 +40,6 @@ steps:
       command: 'validate'
       workingDirectory: ${{ parameters.working_directory }}
       azureServiceConnection: ${{ parameters.azurerm_service_connection }}
+      additionalArgs: '-var-file=${{ parameters.tfvars_file }}'
       ${{ if not(eq(parameters.securevars_file, '')) }}:
         secureVarsFile: ${{ parameters.securevars_file }}
-      # backendServiceArm: '${{ parameters.backend_service_connection }}'
-      # backendAzureRmResourceGroupName: '${{ parameters.backend_azure_rm_resource_group_name }}'
-      # backendAzureRmStorageAccountName: '${{ parameters.backend_azure_rm_storage_account_name }}'
-      # backendAzureRmContainerName: '${{ parameters.backend_azure_rm_container_name }}'
-      # backendAzureRmKey: '${{ parameters.backend_azure_rm_key }}'
-      additionalArgs: '-var-file=${{ parameters.tfvars_file }}'
