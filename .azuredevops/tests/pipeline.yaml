@@ -20,6 +20,7 @@ resources:
 
 variables:
   - template: '../variables/variables.nonprod.yml'
+  - group: ssh_host #library group containing knownHostsEntry, sshPublicKey, sshPassphrase, sshKeySecureFile
 
 stages:
   - template: .azuredevops/stages.deploy.yml@templates
