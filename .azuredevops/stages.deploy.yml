@@ -63,12 +63,12 @@ stages:
               backend_azure_rm_storage_account_name: '${{ environment.backend_azure_rm_storage_account_name }}'
               backend_azure_rm_container_name: '${{ environment.backend_azure_rm_container_name }}'
               backend_azure_rm_key: '${{ environment.backend_azure_rm_key }}' 
-#           - template: ./tasks/tf_validate_task.yml
-#             parameters:
-#               working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
-#               azurerm_service_connection: '${{ environment.azure_service_connection }}'
-#               tfvars_file: '${{ environment.tfvars_file }}'
-#               securevars_file: '${{ parameters.securevars_file }}'
+          - template: ./tasks/tf_validate_task.yml
+            parameters:
+              working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
+              azurerm_service_connection: '${{ environment.azure_service_connection }}'
+              tfvars_file: '${{ environment.tfvars_file }}'
+              securevars_file: '${{ parameters.securevars_file }}'
 # ## TF Plan
 # - ${{ each environment in parameters.environments }}:
 #   - stage: PlanStage${{environment.environment}}
