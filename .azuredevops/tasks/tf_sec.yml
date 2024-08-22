@@ -22,6 +22,7 @@ steps:
     inputs:
       workingDirectory: ${{ parameters.working_directory }}
   - task: tfsec@1
+    displayName: 'Run tfsec'
     inputs:
       dir: ${{ parameters.working_directory }}
       args: ${{ parameters.command_option_args }}
