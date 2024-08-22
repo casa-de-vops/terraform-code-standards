@@ -31,9 +31,9 @@ stages:
         ${{ if not eq(variables['environment.vmImage'], '') }}:
           pool:
             vmImage: Ubuntu-20.04
-        ${{ if environment.vmImage }}:
+        ${{ if variables['environment.vmImage'] }}:
           pool:
-            vmImage: ${{ environment.vmImage }}
+            vmImage: ${{ variables['environment.vmImage'] }}
         ${{ else }}:
           pool: ${{ environment.pool }}
         steps:
@@ -71,10 +71,13 @@ stages:
     jobs:
       - job: TerraformPlanJob
         displayName: 'Terraform Plan'
-        ${{ if environment.vmImage }}:
+        ${{ if not eq(variables['environment.vmImage'], '') }}:
           pool:
-            vmImage: ${{ environment.vmImage }}
-        ${{ if not(environment.vmImage) }}:
+            vmImage: Ubuntu-20.04
+        ${{ if variables['environment.vmImage'] }}:
+          pool:
+            vmImage: ${{ variables['environment.vmImage'] }}
+        ${{ else }}:
           pool: ${{ environment.pool }}
         steps:
           - template: ./tasks/tf_install_task.yml
@@ -129,9 +132,12 @@ stages:
         timeoutInMinutes: 180
         displayName: 'Terraform Apply'
         environment: '${{ parameters.workload }}-${{ environment.environment }}'
-        ${{ if environment.vmImage }}:
+        ${{ if not eq(variables['environment.vmImage'], '') }}:
           pool:
-            vmImage: ${{ environment.vmImage }}
+            vmImage: Ubuntu-20.04
+        ${{ if variables['environment.vmImage'] }}:
+          pool:
+            vmImage: ${{ variables['environment.vmImage'] }}
         ${{ else }}:
           pool: ${{ environment.pool }}
         strategy:
