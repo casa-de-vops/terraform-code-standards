@@ -49,7 +49,7 @@ steps:
       command: 'init'
       workingDirectory: '${{ parameters.working_directory }}'
       backendAzureRmUseEntraIdForAuthentication: true
-      backendServiceArm: ${{ parameters.backend_service_connection }}
+      backendServiceArm: '${{ parameters.backend_service_connection }}'
       backendAzureRmResourceGroupName: '${{ parameters.backend_azure_rm_resource_group_name }}'
       backendAzureRmStorageAccountName: '${{ parameters.backend_azure_rm_storage_account_name }}'
       backendAzureRmContainerName: '${{ parameters.backend_azure_rm_container_name }}'
