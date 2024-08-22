@@ -31,8 +31,13 @@ stages:
       - stage: Test_Global
         pool: default
         azure_service_connection: terraform
-        tfvars_file: ../environments/dev.tfvars
+        tfvars_file: ./environments/dev.tfvars
         environment: test
         ado_environment: ado-test
+        backend_service_connection: terraform
+        backend_azure_rm_resource_group_name: rg-terraform-ops
+        backend_azure_rm_storage_account_name: casadevopsterraform
+        backend_azure_rm_container_name: ops-terraform-state      
+        backend_azure_rm_key: stages.deploy.tfstate
         command_option_args: '-var command_option_args="$(input_variable)"'
         # step_apply_command_option_args: '-destroy'
