@@ -29,6 +29,8 @@ stages:
       working_directory: .azuredevops/tests/terraform
       environments: 
       - stage: Test_Global
+        pool: default
+        azure_service_connection: terraform
         tfvars_file: ../environments/dev.tfvars
         environment: test
         ado_environment: ado-test
