@@ -84,7 +84,6 @@ stages:
           - template: ./tasks/tf_sec.yml
             parameters:
               working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
-              command_option_args: '${{ environment.command_option_args }}'
               
 ## TF Plan
 - ${{ each environment in parameters.environments }}:
