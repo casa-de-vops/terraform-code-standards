@@ -28,14 +28,21 @@ stages:
     jobs:
       - job: TerraformValidateJob
         displayName: 'Terraform Validate'
+
         ${{ if eq(variables['environment.vmImage'], '') }}:
-          pool:
-            vmImage: Ubuntu-20.04
-        ${{ if variables['environment.vmImage'] }}:
-          pool:
-            vmImage: ${{ variables['environment.vmImage'] }}
+          Ubuntu-20.04
         ${{ else }}:
-          pool: ${{ environment.pool }}
+          ${{ variables['environment.vmImage'] }}
+        ${{ if not variables['environment.vmImage'] }}:
+          ${{ environment.pool }
+        # ${{ if eq(variables['environment.vmImage'], '') }}:
+        #   pool:
+        #     vmImage: Ubuntu-20.04
+        # ${{ if variables['environment.vmImage'] }}:
+        #   pool:
+        #     vmImage: ${{ variables['environment.vmImage'] }}
+        # ${{ else }}:
+        #   pool: ${{ environment.pool }}
         steps:
           - template: ./tasks/tf_install_task.yml
             parameters:
