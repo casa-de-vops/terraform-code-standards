@@ -120,7 +120,8 @@ git clone https://github.com/casa-de-vops/terraform-code-standards.git
   - **Public IP Address:** `pip-sharepoint-prod-westus-001`
   
   For detailed guidance on constructing Azure naming conventions, refer to the [Azure Cloud Adoption Framework (CAF)](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming).
-
+  For standardized abbreviations and further guidance on Terraform resource naming, see the [Recommended abbreviations for Azure resource types](https://github.com/MicrosoftDocs/cloud-adoption-framework/blob/main/docs/ready/azure-best-practices/resource-abbreviations.md).
+  
 #### 2. Terraform Symbolic Naming Conventions
 
 - **Use consistent naming conventions for Terraform resources, variables, and outputs** to ensure clarity and maintainability across your Terraform configurations. Terraform symbolic names should be descriptive yet concise, reflecting the purpose and type of resource they represent.
@@ -137,8 +138,7 @@ git clone https://github.com/casa-de-vops/terraform-code-standards.git
   - **Terraform Resource Name:** `azurerm_virtual_network.external`
   - **Variable Name:** `azurerm_virtual_network.external.name` instead of `azurerm_virtual_network.external.vnet_name`
   - **Output Name:** `azurerm_virtual_network.external.id` instead of `azurerm_virtual_network.external.vnet_id`
-  
-  For standardized abbreviations and further guidance on Terraform resource naming, see the [Recommended abbreviations for Azure resource types](https://github.com/MicrosoftDocs/cloud-adoption-framework/blob/main/docs/ready/azure-best-practices/resource-abbreviations.md).
+ 
 
 ### Resource and State Management
 
