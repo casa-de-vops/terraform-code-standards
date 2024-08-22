@@ -78,9 +78,6 @@ stages:
           pool:
             vmImage: ${{ variables['environment.vmImage'] }}
         steps:
-          - template: ./tasks/tf_install_task.yml
-            parameters:
-              tf_version: '${{ parameters.tf_version }}'
           - template: ./tasks/tf_sec.yml
             parameters:
               working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}'
