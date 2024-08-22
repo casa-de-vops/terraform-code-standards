@@ -13,8 +13,10 @@ resources:
   repositories:
     - repository: templates
       type: git
-      name: 'common/azure-pipeline-templates'
-      ref: 'refs/heads/main'
+      name: 'casa-de-vops/terraform-code-standards'
+      ref: 'refs/heads/azdopipeline'
+      endpoint: 'GitHub'
+      mapping: '.azuredevops'
 
 variables:
   - template: '../variables/variables.nonprod.yml'
