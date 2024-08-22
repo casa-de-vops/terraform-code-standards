@@ -20,11 +20,11 @@ parameters:
     default: 'terraform.tfplan'
 
 variables:
-  - name: backend_service_connection
-    ${{ if variables['environment.backend_service_connection'] }}:
-      value: ${{ variables['environment.pool'] }}
-    ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
-      value: ${{ environment.azure_service_connection }}
+- name: backend_service_connection
+  ${{ if variables['environment.backend_service_connection'] }}:
+    value: ${{ variables['environment.pool'] }}
+  ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
+    value: ${{ environment.azure_service_connection }}
 
 stages:
 # TF Validate
