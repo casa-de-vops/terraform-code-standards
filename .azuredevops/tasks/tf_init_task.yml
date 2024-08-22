@@ -37,10 +37,10 @@ steps:
     displayName: 'Install the SSH key info used to clone terraform modules'
     condition: and(succeeded(), ne('${{ parameters.install_ssh }}', false))
     inputs:
-      knownHostsEntry: $(knownHostsEntry)
-      sshPublicKey: $(sshPublicKey)
-      sshPassphrase: $(sshPassphrase)
-      sshKeySecureFile: $(sshKeySecureFile )
+      knownHostsEntry: '$(knownHostsEntry)'
+      sshPublicKey: '$(sshPublicKey)'
+      sshPassphrase: '$(sshPassphrase)'
+      sshKeySecureFile: '$(sshKeySecureFile )'
 
   - task: TerraformTaskV4@4
     displayName: 'Initialize terraform with the tfstate backend and download all remote modules being used'
