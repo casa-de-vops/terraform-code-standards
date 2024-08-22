@@ -40,7 +40,7 @@ steps:
       knownHostsEntry: $(knownHostsEntry)
       sshPublicKey: $(sshPublicKey)
       sshPassphrase: $(sshPassphrase)
-      sshKeySecureFile: $(sshKeySecureFile)
+      sshKeySecureFile: $(sshKeySecureFile )
 
   - task: TerraformTaskV4@4
     displayName: 'Initialize terraform with the tfstate backend and download all remote modules being used'
@@ -48,8 +48,8 @@ steps:
       command: 'init'
       provider: 'azurerm'
       workingDirectory: '${{ parameters.working_directory }}'
-      azureServiceConnection: ${{ parameters.azure_service_connection }}
-      secureVarsFile : ${{ parameters.securevars_file }}
+      # azureServiceConnection: ${{ parameters.azure_service_connection }}
+      # secureVarsFile : ${{ parameters.securevars_file }}
       backendServiceArm: '${{ parameters.backend_service_connection }}'
       backendAzureRmResourceGroupName: '${{ parameters.backend_azure_rm_resource_group_name }}'
       backendAzureRmStorageAccountName: '${{ parameters.backend_azure_rm_storage_account_name }}'
