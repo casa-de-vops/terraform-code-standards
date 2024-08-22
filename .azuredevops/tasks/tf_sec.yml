@@ -16,5 +16,8 @@ parameters:
 steps:
   - task: MicrosoftSecurityDevOps@1
     displayName: 'Run Defender for AzureDevOps'
-    # inputs:
-    #   workingDirectory: ${{ parameters.working_directory }}
+    inputs:
+      workingDirectory: ${{ parameters.working_directory }}
+  - task: tfsec@1
+    inputs:
+      dir: ${{ parameters.working_directory }}
