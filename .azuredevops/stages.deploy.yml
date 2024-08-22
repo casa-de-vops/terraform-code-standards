@@ -28,7 +28,7 @@ stages:
     jobs:
       - job: TerraformValidateJob
         displayName: 'Terraform Validate'
-        ${{ if eq(environment.vmImage, null) }}:
+        ${{ if null(environment.vmImage) }}:
           pool:
             vmImage: Ubuntu-20.04
         ${{ if environment.vmImage }}:
