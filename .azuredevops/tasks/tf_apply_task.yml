@@ -32,7 +32,7 @@ parameters:
 
 
 steps:
-  - task: TerraformCLI@1
+  - task: TerraformCLI@0
     displayName: 'Run a terraform apply'
     inputs:
       command: 'apply'

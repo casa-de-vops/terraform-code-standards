@@ -21,7 +21,7 @@ parameters:
 
 steps:
      
-  - task: TerraformCLI@1
+  - task: TerraformCLI@0
     displayName: 'Terraform Force Unlock'
     inputs:
       command: 'forceunlock'

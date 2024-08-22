@@ -41,7 +41,7 @@ parameters:
     default: 'terraform.tfplan'
 
 steps:
-- task: TerraformCLI@1
+- task: TerraformCLI@0
   displayName: 'Run a terraform plan for ${{ parameters.workload }}-${{ parameters.environment }}'
   inputs:
     command: 'plan'
