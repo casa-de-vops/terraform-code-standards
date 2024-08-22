@@ -42,7 +42,7 @@ steps:
       sshPassphrase: '$(sshPassphrase)'
       sshKeySecureFile: '$(sshKeySecureFile)'
 
-  - task: TerraformTaskV4@3
+  - task: TerraformTaskV3@0
     displayName: 'Initialize terraform with the tfstate backend and download all remote modules being used'
     inputs:
       provider: 'azurerm'
