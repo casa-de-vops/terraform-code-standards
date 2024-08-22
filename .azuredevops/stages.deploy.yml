@@ -28,7 +28,6 @@ stages:
     jobs:
       - job: TerraformValidateJob
         displayName: 'Terraform Validate'
-
         ${{ if variables['environment.pool'] }}:
           pool: ${{ variables['environment.pool'] }}
         ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
@@ -37,13 +36,6 @@ stages:
         ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
           pool:
             vmImage: ${{ variables['environment.vmImage'] }}
-        #   pool:
-        #     vmImage: Ubuntu-20.04
-        # ${{ if variables['environment.vmImage'] }}:
-        #   pool:
-        #     vmImage: ${{ variables['environment.vmImage'] }}
-        # ${{ else }}:
-        #   pool: ${{ environment.pool }}
         steps:
           - template: ./tasks/tf_install_task.yml
             parameters:
@@ -79,14 +71,14 @@ stages:
     jobs:
       - job: TerraformPlanJob
         displayName: 'Terraform Plan'
-        ${{ if eq(variables['environment.vmImage'], '') }}:
+        ${{ if variables['environment.pool'] }}:
+          pool: ${{ variables['environment.pool'] }}
+        ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
           pool:
             vmImage: Ubuntu-20.04
-        ${{ if variables['environment.vmImage'] }}:
+        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
           pool:
             vmImage: ${{ variables['environment.vmImage'] }}
-        ${{ else }}:
-          pool: ${{ environment.pool }}
         steps:
           - template: ./tasks/tf_install_task.yml
             parameters:
@@ -140,14 +132,14 @@ stages:
         timeoutInMinutes: 180
         displayName: 'Terraform Apply'
         environment: '${{ parameters.workload }}-${{ environment.environment }}'
-        ${{ if eq(variables['environment.vmImage'], '') }}:
+        ${{ if variables['environment.pool'] }}:
+          pool: ${{ variables['environment.pool'] }}
+        ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
           pool:
             vmImage: Ubuntu-20.04
-        ${{ if variables['environment.vmImage'] }}:
+        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
           pool:
             vmImage: ${{ variables['environment.vmImage'] }}
-        ${{ else }}:
-          pool: ${{ environment.pool }}
         strategy:
           runOnce:
             deploy:
