@@ -16,7 +16,7 @@ parameters:
     type: string
   - name: install_ssh
     type: boolean
-    default: true
+    default: false
   - name: azure_service_connection
     type: string
   - name: securevars_file
@@ -42,11 +42,11 @@ steps:
       sshPassphrase: $(sshPassphrase)
       sshKeySecureFile: $(sshKeySecureFile)
 
-  - task: TerraformCLI@1
+  - task: TerraformTaskV4@4
     displayName: 'Initialize terraform with the tfstate backend and download all remote modules being used'
     inputs:
       command: 'init'
-      backendType: 'azurerm'
+      provider: 'azurerm'
       workingDirectory: '${{ parameters.working_directory }}'
       azureServiceConnection: ${{ parameters.azure_service_connection }}
       secureVarsFile : ${{ parameters.securevars_file }}
