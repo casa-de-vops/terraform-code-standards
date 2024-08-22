@@ -30,9 +30,10 @@ stages:
         displayName: 'Terraform Validate'
         ${{ if eq(environment.vmImage, null) }}:
           pool:
-            vmImage: Ubumtu-20.04
+            vmImage: Ubuntu-20.04
         ${{ else if environment.vmImage }}:
-          pool: ${{ environment.pool }}
+          pool:
+            vmImage: ${{ environment.vmImage }}
         ${{ else }}:
           pool: ${{ environment.pool }}
         steps:
