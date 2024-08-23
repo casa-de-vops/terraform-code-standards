@@ -39,14 +39,23 @@ parameters:
     default: true
   - name: plan_file_name
     type: string
-    default: 'terraform.tfplan'
+    default: 'cleanup.tfplan'
 
 steps:
 - task: TerraformCLI@0
   displayName: 'Run a TF Plan for ${{ parameters.workload }}-${{ parameters.environment }}'
   inputs:
+    command: 'plan'
+    commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -out=${{ parameters.plan_file_name }} -detailed-exitcode -destroy'
+    workingDirectory: ${{ parameters.working_directory }}
+    environmentServiceName: ${{ parameters.azurerm_service_connection }}
+    ${{ if not(eq(parameters.securevars_file, '')) }}:
+      secureVarsFile: ${{ parameters.securevars_file }}
+- task: TerraformCLI@0
+  displayName: 'Run a TF Plan for ${{ parameters.workload }}-${{ parameters.environment }}'
+  inputs:
     command: 'destroy'
-    commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }}'
+    commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -auto-approve ${{ parameters.plan_file_name }}'
     workingDirectory: ${{ parameters.working_directory }}
     environmentServiceName: ${{ parameters.azurerm_service_connection }}
     ${{ if not(eq(parameters.securevars_file, '')) }}:
