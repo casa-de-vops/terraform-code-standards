@@ -11,19 +11,10 @@
 # It also assumes that the appropriate Azure service connection is available.
 
 parameters:
-  - name: workload
-    type: string
-  - name: environment
-    type: string
   - name: working_directory
     type: string
   - name: azurerm_service_connection
     type: string
-  - name: tfvars_file
-    type: string
-  - name: securevars_file
-    type: string
-    default: ''
   - name: parallelism
     type: number
     default: 10
@@ -52,15 +43,3 @@ steps:
         commandOptions: '-destroy -input=false -parallelism=${{ parameters.parallelism }} -auto-approve ${{ parameters.plan_file_name }}'
       ${{ else }}:
         commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} ${{ parameters.command_option_args }} -auto-approve ${{ parameters.plan_file_name }}'
-
-  - task: TerraformCLI@0
-    condition: eq('${{ parameters.smoke_test_mode }}', true)
-    displayName: 'Verify formatting'
-    inputs:
-      azurerm_service_connection: ${{ parameters.azurerm_service_connection }}
-      working_directory: ${{ parameters.working_directory }} 
-      workload: '${{ parameters.workload }}'
-      environment: '${{ environment.environment }}'
-      securevars_file: ${{ parameters.securevars_file }}
-      tfvars_file: '${{ environment.tfvars_file }}'
-      command_option_args: '${{ environment.command_option_args }}'
