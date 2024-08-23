@@ -133,9 +133,9 @@ stages:
 ## TF Apply
 - ${{ each environment in parameters.environments }}:
   - stage: ApplyStage${{environment.environment}}
-    ${{ if eq(parameters.tf_destroy_mode, true) }}:
+    ${{ if eq(variables['environment.destroy_mode'], 1) }}:
       displayName: 'Apply (Destroy) [${{ parameters.workload }}-${{ environment.environment }}]'
-    ${{ if eq(variables['environment.smoke_test_mode'], true) }}:
+    ${{ if eq(variables['environment.smoke_test_mode'], 1) }}:
       displayName: 'Apply (Smoke Test) [${{ parameters.workload }}-${{ environment.environment }}]'
     ${{ else }}:
       displayName: 'Apply [${{ parameters.workload }}-${{ environment.environment }}]'
@@ -201,9 +201,7 @@ stages:
   - stage: DestoryStage${{environment.environment}}
     displayName: 'Apply (Destroy) [${{ parameters.workload }}-${{ environment.environment }}]'
     dependsOn:
-      - InspectStage${{environment.environment}}
-      - PlanStage${{environment.environment}}
-      - ValidateStage${{environment.environment}}
+      - ApplyStage${{environment.environment}}
     condition: and(succeeded(), eq(variables['environment.smoke_test_mode'], 'true'))
     jobs:
       - deployment: TerraformDestoryJob
