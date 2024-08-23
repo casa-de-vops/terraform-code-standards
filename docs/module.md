@@ -26,4 +26,4 @@
 
 By following these practices and leveraging the Azure Verified Modules Library, you can ensure that your Terraform modules are robust, reusable, and aligned with industry standards, helping to simplify the management of your Azure infrastructure.
 
-[^ back to overview ^](#table-of-contents)
+[^ back to top ^](#table-of-contents)
