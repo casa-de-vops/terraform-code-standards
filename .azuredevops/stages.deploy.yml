@@ -192,7 +192,7 @@ stages:
                 - template: ./tasks/tf_cleanup_task.yml
                   parameters:
                     azurerm_service_connection: ${{ environment.azure_service_connection }}
-                    working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
+                    working_directory: '$(System.DefaultWorkingDirectory)/plan/${{ parameters.working_directory }}' 
                     smoke_test_mode: '${{ coalesce(environment.smoke_test_mode, false) }}'
                     workload: '${{ parameters.workload }}'
                     environment: '${{ environment.environment }}'
