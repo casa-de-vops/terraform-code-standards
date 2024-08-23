@@ -203,7 +203,7 @@ stages:
     displayName: 'Apply (Cleanup) [${{ parameters.workload }}-${{ environment.environment }}]'
     dependsOn:
       # - ApplyStage${{environment.environment}}
-    condition: eq(variables['environment.smoke_test_mode'], true)
+    condition: and(succeeded(), ne('${{ environment.smoke_test }}', false))
     jobs:
       - deployment: TerraformCleanupJob
         timeoutInMinutes: 180
