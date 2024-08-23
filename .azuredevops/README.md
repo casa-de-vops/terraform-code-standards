@@ -10,6 +10,10 @@ The pipeline is structured into three main stages:
    - Validates the Terraform configuration.
    - Ensures syntax and structure are correct.
 
+2. **Inspect**: 
+   - Generates code coverage report.
+   - Generates tfsec security report.
+
 2. **Plan**: 
    - Generates an execution plan.
    - Displays changes that will be made to the infrastructure.
