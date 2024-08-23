@@ -204,9 +204,9 @@ stages:
       # - ApplyStage${{environment.environment}}
     condition: and(succeeded(), eq(variables['environment.smoke_test_mode'], '1'))
     jobs:
-      - deployment: TerraformDestoryJob
+      - deployment: TerraformDestroyJob
         timeoutInMinutes: 180
-        displayName: 'Terraform Destory'
+        displayName: 'Terraform Destroy'
         environment: '${{ parameters.workload }}-${{ environment.environment }}'
         ${{ if variables['environment.pool'] }}:
           pool: ${{ variables['environment.pool'] }}
