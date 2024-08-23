@@ -84,51 +84,51 @@ stages:
 #               run_tfsec: '${{ coalesce(environment.run_tfsec, true) }}'
 #               run_msdefender: '${{ coalesce(environment.run_msdefender, true) }}'
               
-# ## TF Plan
-# - ${{ each environment in parameters.environments }}:
-#   - stage: PlanStage${{environment.environment}}
-#     displayName: "Plan [${{ parameters.workload }}-${{ environment.environment }}]"
-#     dependsOn:
-#       - ValidateStage${{environment.environment}}
-#     jobs:
-#       - job: TerraformPlanJob
-#         displayName: 'Terraform Plan'
-#         ${{ if variables['environment.pool'] }}:
-#           pool: ${{ variables['environment.pool'] }}
-#         ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
-#           pool:
-#             vmImage: Ubuntu-20.04
-#         ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
-#           pool:
-#             vmImage: ${{ variables['environment.vmImage'] }}
-#         steps:
-#           - template: ./tasks/tf_install_task.yml
-#             parameters:
-#               tf_version: '${{ parameters.tf_version }}'
-#           - template: ./tasks/tf_replace_token.yml
-#             parameters:
-#               sources: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}/**'
-#               missingVarAction: 'keep'
-#               logLevel: 'error'
-#           - template: ./tasks/tf_init_task.yml
-#             parameters:
-#               install_ssh: '${{ parameters.install_ssh }}'
-#               working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
-#               backend_service_connection:  '${{ coalesce(environment.backend_service_connection, environment.azure_service_connection) }}'
-#               backend_azure_rm_resource_group_name: '${{ environment.backend_azure_rm_resource_group_name }}'
-#               backend_azure_rm_storage_account_name: '${{ environment.backend_azure_rm_storage_account_name }}'
-#               backend_azure_rm_container_name: '${{ environment.backend_azure_rm_container_name }}'
-#               backend_azure_rm_key: '${{ environment.backend_azure_rm_key }}' 
-#           - template: ./tasks/tf_plan_task.yml
-#             parameters:
-#               azurerm_service_connection: ${{ environment.azure_service_connection }}
-#               working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
-#               workload: '${{ parameters.workload }}'
-#               environment: '${{ environment.environment }}'
-#               securevars_file: ${{ parameters.securevars_file }}
-#               tfvars_file: '${{ environment.tfvars_file }}'
-#               destroy_mode: '${{ coalesce(environment.destroy_mode, false) }}'
-#               command_option_args: '${{ environment.command_option_args }}'
+## TF Plan
+- ${{ each environment in parameters.environments }}:
+  - stage: PlanStage${{environment.environment}}
+    displayName: "Plan [${{ parameters.workload }}-${{ environment.environment }}]"
+    dependsOn:
+      # - ValidateStage${{environment.environment}}
+    jobs:
+      - job: TerraformPlanJob
+        displayName: 'Terraform Plan'
+        ${{ if variables['environment.pool'] }}:
+          pool: ${{ variables['environment.pool'] }}
+        ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
+          pool:
+            vmImage: Ubuntu-20.04
+        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
+          pool:
+            vmImage: ${{ variables['environment.vmImage'] }}
+        steps:
+          - template: ./tasks/tf_install_task.yml
+            parameters:
+              tf_version: '${{ parameters.tf_version }}'
+          - template: ./tasks/tf_replace_token.yml
+            parameters:
+              sources: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}/**'
+              missingVarAction: 'keep'
+              logLevel: 'error'
+          - template: ./tasks/tf_init_task.yml
+            parameters:
+              install_ssh: '${{ parameters.install_ssh }}'
+              working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
+              backend_service_connection:  '${{ coalesce(environment.backend_service_connection, environment.azure_service_connection) }}'
+              backend_azure_rm_resource_group_name: '${{ environment.backend_azure_rm_resource_group_name }}'
+              backend_azure_rm_storage_account_name: '${{ environment.backend_azure_rm_storage_account_name }}'
+              backend_azure_rm_container_name: '${{ environment.backend_azure_rm_container_name }}'
+              backend_azure_rm_key: '${{ environment.backend_azure_rm_key }}' 
+          - template: ./tasks/tf_plan_task.yml
+            parameters:
+              azurerm_service_connection: ${{ environment.azure_service_connection }}
+              working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
+              workload: '${{ parameters.workload }}'
+              environment: '${{ environment.environment }}'
+              securevars_file: ${{ parameters.securevars_file }}
+              tfvars_file: '${{ environment.tfvars_file }}'
+              destroy_mode: '${{ coalesce(environment.destroy_mode, false) }}'
+              command_option_args: '${{ environment.command_option_args }}'
 
 ## TF Apply
 - ${{ each environment in parameters.environments }}:
@@ -139,8 +139,8 @@ stages:
       displayName: 'Apply [${{ parameters.workload }}-${{ environment.environment }}]'
     dependsOn:
       # - InspectStage${{environment.environment}}
-      # - PlanStage${{environment.environment}}
       # - ValidateStage${{environment.environment}}
+      - PlanStage${{environment.environment}}
     # condition: and(succeeded(), or(eq(variables['Build.SourceBranchName'], 'release'), eq(variables['Build.SourceBranchName'], 'main')), eq(dependencies.PlanStage${{ replace(replace(environment.environment, '/', '_'), '-', '_') }}.outputs['TerraformPlanJob.terraformPlanStatus.hasChanges'], 'true'))
     jobs:
       - deployment: TerraformApplyJob
@@ -161,12 +161,12 @@ stages:
               steps:
                 - download: none
                 # Download TF plan artifact
-                # - task: DownloadPipelineArtifact@2
-                #   displayName: 'Download plan'
-                #   inputs:
-                #     source: 'current'
-                #     artifact: terraform_${{ replace(replace(environment.environment, '/', '_'), '-', '_') }}_plan
-                #     path: $(System.DefaultWorkingDirectory)/plan/
+                - task: DownloadPipelineArtifact@2
+                  displayName: 'Download plan'
+                  inputs:
+                    source: 'current'
+                    artifact: terraform_${{ replace(replace(environment.environment, '/', '_'), '-', '_') }}_plan
+                    path: $(System.DefaultWorkingDirectory)/plan/
                 # Install terraform
                 - template: ./tasks/tf_install_task.yml
                   parameters:
@@ -174,7 +174,7 @@ stages:
                 - template: ./tasks/tf_init_task.yml
                   parameters:
                     install_ssh: '${{ parameters.install_ssh }}'
-                    working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
+                    working_directory: '$(System.DefaultWorkingDirectory)/plan/${{ parameters.working_directory }}' 
                     backend_service_connection:  '${{ coalesce(environment.backend_service_connection, environment.azure_service_connection) }}'
                     backend_azure_rm_resource_group_name: '${{ environment.backend_azure_rm_resource_group_name }}'
                     backend_azure_rm_storage_account_name: '${{ environment.backend_azure_rm_storage_account_name }}'
