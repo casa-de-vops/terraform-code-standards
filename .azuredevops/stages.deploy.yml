@@ -133,10 +133,8 @@ stages:
 ## TF Apply
 - ${{ each environment in parameters.environments }}:
   - stage: ApplyStage${{environment.environment}}
-    ${{ if eq(variables['environment.destroy_mode'], '1') }}:
+    ${{ if eq(variables['environment.destroy_mode'], 'true') }}:
       displayName: 'Apply (Destroy) [${{ parameters.workload }}-${{ environment.environment }}]'
-    ${{ elseif eq(variables['environment.smoke_test_mode'], '1') }}:
-      displayName: 'Apply (Smoke Test) [${{ parameters.workload }}-${{ environment.environment }}]'
     ${{ else }}:
       displayName: 'Apply [${{ parameters.workload }}-${{ environment.environment }}]'
     dependsOn:
@@ -201,7 +199,7 @@ stages:
 ## TF Destroy
 - ${{ each environment in parameters.environments }}:
   - stage: CleanupStage${{environment.environment}}
-    displayName: 'Apply (Cleanup) [${{ parameters.workload }}-${{ environment.environment }}]'
+    displayName: 'Apply (Destroy) [${{ parameters.workload }}-${{ environment.environment }}]'
     condition: and(succeeded(), ne('${{ environment.smoke_test }}', false))
     dependsOn:
       - ApplyStage${{environment.environment}}

@@ -35,8 +35,8 @@ parameters:
     type: string
     default: ''
   - name: destroy_mode
-    type: string
-    default: '0'
+    type: boolean
+    default: false
   - name: plan_file_name
     type: string
     default: 'terraform.tfplan'
@@ -48,7 +48,7 @@ steps:
     command: 'plan'
     ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
       commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -out=${{ parameters.plan_file_name }} -detailed-exitcode -lock=false'
-    ${{ elseif eq(parameters.destroy_mode, '1') }}:
+    ${{ elseif eq(parameters.destroy_mode, true) }}:
       commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -out=${{ parameters.plan_file_name }} -detailed-exitcode -destroy'
     ${{ else }}:
       commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -out=${{ parameters.plan_file_name }} -detailed-exitcode'
