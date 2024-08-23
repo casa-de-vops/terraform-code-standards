@@ -36,7 +36,19 @@ steps:
       command: 'apply'
       workingDirectory: ${{ parameters.working_directory }}
       environmentServiceName: ${{ parameters.azurerm_service_connection }}
-      ${{ if eq(parameters.destroy_mode, '1') }}:
-        commandOptions: '-destroy -input=false -parallelism=${{ parameters.parallelism }} -auto-approve ${{ parameters.plan_file_name }}'
-      ${{ else }}:
-        commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} ${{ parameters.command_option_args }} -auto-approve ${{ parameters.plan_file_name }}'
+      commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} ${{ parameters.command_option_args }} -auto-approve ${{ parameters.plan_file_name }}'
+      # ${{ if eq(parameters.destroy_mode, '1') }}:
+      #   commandOptions: '-destroy -input=false -parallelism=${{ parameters.parallelism }} -auto-approve ${{ parameters.plan_file_name }}'
+      # ${{ else }}:
+      #   commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} ${{ parameters.command_option_args }} -auto-approve ${{ parameters.plan_file_name }}'
+  - task: TerraformCLI@0
+    displayName: 'Run a terraform destroy'
+    inputs:
+      command: 'apply'
+      workingDirectory: ${{ parameters.working_directory }}
+      environmentServiceName: ${{ parameters.azurerm_service_connection }}  
+      commandOptions: '-destroy -input=false -parallelism=${{ parameters.parallelism }} -auto-approve ${{ parameters.plan_file_name }}'
+      # ${{ if eq(parameters.destroy_mode, '1') }}:
+      #   commandOptions: '-destroy -input=false -parallelism=${{ parameters.parallelism }} -auto-approve ${{ parameters.plan_file_name }}'
+      # ${{ else }}:
+      #   commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} ${{ parameters.command_option_args }} -auto-approve ${{ parameters.plan_file_name }}'
