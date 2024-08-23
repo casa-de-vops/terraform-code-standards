@@ -20,7 +20,7 @@ parameters:
     default: true
   - name: security_tools
     type: string
-    default: 'iacfilescanner, trivy, terrascan, tfsec'
+    default: 'iacfilescanner, trivy, terrascan'
   - name: run_tfsec
     type: boolean
     default: true
@@ -33,7 +33,7 @@ steps:
       tools: ${{ parameters.security_tools }} 
       workingDirectory: ${{ parameters.working_directory }}
   - task: tfsec@1
-    condition: and(succeeded(), contains('${{ parameters.security_tools }}, "tfsec"))
+    condition: and(succeeded(), ne('${{ parameters.run_tfsec }}', false))
     displayName: 'Run tfsec'
     inputs:
       dir: ${{ parameters.working_directory }}
