@@ -41,5 +41,6 @@ steps:
       workingDirectory: ${{ parameters.working_directory }}
       azureServiceConnection: ${{ parameters.azurerm_service_connection }}
       additionalArgs: '-var-file=${{ parameters.tfvars_file }}'
+      runAzLogin: true
       ${{ if not(eq(parameters.securevars_file, '')) }}:
         secureVarsFile: ${{ parameters.securevars_file }}
