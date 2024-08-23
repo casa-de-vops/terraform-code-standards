@@ -1,0 +1,45 @@
+name: $(SourceBranchName)-$(Date:yyyyMMdd)-$(Rev:rrr)
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - .azuredevops/environments/dev.tfvars
+      - .azuredevops/tests/*.tf
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: 'casa-de-vops/terraform-code-standards'
+      ref: 'refs/heads/azdopipeline'
+      endpoint: 'GitHub'
+      mapping: '.azuredevops'
+
+variables:
+  - template: '../variables/variables.nonprod.yml'
+  - group: ssh_host #library group containing knownHostsEntry, sshPublicKey, sshPassphrase, sshKeySecureFile
+
+stages:
+  - template: .azuredevops/stages.deploy.yml@templates
+    parameters:
+      workload: terraform-pipeline
+      working_directory: .azuredevops/tests/terraform
+      environments: 
+      - stage: Test_Global
+        pool: default
+        azure_service_connection: terraform
+        tfvars_file: ../environments/dev.tfvars
+        environment: test
+        ado_environment: ado-test
+        backend_service_connection: terraform
+        backend_azure_rm_resource_group_name: rg-terraform-ops
+        backend_azure_rm_storage_account_name: casadevopsterraform
+        backend_azure_rm_container_name: ops-terraform-state      
+        backend_azure_rm_key: stages.deploy.tfstate
+        command_option_args: '-var command_option_args="$(input_variable)"'
+        # run_tfsec: false
+        # run_msdefender: false
+        # step_apply_command_option_args: '-destroy'

@@ -1,0 +1,30 @@
+# Azure YAML Pipeline Template Documentation
+#
+# Overview:
+#
+# This template includes steps for unlocking the terraform state file.
+#
+# Assumptions:
+#
+# This template assumes that the necessary Terraform files are present in the
+# working directory and that the Azure backend storage details are correctly
+# provided.
+
+parameters:
+  - name: working_directory
+    type: string
+  - name: lock_id
+    type: string
+    default: true
+  - name: azure_service_connection
+    type: string
+
+steps:
+     
+  - task: TerraformCLI@0
+    displayName: 'Terraform Force Unlock'
+    inputs:
+      command: 'forceunlock'
+      lockID: '${{ parameters.lock_id }}'
+      workingDirectory: '${{ parameters.working_directory }}'
+      azureServiceConnection: ${{ parameters.azure_service_connection }}

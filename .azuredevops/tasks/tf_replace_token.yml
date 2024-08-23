@@ -1,0 +1,32 @@
+# Azure YAML Pipeline Template Documentation
+#
+# Overview:
+#
+# This template replace token in the Terraform files on the specified working directory.
+# The formatting is performed using the Replace Tokens marketplace task.
+#
+# Assumptions:
+#
+# This template assumes that the necessary Terraform files are present in the working directory.
+#
+
+parameters:
+  - name: sources
+    type: string
+  - name: missingVarAction
+    type: string
+  - name: logLevel
+    type: string
+  - name: tokenPattern
+    type: string
+    default: "doubleunderscores"
+
+steps:
+  - task: qetza.replacetokens.replacetokens-task.replacetokens@6
+    displayName: "Replace module version tokens in Terraform files"
+    name: replaceTokens
+    inputs:
+      sources: ${{ parameters.sources }}
+      missingVarAction: ${{ parameters.missingVarAction }}
+      logLevel: ${{ parameters.logLevel }}
+      tokenPattern: ${{ parameters.tokenPattern }}

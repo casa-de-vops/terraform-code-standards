@@ -1,0 +1,46 @@
+# Azure YAML Pipeline Template Documentation
+#
+# Overview:
+#
+# This template performs several tasks related to Terraform validation. It checks 
+# the formatting and syntax of Terraform files, retrieves a specific business app ID from the 
+# Terraform configuration, and adds tags to the build.
+#
+# Assumptions:
+#
+# The template assumes that the necessary Terraform files are present in the 
+# working directory.
+#
+
+parameters:
+  - name: working_directory
+    type: string
+  - name: fmtOptions
+    type: string
+    default: '--check --diff'
+  - name: azurerm_service_connection
+    type: string
+  - name: tfvars_file
+    type: string
+  - name: securevars_file
+    type: string
+    default: ''
+
+steps:
+  - task: TerraformCLI@0
+    displayName: 'Verify formatting'
+    inputs:
+      command: 'fmt'
+      commandOptions: ${{ parameters.fmtOptions }}
+      workingDirectory: ${{ parameters.working_directory }}
+      
+  - task: TerraformCLI@0
+    displayName: 'Validate the TF config'
+    inputs:
+      command: 'validate'
+      workingDirectory: ${{ parameters.working_directory }}
+      azureServiceConnection: ${{ parameters.azurerm_service_connection }}
+      additionalArgs: '-var-file=${{ parameters.tfvars_file }}'
+      runAzLogin: true
+      ${{ if not(eq(parameters.securevars_file, '')) }}:
+        secureVarsFile: ${{ parameters.securevars_file }}

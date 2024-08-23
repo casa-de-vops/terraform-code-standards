@@ -1,0 +1,60 @@
+parameters:
+  - name: workload
+    type: string
+  - name: environments
+    type: object
+  - name: working_directory
+    type: string
+    default: 'terraform'
+  - name: tf_version
+    type: string
+    default: 'latest'
+  - name: securevars_file
+    type: string
+  - name: install_ssh
+    type: boolean
+    default: true
+
+stages:
+# TF Force-Unlock
+- ${{ each environment in parameters.environments }}:
+  - stage: ForceUnlock${{ environment.environment }}
+    displayName: "Force-Unlock [${{ parameters.workload }}-${{ environment.environment }}]"
+    dependsOn: []
+    variables:
+      - ${{ if eq(environment.environment, 'prod') }}:
+        - template: ../variables/variables.prod.yml
+      - ${{ else }}:
+        - template: ../variables/variables.nonprod.yml
+    jobs:
+      - job: TerraformForceUnlockJob
+        displayName: 'Terraform Force-Unlock'
+        ${{ if variables['environment.pool'] }}:
+          pool: ${{ variables['environment.pool'] }}
+        ${{ if and(or(not(variables['environment.pool']), eq(lower(variables['environment.pool']), 'default')), eq(variables['environment.vmImage'], '')) }}:
+          pool:
+            vmImage: Ubuntu-20.04
+        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
+          pool:
+            vmImage: ${{ variables['environment.vmImage'] }}
+        steps:
+          - template: ../tasks/tf_install_task.yml
+            parameters:
+              tf_version: '${{ parameters.tf_version }}'
+          - template: ../tasks/tf_init_task.yml
+            parameters:
+              azure_service_connection: '${{ environment.azure_service_connection }}'
+              working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
+              install_ssh: '${{ parameters.install_ssh }}'
+              securevars_file: ${{ parameters.securevars_file }}
+              # tfvars_file: ${{ parameters.tfvars_file }}
+              backend_service_connection: ${{ environment.backend_service_connection }}
+              backend_azure_rm_resource_group_name: '${{ environment.backend_azure_rm_resource_group_name }}'
+              backend_azure_rm_storage_account_name: '${{ environment.backend_azure_rm_storage_account_name }}'
+              backend_azure_rm_container_name: '${{ environment.backend_azure_rm_container_name }}'
+              backend_azure_rm_key: '${{ environment.backend_azure_rm_key }}' 
+          - template: ../tasks/tf_unlock_task.yml
+            parameters:
+              azure_service_connection: '${{ environment.azure_service_connection }}'
+              working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
+              lock_id: '${{ environment.lock_id }}'

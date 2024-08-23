@@ -1,0 +1,36 @@
+# Azure YAML Pipeline Template Documentation
+#
+# Overview:
+#
+# This template installs a specified version of Terraform on the agent.
+# The installation is performed using the shorthand version of the TerraformInstaller@0 task,
+# but the particular package manager used varies depending on the operating system of the agent.
+#
+# Assumptions:
+#
+# The template assumes that the necessary permissions are in place to install software on the build agent.
+#
+# Parameters:
+#
+# - tf_version: The version of Terraform to install.
+#   (optional)
+#   (type: string)
+#   (default: 'latest')
+#
+# Steps:
+#
+# 1. Install Terraform:
+#
+#    This step uses the TerraformInstaller@0 task to install the specified version of Terraform on the build agent.
+#    If the tf_version parameter is not set to 'latest', it appends the version to the installation command.
+
+parameters:
+  - name: tf_version
+    type: string
+    default: 'latest'
+
+steps:
+- task: TerraformInstaller@1
+  displayName: 'Install Terraform ${{ parameters.tf_version }}'
+  inputs:
+    terraformVersion: '${{ parameters.tf_version }}'

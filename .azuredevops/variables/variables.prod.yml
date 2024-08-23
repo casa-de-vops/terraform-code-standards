@@ -1,0 +1,4 @@
+variables:
+  input_variable: command_option_prod
+  kv_module_version: 1.0.0
+  eh_module_version: 1.0.0
