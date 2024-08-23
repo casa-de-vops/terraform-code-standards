@@ -1,6 +1,7 @@
 name: $(SourceBranchName)-$(Date:yyyyMMdd)-$(Rev:rrr)
 
 trigger:
+  batch: true
   branches:
     include:
       - main
@@ -14,7 +15,7 @@ resources:
     - repository: templates
       type: github
       name: 'casa-de-vops/terraform-code-standards'
-      ref: 'refs/heads/azdopipeline'
+      ref: 'refs/heads/main'
       endpoint: 'GitHub'
       mapping: '.azuredevops'
 
@@ -26,7 +27,7 @@ stages:
   - template: .azuredevops/stages.deploy.yml@templates
     parameters:
       workload: terraform-pipeline
-      working_directory: .azuredevops/tests/terraform
+      working_directory: terraform
       environments: 
       - stage: Test_Global
         pool: default
@@ -40,6 +41,7 @@ stages:
         backend_azure_rm_container_name: ops-terraform-state      
         backend_azure_rm_key: stages.deploy.tfstate
         command_option_args: '-var command_option_args="$(input_variable)"'
+        # destroy_mode: true
         # run_tfsec: false
         # run_msdefender: false
-        # step_apply_command_option_args: '-destroy'
+        # step_apply_command_option_args: '-no-color'
