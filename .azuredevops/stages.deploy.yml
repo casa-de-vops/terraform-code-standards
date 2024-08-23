@@ -200,7 +200,7 @@ stages:
 - ${{ each environment in parameters.environments }}:
   - stage: CleanupStage${{environment.environment}}
     displayName: 'Apply (Destroy) [${{ parameters.workload }}-${{ environment.environment }}]'
-    condition: and(succeeded(), ${{ coalesce(environment.smoke_test, false) }} ))
+    condition: and(succeeded(), ${{ coalesce(environment.smoke_test, false) }} )
     dependsOn:
       - ApplyStage${{environment.environment}}
     jobs:
