@@ -16,12 +16,12 @@
 
 - **Use consistent naming conventions for all Azure resources** to ensure clarity, manageability, and compliance with best practices. A well-defined naming convention should help identify the resource type, its associated workload, environment, and location.
 
-- **Adopt Azure resource naming patterns** based on the Microsoft Cloud Adoption Framework (CAF) guidelines. These patterns should include components such as resource type, environment, location, and instance identifiers. For example, a resource group for a shared account lookup service might be named `rg-acctlookupsvc-shared-001`.
+- **Adopt Azure resource naming patterns** based on the Microsoft Cloud Adoption Framework (CAF) guidelines. These patterns should include components such as resource type, environment, location, and instance identifiers. For example, a resource group for a shared account lookup service might be named `rg-acctlookupsvc-shared-prod-westus-001`.
 
 - **Apply naming patterns consistently across all environments and stages** to maintain predictability and ease of management. Consistency in naming helps in resource identification, management, and automation.
 
 - **Examples of Azure Naming Patterns:**
-  - **Resource Group:** `rg-acctlookupsvc-shared-001` 
+  - **Resource Group:** `rg-acctlookupsvc-shared-prod-westus-001` 
   - **Virtual Network:** `vnet-prod-westus-001`
   - **Public IP Address:** `pip-sharepoint-prod-westus-001`
   
