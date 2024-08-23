@@ -198,7 +198,7 @@ stages:
                     # log_level: '${{ parameters.tf_log_level }}'
 ## TF Cleanup
 - ${{ each environment in parameters.environments }}:
-  - stage: ApplyStage${{environment.environment}}
+  - stage: DestoryStage${{environment.environment}}
     displayName: 'Apply (Destroy) [${{ parameters.workload }}-${{ environment.environment }}]'
     dependsOn:
       - InspectStage${{environment.environment}}
@@ -206,9 +206,9 @@ stages:
       - ValidateStage${{environment.environment}}
     condition: and(succeeded(), eq(variables['environment.smoke_test_mode'], 'true'))
     jobs:
-      - deployment: TerraformApplyJob
+      - deployment: TerraformDestoryJob
         timeoutInMinutes: 180
-        displayName: 'Terraform Apply'
+        displayName: 'Terraform Destory'
         environment: '${{ parameters.workload }}-${{ environment.environment }}'
         ${{ if variables['environment.pool'] }}:
           pool: ${{ variables['environment.pool'] }}
@@ -249,11 +249,10 @@ stages:
                     backend_azure_rm_container_name: '${{ environment.backend_azure_rm_container_name }}'
                     backend_azure_rm_key: '${{ environment.backend_azure_rm_key }}' 
                 # TF apply
-                - template: ./tasks/tf_apply_task.yml
+                - template: ./tasks/tf_smoke_test_task.yml
                   parameters:
                     working_directory: '$(System.DefaultWorkingDirectory)/plan/${{ parameters.working_directory }}' 
                     azurerm_service_connection: ${{ environment.azure_service_connection }}
                     command_option_args: '${{ environment.step_apply_command_option_args }}'
-                    destroy_mode: '${{ environment.tf_destroy_mode }}'
                     plan_file_name: '${{ parameters.plan_file_name }}'
                     # log_level: '${{ parameters.tf_log_level }}'

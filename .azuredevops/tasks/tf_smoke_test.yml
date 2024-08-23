@@ -1,0 +1,89 @@
+# Azure YAML Pipeline Template Documentation
+#
+# Overview:
+#
+# This template performs several tasks related to a Terraform plan. It runs a 
+# Terraform plan against a specified subscription, adds a comment to the pull 
+# request if there are no changes, generates a Terraform plan JSON file, creates 
+# a gzip archive of the Terraform working directory, publishes the gzip archive 
+# as an artifact, adds a build tag, and outputs a task variable indicating if 
+# the Terraform plan had changes.
+#
+# Assumptions:
+#
+# The template assumes that the necessary Terraform files are present in the 
+# working directory and that the appropriate Azure service connection is available.
+
+parameters:
+  - name: workload
+    type: string
+  - name: environment
+    type: string
+  - name: working_directory
+    type: string
+  - name: azurerm_service_connection
+    type: string
+  - name: tfvars_file
+    type: string
+  - name: securevars_file
+    type: string
+    default: ''
+  - name: parallelism
+    type: number
+    default: 10
+  - name: command_option_args
+    type: string
+    default: ''
+  - name: destroy_mode
+    type: string
+    default: '1'
+  - name: plan_file_name
+    type: string
+    default: 'terraform.tfplan'
+
+steps:
+- task: TerraformCLI@0
+  displayName: 'Run a TF Plan for ${{ parameters.workload }}-${{ parameters.environment }}'
+  inputs:
+    command: 'plan'
+    ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -out=${{ parameters.plan_file_name }} -detailed-exitcode -lock=false'
+    ${{ elseif eq(parameters.destroy_mode, '1') }}:
+      commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -out=${{ parameters.plan_file_name }} -detailed-exitcode -destroy'
+    ${{ else }}:
+      commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -out=${{ parameters.plan_file_name }} -detailed-exitcode'
+    workingDirectory: ${{ parameters.working_directory }}
+    environmentServiceName: ${{ parameters.azurerm_service_connection }}
+    ${{ if not(eq(parameters.securevars_file, '')) }}:
+      secureVarsFile: ${{ parameters.securevars_file }}
+
+- script: echo "##vso[task.setvariable variable=hasChanges;isOutput=true]$(TERRAFORM_PLAN_HAS_CHANGES)"
+  displayName: Record TF Plan status as stage output
+  name: terraformPlanStatus
+
+- task: TerraformCLI@0
+  displayName: 'Run a terraform apply'
+  inputs:
+    command: 'apply'
+    workingDirectory: ${{ parameters.working_directory }}
+    environmentServiceName: ${{ parameters.azurerm_service_connection }}
+    ${{ if eq(parameters.destroy_mode, '1') }}:
+      commandOptions: '-destroy -input=false -parallelism=${{ parameters.parallelism }} -auto-approve ${{ parameters.plan_file_name }}'
+    ${{ else }}:
+      commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} ${{ parameters.command_option_args }} -auto-approve ${{ parameters.plan_file_name }}'
+
+- task: Bash@3
+  displayName: Clean up directory before publishing'
+  condition: and(succeeded(), eq(variables['TERRAFORM_PLAN_HAS_CHANGES'], 'true'), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))
+  inputs:
+    targetType: 'inline'
+    script: 'rm -rf ${{ parameters.environment }}/.terraform'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+- task: PublishPipelineArtifact@1
+  displayName: Store TF Plan as a pipeline artifact
+  condition: and(succeeded(), eq(variables['TERRAFORM_PLAN_HAS_CHANGES'], 'true'), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))
+  inputs:
+    targetPath: '$(System.DefaultWorkingDirectory)'
+    artifact: 'terraform_${{ parameters.environment }}_smoke_test'
+    publishLocation: 'pipeline'
