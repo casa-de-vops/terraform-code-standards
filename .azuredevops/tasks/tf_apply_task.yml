@@ -11,10 +11,19 @@
 # It also assumes that the appropriate Azure service connection is available.
 
 parameters:
+  - name: workload
+    type: string
+  - name: environment
+    type: string
   - name: working_directory
     type: string
   - name: azurerm_service_connection
     type: string
+  - name: tfvars_file
+    type: string
+  - name: securevars_file
+    type: string
+    default: ''
   - name: parallelism
     type: number
     default: 10
