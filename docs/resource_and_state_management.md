@@ -24,9 +24,7 @@
 
 - **Enable autonomy and innovation within teams** by providing read-only access to lower-level state files and write access only to the current level. This allows teams to build on existing infrastructure components without risking unauthorized changes to more privileged resources.
 
-- **Implement codeless state reading and enterprise composition** using tools like Azure Terraform SRE, which provide object models to load and compose landing zones in memory. This enables sophisticated environment composition and management while maintaining strict access controls.
-
-- Store state files in a remote backend with appropriate access controls.
+- **Implement codeless state reading and enterprise composition** using Azure Terraform SRE and HCL remote-state blocks. These tools provide object models to dynamically load and compose landing zones in memory, enabling sophisticated environment composition and management. By integrating remote-state blocks, you can establish a seamless flow from lower to higher layers, ensuring consistency across environments. This approach allows for strict access controls, maintaining security while facilitating the dynamic composition and management of enterprise environments.
   
 - Enable state locking to prevent concurrent modifications.
   
