@@ -63,4 +63,4 @@ Please ensure your code adheres to the standards outlined in this document befor
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+This project is licensed under the Apache License. See the [LICENSE](LICENSE) file for more details.
