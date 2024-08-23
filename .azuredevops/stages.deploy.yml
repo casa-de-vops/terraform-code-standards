@@ -61,29 +61,6 @@ stages:
               tfvars_file: '${{ environment.tfvars_file }}'
               securevars_file: '${{ parameters.securevars_file }}'
 
-# TF Security Scan
-- ${{ each environment in parameters.environments }}:
-  - stage: InspectStage${{ environment.environment }}
-    displayName: "Inspect [${{ parameters.workload }}-${{ environment.environment }}]"
-    dependsOn: []
-    jobs:
-      - job: TerraformInspectJob
-        displayName: 'Terraform Security Scan'
-        ${{ if variables['environment.pool'] }}:
-          pool: ${{ variables['environment.pool'] }}
-        ${{ if and(or(not(variables['environment.pool']), eq(lower(variables['environment.pool']), 'default')), eq(variables['environment.vmImage'], '')) }}:
-          pool:
-            vmImage: Ubuntu-20.04
-        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
-          pool:
-            vmImage: ${{ variables['environment.vmImage'] }}
-        steps:
-          - template: ./tasks/tf_sec.yml
-            parameters:
-              working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}'
-              run_tfsec: '${{ coalesce(environment.run_tfsec, true) }}'
-              run_msdefender: '${{ coalesce(environment.run_msdefender, true) }}'
-              
 ## TF Plan
 - ${{ each environment in parameters.environments }}:
   - stage: PlanStage${{environment.environment}}
@@ -130,6 +107,31 @@ stages:
               destroy_mode: ${{ coalesce(environment.destroy_mode, false) }}
               command_option_args: '${{ environment.command_option_args }}'
 
+# TF Security Scan
+- ${{ each environment in parameters.environments }}:
+  - stage: InspectStage${{ environment.environment }}
+    displayName: "Inspect [${{ parameters.workload }}-${{ environment.environment }}]"
+    dependsOn: [
+      - PlanStage${{environment.environment}}
+    ]
+    jobs:
+      - job: TerraformInspectJob
+        displayName: 'Terraform Security Scan'
+        ${{ if variables['environment.pool'] }}:
+          pool: ${{ variables['environment.pool'] }}
+        ${{ if and(or(not(variables['environment.pool']), eq(lower(variables['environment.pool']), 'default')), eq(variables['environment.vmImage'], '')) }}:
+          pool:
+            vmImage: Ubuntu-20.04
+        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
+          pool:
+            vmImage: ${{ variables['environment.vmImage'] }}
+        steps:
+          - template: ./tasks/tf_sec.yml
+            parameters:
+              working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}'
+              run_tfsec: '${{ coalesce(environment.run_tfsec, true) }}'
+              run_msdefender: '${{ coalesce(environment.run_msdefender, true) }}'
+              
 ## TF Apply
 - ${{ each environment in parameters.environments }}:
   - stage: ApplyStage${{environment.environment}}
