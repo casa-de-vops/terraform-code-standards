@@ -167,11 +167,6 @@ stages:
                 #     source: 'current'
                 #     artifact: terraform_${{ replace(replace(environment.environment, '/', '_'), '-', '_') }}_plan
                 #     path: $(System.DefaultWorkingDirectory)/plan/
-                # - task: Bash@3
-                #   displayName: 'List files in plan directory'
-                #   inputs:
-                #     targetType: 'inline'
-                #     script: 'ls -la $(System.DefaultWorkingDirectory)/plan/'
                 # Install terraform
                 - template: ./tasks/tf_install_task.yml
                   parameters:
