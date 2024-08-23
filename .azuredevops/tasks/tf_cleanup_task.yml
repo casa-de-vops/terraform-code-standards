@@ -43,7 +43,7 @@ parameters:
 
 steps:
 - task: TerraformCLI@0
-  condition: eq(parameters.smoke_test_mode, true)
+  # condition: eq(parameters.smoke_test_mode, true)
   displayName: 'Run a TF Plan for ${{ parameters.workload }}-${{ parameters.environment }}'
   inputs:
     command: 'plan'
@@ -53,7 +53,7 @@ steps:
     ${{ if not(eq(parameters.securevars_file, '')) }}:
       secureVarsFile: ${{ parameters.securevars_file }}
 - task: TerraformCLI@0
-  condition: and(eq(parameters.smoke_test_mode, true), eq(variables['TERRAFORM_PLAN_HAS_CHANGES'], '0'))
+  # condition: eq(parameters.smoke_test_mode, true)
   displayName: 'Destroy ${{ parameters.workload }}-${{ parameters.environment }}'
   inputs:
     command: 'apply'
