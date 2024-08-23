@@ -29,11 +29,14 @@ stages:
     jobs:
       - job: TerraformForceUnlockJob
         displayName: 'Terraform Force-Unlock'
-        ${{ if environment.vmImage }}:
+        ${{ if variables['environment.pool'] }}:
+          pool: ${{ variables['environment.pool'] }}
+        ${{ if and(or(not(variables['environment.pool']), eq(lower(variables['environment.pool']), 'default')), eq(variables['environment.vmImage'], '')) }}:
           pool:
-            vmImage: ${{ environment.vmImage }}
-        ${{ else }}:
-          pool: ${{ environment.pool }}
+            vmImage: Ubuntu-20.04
+        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
+          pool:
+            vmImage: ${{ variables['environment.vmImage'] }}
         steps:
           - template: ../tasks/tf_install_task.yml
             parameters:

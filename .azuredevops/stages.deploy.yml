@@ -57,7 +57,7 @@ stages:
           - template: ./tasks/tf_validate_task.yml
             parameters:
               working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
-              azurerm_service_connection: '${{ environment.azure_service_connection }}'
+              azurerm_service_connection: ${{ environment.azure_service_connection }}
               tfvars_file: '${{ environment.tfvars_file }}'
               securevars_file: '${{ parameters.securevars_file }}'
 
@@ -184,7 +184,7 @@ stages:
                 - template: ./tasks/tf_apply_task.yml
                   parameters:
                     working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
-                    azurerm_service_connection: '${{ environment.azure_service_connection }}'
+                    azurerm_service_connection: ${{ environment.azure_service_connection }}
                     command_option_args: '${{ environment.step_apply_command_option_args }}'
                     destroy_mode: '${{ parameters.tf_destroy_mode }}'
                     plan_file_name: '${{ parameters.plan_file_name }}'
