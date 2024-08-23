@@ -197,18 +197,17 @@ stages:
 #                     plan_file_name: '${{ parameters.plan_file_name }}'
 #                     # log_level: '${{ parameters.tf_log_level }}'
 #
-## TF destory when running a smoke test
+
+## TF Destroy
 - ${{ each environment in parameters.environments }}:
   - stage: CleanupStage${{environment.environment}}
     displayName: 'Apply (Cleanup) [${{ parameters.workload }}-${{ environment.environment }}]'
+    condition: and(succeeded(), ne('${{ environment.smoke_test }}', false))
     dependsOn:
       # - ApplyStage${{environment.environment}}
-    condition: and(succeeded(), ne('${{ environment.smoke_test }}', false))
     jobs:
-      - deployment: TerraformCleanupJob
-        timeoutInMinutes: 180
-        displayName: 'Terraform Destroy'
-        environment: '${{ parameters.workload }}-${{ environment.environment }}'
+      - job: TerraformCleanupJob
+        displayName: 'Terraform Cleanup'
         ${{ if variables['environment.pool'] }}:
           pool: ${{ variables['environment.pool'] }}
         ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
@@ -217,32 +216,31 @@ stages:
         ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
           pool:
             vmImage: ${{ variables['environment.vmImage'] }}
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - download: none
-                - template: ./tasks/tf_install_task.yml
-                  parameters:
-                    tf_version: '${{ parameters.tf_version }}'
-                - template: ./tasks/tf_init_task.yml
-                  parameters:
-                    install_ssh: '${{ parameters.install_ssh }}'
-                    working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
-                    backend_service_connection: '${{ coalesce(environment.backend_service_connection, environment.azure_service_connection) }}'
-                    backend_azure_rm_resource_group_name: '${{ environment.backend_azure_rm_resource_group_name }}'
-                    backend_azure_rm_storage_account_name: '${{ environment.backend_azure_rm_storage_account_name }}'
-                    backend_azure_rm_container_name: '${{ environment.backend_azure_rm_container_name }}'
-                    backend_azure_rm_key: '${{ environment.backend_azure_rm_key }}' 
-                # TF destroy
-                - template: ./tasks/tf_smoke_test_task.yml
-                  parameters:
-                    working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
-                    azurerm_service_connection: ${{ environment.azure_service_connection }}
-                    workload: '${{ parameters.workload }}'
-                    environment: '${{ environment.environment }}'
-                    securevars_file: ${{ parameters.securevars_file }}
-                    tfvars_file: '${{ environment.tfvars_file }}'
-                    command_option_args: '${{ environment.step_apply_command_option_args }}'
-                    plan_file_name: '${{ parameters.plan_file_name }}'
-                    # log_level: '${{ parameters.tf_log_level }}'
+        steps:
+          - template: ./tasks/tf_install_task.yml
+            parameters:
+              tf_version: '${{ parameters.tf_version }}'
+          - template: ./tasks/tf_replace_token.yml
+            parameters:
+              sources: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}/**'
+              missingVarAction: 'keep'
+              logLevel: 'error'
+          - template: ./tasks/tf_init_task.yml
+            parameters:
+              install_ssh: '${{ parameters.install_ssh }}'
+              working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
+              backend_service_connection:  '${{ coalesce(environment.backend_service_connection, environment.azure_service_connection) }}'
+              backend_azure_rm_resource_group_name: '${{ environment.backend_azure_rm_resource_group_name }}'
+              backend_azure_rm_storage_account_name: '${{ environment.backend_azure_rm_storage_account_name }}'
+              backend_azure_rm_container_name: '${{ environment.backend_azure_rm_container_name }}'
+              backend_azure_rm_key: '${{ environment.backend_azure_rm_key }}' 
+          - template: ./tasks/tf_plan_task.yml
+            parameters:
+              azurerm_service_connection: ${{ environment.azure_service_connection }}
+              working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
+              workload: '${{ parameters.workload }}'
+              environment: '${{ environment.environment }}'
+              securevars_file: ${{ parameters.securevars_file }}
+              tfvars_file: '${{ environment.tfvars_file }}'
+              destroy_mode: '${{ environment.destroy_mode }}'
+              command_option_args: '${{ environment.command_option_args }}'
