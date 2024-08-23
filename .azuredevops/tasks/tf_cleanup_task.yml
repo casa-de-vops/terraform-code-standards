@@ -52,9 +52,9 @@ steps:
     ${{ if not(eq(parameters.securevars_file, '')) }}:
       secureVarsFile: ${{ parameters.securevars_file }}
 - task: TerraformCLI@0
-  displayName: 'Run a TF Plan for ${{ parameters.workload }}-${{ parameters.environment }}'
+  displayName: 'Destroy ${{ parameters.workload }}-${{ parameters.environment }}'
   inputs:
-    command: 'destroy'
+    command: 'apply'
     commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -auto-approve ${{ parameters.plan_file_name }}'
     workingDirectory: ${{ parameters.working_directory }}
     environmentServiceName: ${{ parameters.azurerm_service_connection }}
