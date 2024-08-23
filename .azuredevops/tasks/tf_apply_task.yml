@@ -24,6 +24,9 @@ parameters:
   - name: destroy_mode
     type: boolean
     default: false
+  - name: smoke_test_mode
+    type: boolean
+    default: false
   - name: plan_file_name
     type: string
     default: 'terraform.tfplan'
@@ -40,3 +43,15 @@ steps:
         commandOptions: '-destroy -input=false -parallelism=${{ parameters.parallelism }} -auto-approve ${{ parameters.plan_file_name }}'
       ${{ else }}:
         commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} ${{ parameters.command_option_args }} -auto-approve ${{ parameters.plan_file_name }}'
+
+  - task: TerraformCLI@0
+    condition: eq('${{ parameters.smoke_test_mode }}', true)
+    displayName: 'Verify formatting'
+    inputs:
+      azurerm_service_connection: ${{ parameters.azurerm_service_connection }}
+      working_directory: ${{ parameters.working_directory }} 
+      workload: '${{ parameters.workload }}'
+      environment: '${{ environment.environment }}'
+      securevars_file: ${{ parameters.securevars_file }}
+      tfvars_file: '${{ environment.tfvars_file }}'
+      command_option_args: '${{ environment.command_option_args }}'
