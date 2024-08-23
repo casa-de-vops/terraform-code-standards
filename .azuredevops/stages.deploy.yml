@@ -127,7 +127,7 @@ stages:
               environment: '${{ environment.environment }}'
               securevars_file: ${{ parameters.securevars_file }}
               tfvars_file: '${{ environment.tfvars_file }}'
-              destroy_mode: ${{ environment.destroy_mode }}
+              destroy_mode: ${{ coalesce(environment.destroy_mode, false) }}
               command_option_args: '${{ environment.command_option_args }}'
 
 ## TF Apply
