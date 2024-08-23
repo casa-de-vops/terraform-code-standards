@@ -45,13 +45,8 @@ steps:
 - task: TerraformCLI@0
   displayName: 'Run a TF Plan for ${{ parameters.workload }}-${{ parameters.environment }}'
   inputs:
-    command: 'plan'
-    ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-      commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -out=${{ parameters.plan_file_name }} -detailed-exitcode -lock=false'
-    ${{ elseif eq(parameters.destroy_mode, true) }}:
-      commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -out=${{ parameters.plan_file_name }} -detailed-exitcode -destroy'
-    ${{ else }}:
-      commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -out=${{ parameters.plan_file_name }} -detailed-exitcode'
+    command: 'apply'
+    commandOptions: '--auto-approve -input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -out=${{ parameters.plan_file_name }} -detailed-exitcode -destroy'
     workingDirectory: ${{ parameters.working_directory }}
     environmentServiceName: ${{ parameters.azurerm_service_connection }}
     ${{ if not(eq(parameters.securevars_file, '')) }}:
@@ -61,16 +56,13 @@ steps:
   displayName: Record TF Plan status as stage output
   name: terraformPlanStatus
 
-- task: TerraformCLI@0
-  displayName: 'Run a terraform apply'
-  inputs:
-    command: 'apply'
-    workingDirectory: ${{ parameters.working_directory }}
-    environmentServiceName: ${{ parameters.azurerm_service_connection }}
-    ${{ if eq(parameters.destroy_mode, true) }}:
-      commandOptions: '-destroy -input=false -parallelism=${{ parameters.parallelism }} -auto-approve ${{ parameters.plan_file_name }}'
-    ${{ else }}:
-      commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} ${{ parameters.command_option_args }} -auto-approve ${{ parameters.plan_file_name }}'
+# - task: TerraformCLI@0
+#   displayName: 'Run a terraform apply'
+#   inputs:
+#     command: 'apply'
+#     workingDirectory: ${{ parameters.working_directory }}
+#     environmentServiceName: ${{ parameters.azurerm_service_connection }}
+#     commandOptions: '-destroy -input=false -parallelism=${{ parameters.parallelism }} -auto-approve ${{ parameters.plan_file_name }}'
 
 - task: Bash@3
   displayName: Clean up directory before publishing'
