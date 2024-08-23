@@ -16,7 +16,7 @@
 
 - **Write reusable modules with clear input and output definitions** to ensure that your Terraform configurations are modular, maintainable, and easy to understand. Reusable modules help in standardizing infrastructure deployments across different projects and environments.
 
-- **Leverage the Terraform Azure Verified Modules (AVM) Library** for pre-built, tested, and verified modules specifically designed for Azure infrastructure. These modules are curated by Microsoft and its partners, ensuring they adhere to best practices and are optimized for Azure. Using these verified modules can save time, reduce errors, and ensure that your deployments are aligned with Azure's best practices.
+- **Leverage the Terraform Azure Verified Modules (AVM) Library** for pre-built, tested, and verified modules specifically designed for Azure infrastructure. These modules are curated by Microsoft and its partners, ensuring they adhere to best practices and are optimized for Azure. Using these verified modules can save time, reduce errors, and ensure that your deployments are aligned with Azure's best practices. [Find more information here](https://azure.github.io/Azure-Verified-Modules/).
 
 - **Store modules in a centralized location,** such as a version-controlled repository like GitHub, Azure Repos, or an internal registry. This allows teams to share and reuse modules across different projects, promoting consistency and reducing duplication of effort. For instance, you can manage custom modules and Azure Verified Modules together, making it easier to maintain and update them.
 
