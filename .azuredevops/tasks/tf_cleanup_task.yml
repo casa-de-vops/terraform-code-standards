@@ -46,7 +46,7 @@ steps:
   displayName: 'Run a TF Plan for ${{ parameters.workload }}-${{ parameters.environment }}'
   inputs:
     command: 'apply'
-    commandOptions: '--auto-approve -input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -out=${{ parameters.plan_file_name }} -detailed-exitcode -destroy'
+    commandOptions: '--auto-approve -input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -detailed-exitcode -destroy'
     workingDirectory: ${{ parameters.working_directory }}
     environmentServiceName: ${{ parameters.azurerm_service_connection }}
     ${{ if not(eq(parameters.securevars_file, '')) }}:
