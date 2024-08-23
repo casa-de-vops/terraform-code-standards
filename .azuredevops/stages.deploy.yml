@@ -135,6 +135,8 @@ stages:
   - stage: ApplyStage${{environment.environment}}
     ${{ if eq(parameters.tf_destroy_mode, true) }}:
       displayName: 'Apply (Destroy) [${{ parameters.workload }}-${{ environment.environment }}]'
+    ${{ if eq(variables['environment.smoke_test_mode'], true) }}:
+      displayName: 'Apply (Smoke Test) [${{ parameters.workload }}-${{ environment.environment }}]'
     ${{ else }}:
       displayName: 'Apply [${{ parameters.workload }}-${{ environment.environment }}]'
     dependsOn:
@@ -142,6 +144,67 @@ stages:
       - PlanStage${{environment.environment}}
       - ValidateStage${{environment.environment}}
     condition: and(succeeded(), or(eq(variables['Build.SourceBranchName'], 'release'), eq(variables['Build.SourceBranchName'], 'main')), eq(dependencies.PlanStage${{ replace(replace(environment.environment, '/', '_'), '-', '_') }}.outputs['TerraformPlanJob.terraformPlanStatus.hasChanges'], 'true'))
+    jobs:
+      - deployment: TerraformApplyJob
+        timeoutInMinutes: 180
+        displayName: 'Terraform Apply'
+        environment: '${{ parameters.workload }}-${{ environment.environment }}'
+        ${{ if variables['environment.pool'] }}:
+          pool: ${{ variables['environment.pool'] }}
+        ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
+          pool:
+            vmImage: Ubuntu-20.04
+        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
+          pool:
+            vmImage: ${{ variables['environment.vmImage'] }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: none
+                # Download TF plan artifact
+                - task: DownloadPipelineArtifact@2
+                  displayName: 'Download plan'
+                  inputs:
+                    source: 'current'
+                    artifact: terraform_${{ replace(replace(environment.environment, '/', '_'), '-', '_') }}_plan
+                    path: $(System.DefaultWorkingDirectory)/plan/
+                - task: Bash@3
+                  displayName: 'List files in plan directory'
+                  inputs:
+                    targetType: 'inline'
+                    script: 'ls -la $(System.DefaultWorkingDirectory)/plan/'
+                # Install terraform
+                - template: ./tasks/tf_install_task.yml
+                  parameters:
+                    tf_version: '${{ parameters.tf_version }}'
+                - template: ./tasks/tf_init_task.yml
+                  parameters:
+                    install_ssh: '${{ parameters.install_ssh }}'
+                    working_directory: '$(System.DefaultWorkingDirectory)/plan/${{ parameters.working_directory }}' 
+                    backend_service_connection:  '${{ coalesce(environment.backend_service_connection, environment.azure_service_connection) }}'
+                    backend_azure_rm_resource_group_name: '${{ environment.backend_azure_rm_resource_group_name }}'
+                    backend_azure_rm_storage_account_name: '${{ environment.backend_azure_rm_storage_account_name }}'
+                    backend_azure_rm_container_name: '${{ environment.backend_azure_rm_container_name }}'
+                    backend_azure_rm_key: '${{ environment.backend_azure_rm_key }}' 
+                # TF apply
+                - template: ./tasks/tf_apply_task.yml
+                  parameters:
+                    working_directory: '$(System.DefaultWorkingDirectory)/plan/${{ parameters.working_directory }}' 
+                    azurerm_service_connection: ${{ environment.azure_service_connection }}
+                    command_option_args: '${{ environment.step_apply_command_option_args }}'
+                    destroy_mode: '${{ environment.tf_destroy_mode }}'
+                    plan_file_name: '${{ parameters.plan_file_name }}'
+                    # log_level: '${{ parameters.tf_log_level }}'
+## TF Cleanup
+- ${{ each environment in parameters.environments }}:
+  - stage: ApplyStage${{environment.environment}}
+    displayName: 'Apply (Destroy) [${{ parameters.workload }}-${{ environment.environment }}]'
+    dependsOn:
+      - InspectStage${{environment.environment}}
+      - PlanStage${{environment.environment}}
+      - ValidateStage${{environment.environment}}
+    condition: and(succeeded(), eq(variables['environment.smoke_test_mode'], 'true'))
     jobs:
       - deployment: TerraformApplyJob
         timeoutInMinutes: 180
