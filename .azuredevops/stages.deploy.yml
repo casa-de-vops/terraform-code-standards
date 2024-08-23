@@ -186,10 +186,10 @@ stages:
                     backend_azure_rm_container_name: '${{ environment.backend_azure_rm_container_name }}'
                     backend_azure_rm_key: '${{ environment.backend_azure_rm_key }}' 
                 # TF apply
-                - ${{ if eq(variables['environment.destroy_mode'], 'true') }}:
+                ${{ if eq(variables['environment.destroy_mode'], 'true') }}:
                   - template: './tasks/tf_smoke_test_task.yml'
 
-                - ${{ if ne(variables['environment.destroy_mode'], 'true') }}:
+                ${{ if ne(variables['environment.destroy_mode'], 'true') }}:
                   - template: './tasks/tf_apply_task.yml'                # ${{ if variables['environment.destroy_mode'] }}:
                 #   - template: ./tasks/tf_smoke_test_task.yml
                 # ${{ else }}:
