@@ -195,7 +195,7 @@ stages:
                     plan_file_name: '${{ parameters.plan_file_name }}'
                     # log_level: '${{ parameters.tf_log_level }}'
                 - template: ./tasks/tf_cleanup_task.yml
-                  conditions: and(succeeded(), eq(variables['environment.smoke_test_mode'], true))
+                  condition: and(succeeded(), eq(variables['environment.smoke_test_mode'], true))
                   parameters:
                     azurerm_service_connection: ${{ environment.azure_service_connection }}
                     working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
