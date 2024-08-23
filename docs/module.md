@@ -24,6 +24,18 @@
 
 - **Customize and Extend AVM Modules** by passing specific values to input variables or by composing multiple modules together to fit your specific use cases. The flexibility of Terraform combined with the reliability of AVM modules provides a powerful way to manage complex Azure environments.
 
+- **Evaluate whether a new module is needed** refer to this [blog post](https://brendanthompson.com/posts/2020/terraform-to-module-or-not-to-module) for Brendan Thompson  9 rules to help guide Terraform developers/engineers assess whether to create a new module or use base/naked resource calls to build your solution.
+
+  1. If a resource MUST have security/audit/compliance controls enforced at provision and/or configuration time, this MUST then be encapsulated within a Terraform module. Otherwise, it SHOULD be consumed as a Terraform resource.
+  2. When specific configuration or metadata MUST be applied to a resource it MUST then be created as a Terraform module to enforce those requirements.
+  3. When a resource has a stringent/complex naming required that MUST be adhered to these resource MUST be created as a Terraform module.
+  4. When a resource relies on information/metadata/context that cannot be known by the consumer it MUST be created as a Terraform module.
+  5. If a Terraform module will reduce the complexity of either the configuration or its interface then a Terraform module SHOULD be used.
+  6. Resources that have an aligned business purpose/requirement SHOULD be grouped together as a Terraform module.
+  7. Resources that MUST satisfy multiple use cases SHOULD be created as a Terraform module.
+  8. When a group of resources shares a similar lifecycle they SHOULD be grouped together as a Terraform module.
+  9. If a resource is always going to be consumed by a higher-order module it SHOULD NOT be created as a bare/wrapper Terraform module
+
 By following these practices and leveraging the Azure Verified Modules Library, you can ensure that your Terraform modules are robust, reusable, and aligned with industry standards, helping to simplify the management of your Azure infrastructure.
 
 [^ back to top ^](#table-of-contents)
