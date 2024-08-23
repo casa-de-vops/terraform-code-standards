@@ -111,9 +111,8 @@ stages:
 - ${{ each environment in parameters.environments }}:
   - stage: InspectStage${{ environment.environment }}
     displayName: "Inspect [${{ parameters.workload }}-${{ environment.environment }}]"
-    dependsOn: [
+    dependsOn:
       - PlanStage${{environment.environment}}
-    ]
     jobs:
       - job: TerraformInspectJob
         displayName: 'Terraform Security Scan'
