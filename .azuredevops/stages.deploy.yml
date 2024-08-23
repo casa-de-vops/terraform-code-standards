@@ -191,7 +191,7 @@ stages:
                     working_directory: '$(System.DefaultWorkingDirectory)/plan/${{ parameters.working_directory }}' 
                     azurerm_service_connection: ${{ environment.azure_service_connection }}
                     command_option_args: '${{ environment.step_apply_command_option_args }}'
-                    destroy_mode: ${{ environment.destroy_mode }}
+                    destroy_mode: '${{ environment.destroy_mode }}'
                     plan_file_name: '${{ parameters.plan_file_name }}'
                     # log_level: '${{ parameters.tf_log_level }}'
                 # Cleanup if smoke test mode is enabled
