@@ -18,6 +18,9 @@ parameters:
   - name: run_msdefender
     type: boolean
     default: true
+  - name: security_tools
+    type: string
+    default: 'iacfilescanner, trivy, terrascan, tfsec'
   - name: run_tfsec
     type: boolean
     default: true
@@ -27,10 +30,10 @@ steps:
     condition: and(succeeded(), ne('${{ parameters.run_msdefender }}', false))
     displayName: 'Run Defender for AzureDevOps'
     inputs:
-      tools: 'iacfilescanner, trivy'
+      tools: ${{ parameters.security_tools }} 
       workingDirectory: ${{ parameters.working_directory }}
   - task: tfsec@1
-    condition: and(succeeded(), ne('${{ parameters.run_tfsec }}', false))
+    condition: and(succeeded(), contains('${{ parameters.security_tools }}, "tfsec"))
     displayName: 'Run tfsec'
     inputs:
       dir: ${{ parameters.working_directory }}
