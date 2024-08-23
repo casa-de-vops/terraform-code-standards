@@ -34,15 +34,16 @@ parameters:
   - name: command_option_args
     type: string
     default: ''
-  - name: destroy_mode
+  - name: smoke_test_mode
     type: boolean
-    default: true
+    default: false
   - name: plan_file_name
     type: string
     default: 'cleanup.tfplan'
 
 steps:
 - task: TerraformCLI@0
+  condition: eq(parameters.smoke_test_mode, true)
   displayName: 'Run a TF Plan for ${{ parameters.workload }}-${{ parameters.environment }}'
   inputs:
     command: 'plan'
@@ -52,6 +53,7 @@ steps:
     ${{ if not(eq(parameters.securevars_file, '')) }}:
       secureVarsFile: ${{ parameters.securevars_file }}
 - task: TerraformCLI@0
+  condition: and(eq(parameters.smoke_test_mode, true), eq(variables['TERRAFORM_PLAN_HAS_CHANGES'], '0'))
   displayName: 'Destroy ${{ parameters.workload }}-${{ parameters.environment }}'
   inputs:
     command: 'apply'
