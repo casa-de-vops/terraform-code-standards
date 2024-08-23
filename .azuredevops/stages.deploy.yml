@@ -196,15 +196,16 @@ stages:
 #                     destroy_mode: '${{ environment.tf_destroy_mode }}'
 #                     plan_file_name: '${{ parameters.plan_file_name }}'
 #                     # log_level: '${{ parameters.tf_log_level }}'
-## TF Cleanup
+#
+## TF destory when running a smoke test
 - ${{ each environment in parameters.environments }}:
-  - stage: DestroyStage${{environment.environment}}
-    displayName: 'Apply (Destroy) [${{ parameters.workload }}-${{ environment.environment }}]'
+  - stage: CleanupStage${{environment.environment}}
+    displayName: 'Apply (Cleanup) [${{ parameters.workload }}-${{ environment.environment }}]'
     dependsOn:
       # - ApplyStage${{environment.environment}}
-    # condition: and(succeeded(), eq(variables['environment.smoke_test_mode'], '1'))
+    condition: eq(variables['environment.smoke_test_mode'], true)
     jobs:
-      - deployment: TerraformDestroyJob
+      - deployment: TerraformCleanupJob
         timeoutInMinutes: 180
         displayName: 'Terraform Destroy'
         environment: '${{ parameters.workload }}-${{ environment.environment }}'
@@ -222,18 +223,6 @@ stages:
               steps:
                 - download: none
                 # Download TF plan artifact
-                - task: DownloadPipelineArtifact@2
-                  displayName: 'Download plan'
-                  inputs:
-                    source: 'current'
-                    artifact: terraform_${{ replace(replace(environment.environment, '/', '_'), '-', '_') }}_plan
-                    path: $(System.DefaultWorkingDirectory)/plan/
-                - task: Bash@3
-                  displayName: 'List files in plan directory'
-                  inputs:
-                    targetType: 'inline'
-                    script: 'ls -la $(System.DefaultWorkingDirectory)/plan/'
-                # Install terraform
                 - template: ./tasks/tf_install_task.yml
                   parameters:
                     tf_version: '${{ parameters.tf_version }}'
@@ -246,7 +235,7 @@ stages:
                     backend_azure_rm_storage_account_name: '${{ environment.backend_azure_rm_storage_account_name }}'
                     backend_azure_rm_container_name: '${{ environment.backend_azure_rm_container_name }}'
                     backend_azure_rm_key: '${{ environment.backend_azure_rm_key }}' 
-                # TF apply
+                # TF destory
                 - template: ./tasks/tf_smoke_test_task.yml
                   parameters:
                     working_directory: '$(System.DefaultWorkingDirectory)/plan/${{ parameters.working_directory }}' 
