@@ -27,6 +27,7 @@ steps:
     condition: and(succeeded(), ne('${{ parameters.run_msdefender }}', false))
     displayName: 'Run Defender for AzureDevOps'
     inputs:
+      tools: 'iacfilescanner, trivy'
       workingDirectory: ${{ parameters.working_directory }}
   - task: tfsec@1
     condition: and(succeeded(), ne('${{ parameters.run_tfsec }}', false))
