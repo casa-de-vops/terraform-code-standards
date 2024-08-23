@@ -162,6 +162,7 @@ stages:
                 - download: none
                 # Download TF plan artifact
                 - task: DownloadPipelineArtifact@2
+                  condition: and(succeeded(), or(eq(variables['Build.SourceBranchName'], 'release'), eq(variables['Build.SourceBranchName'], 'main')), eq(dependencies.PlanStage${{ replace(replace(environment.environment, '/', '_'), '-', '_') }}.outputs['TerraformPlanJob.terraformPlanStatus.hasChanges'], 'true'))
                   displayName: 'Download plan'
                   inputs:
                     source: 'current'
