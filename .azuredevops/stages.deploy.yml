@@ -167,6 +167,11 @@ stages:
                     source: 'current'
                     artifact: terraform_${{ replace(replace(environment.environment, '/', '_'), '-', '_') }}_plan
                     path: $(System.DefaultWorkingDirectory)/plan/
+                - task: Bash@3
+                  displayName: 'List files in plan directory'
+                  inputs:
+                    targetType: 'inline'
+                    script: 'ls -la $(System.DefaultWorkingDirectory)/plan/'
                 # Install terraform
                 - template: ./tasks/tf_install_task.yml
                   parameters:
@@ -175,7 +180,7 @@ stages:
                   parameters:
                     install_ssh: '${{ parameters.install_ssh }}'
                     working_directory: '$(System.DefaultWorkingDirectory)/plan/${{ parameters.working_directory }}' 
-                    backend_service_connection: '${{ coalesce(environment.backend_service_connection, environment.azure_service_connection) }}'
+                    backend_service_connection:  '${{ coalesce(environment.backend_service_connection, environment.azure_service_connection) }}'
                     backend_azure_rm_resource_group_name: '${{ environment.backend_azure_rm_resource_group_name }}'
                     backend_azure_rm_storage_account_name: '${{ environment.backend_azure_rm_storage_account_name }}'
                     backend_azure_rm_container_name: '${{ environment.backend_azure_rm_container_name }}'
@@ -187,5 +192,15 @@ stages:
                     azurerm_service_connection: ${{ environment.azure_service_connection }}
                     command_option_args: '${{ environment.step_apply_command_option_args }}'
                     destroy_mode: '${{ environment.tf_destroy_mode }}'
+                    plan_file_name: '${{ parameters.plan_file_name }}'
+                    # log_level: '${{ parameters.tf_log_level }}'
+                # TF Cleanup
+                - template: ./tasks/tf_apply_task.yml
+                  condition: and(succeeded(), ${{ environment.cleanup_mode }})
+                  parameters:
+                    working_directory: '$(System.DefaultWorkingDirectory)/plan/${{ parameters.working_directory }}' 
+                    azurerm_service_connection: ${{ environment.azure_service_connection }}
+                    command_option_args: '${{ environment.step_apply_command_option_args }}'
+                    destroy_mode: 1
                     plan_file_name: '${{ parameters.plan_file_name }}'
                     # log_level: '${{ parameters.tf_log_level }}'
