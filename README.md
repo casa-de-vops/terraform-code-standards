@@ -10,7 +10,7 @@ This project aims to establish a comprehensive set of Terraform coding standards
 - [Why Coding Standards?](#why-coding-standards)
 - [Scope](#scope)
 - [Getting Started](#getting-started)
-- Coding Standards
+- [Coding Standards]($coding-standards)
   - [Directory Structure](./docs/directory_structure.md)
   - [Domain Specific Files](./docs/domain_specific_files.md)
   - [Naming Conventions](./docs/naming_conventions.md#naming-conventions)
@@ -20,6 +20,8 @@ This project aims to establish a comprehensive set of Terraform coding standards
   - [Version Control](./docs/version_control.md)
   - [Documentation](./docs/documentation.md)
   - [Testing and Validation](./docs/testing_and_validation.md)
+- [Azure DevOps Workflows](#azure-devops-workflows)
+  - [Workflow Overview](./.azuredevops/README.md)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -40,6 +42,15 @@ As organizations scale their infrastructure using Terraform, maintaining consist
 These standards are based on my experience as a DevOps engineer primarily working in the Azure cloud environment. While many of these recommendations are general enough to apply across different cloud platforms—such as AWS and Google Cloud—they are scoped to reflect best practices and lessons learned from Azure-centric projects. Users are encouraged to adapt these standards as necessary to fit the specific needs and characteristics of other cloud environments.
 
 These guidelines are intended for use by DevOps engineers, cloud architects, and developers involved in infrastructure management, particularly within Azure-based projects.
+
+## Coding Standards
+
+The **Coding Standards** section provides comprehensive guidelines to ensure consistency and best practices across your codebase. It includes documentation on [Directory Structure](./docs/directory_structure.md), [Domain Specific Files](./docs/domain_specific_files.md), [Naming Conventions](./docs/naming_conventions.md#naming-conventions), [Resource and State Management](./docs/resource_and_state_management.md), [Modules](./docs/module.md), [Variables and Outputs](./docs/variables_and_outputs.md), [Version Control](./docs/version_control.md), [Documentation](./docs/documentation.md), and [Testing and Validation](./docs/testing_and_validation.md). This section ensures that all team members adhere to a uniform set of coding practices, facilitating maintainability and scalability.
+
+## Azure DevOps Workflows
+
+The [**Azure DevOps Workflows**](./.azuredevops/README.md) section offers a set of reusable and scalable templates designed to automate the Terraform workflow across multiple environments in Azure. This includes validation, planning, security scanning, and applying Terraform configurations. The pipelines are parameterized to accommodate different environments and workloads, streamlining infrastructure management and enhancing deployment efficiency.
+
 
 ## Getting Started
 
