@@ -183,7 +183,7 @@ stages:
                 # TF apply
                 - template: ./tasks/tf_apply_task.yml
                   parameters:
-                    working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
+                    working_directory: '$(System.DefaultWorkingDirectory)/apply/${{ parameters.working_directory }}' 
                     azurerm_service_connection: ${{ environment.azure_service_connection }}
                     command_option_args: '${{ environment.step_apply_command_option_args }}'
                     destroy_mode: '${{ parameters.tf_destroy_mode }}'
