@@ -32,7 +32,7 @@
   
 For detailed guidance on constructing Azure naming conventions, refer to the [Azure Cloud Adoption Framework (CAF)](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming). For standardized abbreviations and further guidance on Terraform resource naming, see the [Recommended abbreviations for Azure resource types](https://github.com/MicrosoftDocs/cloud-adoption-framework/blob/main/docs/ready/azure-best-practices/resource-abbreviations.md).
   
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)
 
 ## Terraform Symbolic Naming Conventions
 
@@ -51,4 +51,4 @@ For detailed guidance on constructing Azure naming conventions, refer to the [Az
   - **Variable Name:** `azurerm_virtual_network.external.name` instead of `azurerm_virtual_network.external.vnet_name`
   - **Output Name:** `azurerm_virtual_network.external.id` instead of `azurerm_virtual_network.external.vnet_id`
  
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)

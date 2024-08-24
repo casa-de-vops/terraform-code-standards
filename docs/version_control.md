@@ -32,4 +32,4 @@ In summary, this means a version number will be represented in the form `MAJOR`.
 
 The following [**document**](./versioning.md) provides detailed examples of semantic increments and examples of changelog notes that can be used to guide versioning decisions 
 
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)

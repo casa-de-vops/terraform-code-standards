@@ -37,4 +37,4 @@
 
 For more information on how to set up and use Terraform Docs, visit the official [Terraform Docs User Guide](https://terraform-docs.io/user-guide/introduction/).
 
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)

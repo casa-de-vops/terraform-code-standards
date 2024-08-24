@@ -86,4 +86,4 @@
   - A documentation file to describe the project, directory structure, usage instructions, and any relevant details.
 
 A documentation file to describe the project, directory structure, usage instructions, and any relevant details.
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)

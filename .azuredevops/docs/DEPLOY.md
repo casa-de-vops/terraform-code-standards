@@ -24,7 +24,7 @@ The deployment pipeline uses the following parameters:
 | `securevars_file`        | The path to a secure variables file.                                 | `string`      | `''`                                       | no       |
 | `plan_file_name`         | The name of the Terraform plan file. 
 
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)
 
 ## Environment Configuration
 
@@ -40,7 +40,7 @@ Each environment specified in the `environments` parameter should contain the fo
 | `destroy_mode`              | If true, the pipeline will run in destroy mode.                                                 | `boolean`  | `false`       | no       |
 | `command_option_args`       | Additional command options for the Terraform plan or apply command.                             | `string`   | `''`          | no       |
 
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)
 
 ## Prerequisites
 
@@ -65,7 +65,7 @@ Each environment specified in the `environments` parameter should contain the fo
    - A separate service connection should be used for managing the backend layer of the Terraform environment.
    - **Default Behavior:** If the `backend_service_connection` parameter is not specified in the pipeline, the `azure_service_connection` parameter will be used by default.
 
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)
 
 ## Detailed Pipeline Stages
 
@@ -138,7 +138,7 @@ The Apply Stage applies the Terraform configuration to each environment, making 
   3. **Initialize:** Initialize the Terraform environment to prepare it for applying changes.
   4. **Apply Plan:** Run the `terraform apply` command to deploy or modify the infrastructure as per the plan.
 
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)
 
 ### Example Pipeline Templates
 
@@ -148,7 +148,7 @@ For a complete example of how to set up and deploy this pipeline, refer to the f
 
 This example provides a basic Terraform configuration that does not deploy any resources. It can be setup from your Azure DevOps Pipeline service to test the workflow and ensure that the pipeline is correctly configured and functioning as expected in your environment.
 
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)
 
 ### Validating Pipeline Outputs
 
@@ -198,4 +198,4 @@ validation = {
 
 By following these steps, you can validate that each key aspect of your pipeline's configuration is functioning as expected across different environments and scenarios.
 
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)

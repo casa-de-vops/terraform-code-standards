@@ -24,4 +24,4 @@
     default     = "my-vnet"
   }
 
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)

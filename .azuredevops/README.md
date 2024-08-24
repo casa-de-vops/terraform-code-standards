@@ -37,3 +37,5 @@ This section includes documentation on the following key workflows:
 ---
 
 This documentation serves as a guide for understanding and modifying the pipeline. Adjustments can be made to parameters, stages, or environment configurations based on specific requirements.
+
+[^ table of contents ^]($table-of-contents)

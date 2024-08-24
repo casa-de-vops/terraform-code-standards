@@ -12,7 +12,6 @@ parameters:
   - name: securevars_file
     type: string
     default: ''
-
   - name: plan_file_name
     type: string
     default: 'terraform.tfplan'

@@ -25,7 +25,7 @@ The unlock pipeline uses the following parameters:
 
 - **`lock_id`** is a runtime parameter and must be passed in when triggering the pipeline. This allows the user to specify the exact lock ID that needs to be removed from the Terraform state.
 
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)
 
 ## Environment Configuration
 
@@ -41,7 +41,7 @@ Each environment specified in the `environments` parameter should contain the fo
 | `backend_azure_rm_container_name`    | The name of the container within the storage account that holds the Terraform state file.       | `string`   | n/a           | yes      |
 | `backend_azure_rm_key`               | The key of the Terraform state file within the container.                                       | `string`   | n/a           | yes      |
 
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)
 
 ## Prerequisites
 
@@ -54,7 +54,7 @@ Each environment specified in the `environments` parameter should contain the fo
 3. **State Locking and Unlocking Permissions:**
    - Verify that the pipeline has sufficient permissions to lock and unlock Terraform state files in the specified Azure environments.
 
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)
 
 ## Detailed Pipeline Stages
 
@@ -75,7 +75,7 @@ The Force-Unlock Stage performs the unlocking of the Terraform state file, allow
   2. **Run Force-Unlock Command:** Execute `terraform force-unlock` to unlock the state file identified by `lock_id`.
   3. **Validate Unlock:** Confirm that the state file has been successfully unlocked and is no longer marked as locked.
 
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)
 
 ### Example Unlock Pipeline Template
 
@@ -85,4 +85,4 @@ For a complete example of how to set up and deploy this unlock pipeline, refer t
 
 This example provides a basic Terraform configuration to unlock state files. It can be set up from your Azure DevOps Pipeline service to test the workflow and ensure that the pipeline is correctly configured and functioning as expected in your environment.
 
-[^ back to top ^](#table-of-contents)
+[^ table of contents ^](#table-of-contents)
