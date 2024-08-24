@@ -19,9 +19,7 @@
 
 ```plaintext
 ├── workflows
-│   ├── production.yml
-│   ├── staging.yml
-│   └── development.yml
+│   └── template.yml
 ├── versions
 │   ├── production.yml
 │   ├── staging.yml
@@ -46,14 +44,23 @@
 │   ├── backend.tf
 │   └── provider.tf
 └── README.md
+└── pipeline.development.yaml
+└── pipeline.staging.yaml
+└── pipeline.production.yaml
+
 ```
 
 ## Directory Breakdown
 
 - **workflows/**: 
-  - Contains pipeline configuration files for CI/CD workflows, typically in `.yml` format.
-  - Files like `production.yml`, `staging.yml`, and `development.yml` represent pipeline configurations for different environments.
+  - Contains reusable pipeline configuration files that can be run by environments for CI/CD workflows, typically in `.yml` format.
   - The `workflows` folder **should** be renamed according to the requirements or best practices of the CI/CD tool being used. For example, it can be named `.github/workflows` for GitHub Actions or `.azuredevops` for Azure DevOps.
+  - This folder is only needed if the workflow yml templates in this project are local. If using remote workflows, like shown in the [example](../.azuredevops/tests/pipeline.yaml) workflow, the `workflow` folder may not be necessary.
+
+- **./pipeline.yaml trigger files**: 
+  - Contains trigger yaml files representing actual deployment pipelines. These can be structured to run a single environment, or a set or environments.
+  - These files sit at the root of the directory and can either call a local workflows folder, or a remote set of workflows, like shown in the [example](../.azuredevops/tests/pipeline.yaml) workflow.
+  - Files like `pipeline.production.yaml`, `pipeline.staging.yaml`, and `pipeline.development.yaml.yml` represent pipeline entrypoints for deployment for different environments. When configuring Azure DevOps pipelines, point it to one of these yaml files.
 
 - **versions/**:
   - Contains versioning files to manage resource module versions across different environments.

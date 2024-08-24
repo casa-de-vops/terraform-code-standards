@@ -31,7 +31,7 @@ parameters:
 steps:
   - task: InstallSSHKey@0
     displayName: 'Install the SSH key info used to clone terraform modules'
-    condition: and(succeeded(), ne('${{ parameters.install_ssh }}', false))
+    condition: and(succeeded(), ne('$(install_ssh)', false))
     inputs:
       knownHostsEntry: '$(knownHostsEntry)'
       sshPublicKey: '$(sshPublicKey)'

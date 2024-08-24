@@ -33,6 +33,7 @@
         ├── aks.tf
         ├── network.tf    
         └── main.tf
+    └── pipeline.yaml
   ```
 
 ## Directory Breakdown

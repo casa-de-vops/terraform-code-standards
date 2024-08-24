@@ -11,7 +11,6 @@ This pipeline is designed to automate the validation, planning, inspection (secu
 - **`working_directory`** (`string`, default: `terraform`): The directory where Terraform configuration files are located.
 - **`tf_version`** (`string`, default: `latest`): Version of Terraform to install and use during the pipeline run.
 - **`securevars_file`** (`string`, default: `''`): A file containing sensitive variables to be used by Terraform. Optional.
-- **`install_ssh`** (`boolean`, default: `true`): Determines whether SSH keys should be installed for the Terraform commands.
 - **`plan_file_name`** (`string`, default: `terraform.tfplan`): The name of the Terraform plan file generated during the `Plan` stage.
 
 ## Pipeline Stages
@@ -107,7 +106,7 @@ A sample trigger pipeline can be set up in Azure DevOps to call these templates 
        - `sshPassphrase`: The passphrase for the SSH key, if any.
        - `sshKeySecureFile`: The secure file that contains the private SSH key.
      - Configure this variable group in the pipeline to ensure the agent has the necessary SSH credentials.
-     - If the modules are public or local, then set install_ssh parameter to **false**.
+     - If the modules are public or local, then set install_ssh parameter to **false** in the [variables](../.azuredevops/variables/) files for your environment.
 
 3. **Backend Service Connection:**
    - A separate service connection should be used for managing the backend layer of the Terraform environment. If the `backend_service_connection` parameter is not specified in the pipeline, the `azure_service_connection` parameter will be used by default.
