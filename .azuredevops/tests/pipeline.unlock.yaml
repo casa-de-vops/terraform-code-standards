@@ -25,9 +25,9 @@ resources:
       ref: 'refs/heads/main'
       endpoint: 'GitHub'
       mapping: '.azuredevops'
-      
+
     - repository: local
-      type: azureRepos
+      type: git
       name: 'casa-de-vops/terraform-code-standards'
 
 stages:
