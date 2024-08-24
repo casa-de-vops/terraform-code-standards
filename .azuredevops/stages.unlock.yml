@@ -18,11 +18,6 @@ stages:
   - stage: ForceUnlock${{ environment.environment }}
     displayName: "Force-Unlock [${{ parameters.workload }}-${{ environment.environment }}]"
     dependsOn: []
-    variables:
-      - ${{ if eq(environment.environment, 'prod') }}:
-        - template: ../variables/variables.prod.yml
-      - ${{ else }}:
-        - template: ../variables/variables.nonprod.yml
     jobs:
       - job: TerraformForceUnlockJob
         displayName: 'Terraform Force-Unlock'
