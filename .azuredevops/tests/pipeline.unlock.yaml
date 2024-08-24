@@ -43,3 +43,4 @@ stages:
         backend_azure_rm_storage_account_name: casadevopsterraform
         backend_azure_rm_container_name: ops-terraform-state      
         backend_azure_rm_key: pipeline-test.dev.tfstate
+        vmImage: 'ubuntu-latest'
