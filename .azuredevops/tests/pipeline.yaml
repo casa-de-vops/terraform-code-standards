@@ -23,7 +23,7 @@ resources:
 
 variables:
   - template: '../variables/variables.nonprod.yml'
-  - template: '../versions/versions.nonprod.yml'
+  - template: './versions/versions.nonprod.yml'
   - group: ssh_host #library group containing knownHostsEntry, sshPublicKey, sshPassphrase, sshKeySecureFile
 
 stages:
