@@ -147,7 +147,7 @@ stages:
       - deployment: TerraformApplyJob
         timeoutInMinutes: 180
         displayName: 'Terraform Apply'
-        environment: '${{ environment.environment }}-${{ parameters.workload }}'
+        environment: '${{ parameters.workload }}-${{ environment.environment }}'
         ${{ if variables['environment.pool'] }}:
           pool: ${{ variables['environment.pool'] }}
         ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
