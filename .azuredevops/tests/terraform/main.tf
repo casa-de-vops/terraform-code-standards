@@ -7,5 +7,5 @@ locals {
 module "this" {
   source   = "../modules/this"
   for_each = { for k, v in local.these : k => v }
-  in     = each.value
+  in       = each.value
 }
