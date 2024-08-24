@@ -22,6 +22,8 @@ This project aims to establish a comprehensive set of Terraform coding standards
   - [Testing and Validation](./docs/testing_and_validation.md)
 - [Azure DevOps Workflows](#azure-devops-workflows)
   - [Workflow Overview](./.azuredevops/README.md)
+  - [Terraform CI/CD Workflow](./.azuredevops/DEPLOY.md)
+  - [Terraform Force-Unlock Workflow](.azuredevops/UNLOCK.md)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -47,10 +49,28 @@ These guidelines are intended for use by DevOps engineers, cloud architects, and
 
 The **Coding Standards** section provides comprehensive guidelines to ensure consistency and best practices across your codebase. It includes documentation on [Directory Structure](./docs/directory_structure.md), [Domain Specific Files](./docs/domain_specific_files.md), [Naming Conventions](./docs/naming_conventions.md#naming-conventions), [Resource and State Management](./docs/resource_and_state_management.md), [Modules](./docs/module.md), [Variables and Outputs](./docs/variables_and_outputs.md), [Version Control](./docs/version_control.md), [Documentation](./docs/documentation.md), and [Testing and Validation](./docs/testing_and_validation.md). This section ensures that all team members adhere to a uniform set of coding practices, facilitating maintainability and scalability.
 
+[^ back to top ^](#table-of-contents)
+
 ## Azure DevOps Workflows
 
-The [**Azure DevOps Workflows**](./.azuredevops/README.md) section offers a set of reusable and scalable templates designed to automate the Terraform workflow across multiple environments in Azure. This includes validation, planning, security scanning, and applying Terraform configurations. The pipelines are parameterized to accommodate different environments and workloads, streamlining infrastructure management and enhancing deployment efficiency.
+The Azure DevOps Workflows section offers a set of reusable and scalable templates designed to automate the Terraform workflow across multiple environments in Azure. This includes validation, planning, security scanning, and applying Terraform configurations. The pipelines are parameterized to accommodate different environments and workloads, streamlining infrastructure management and enhancing deployment efficiency.
 
+ 1. [Deployment Pipeline](./.azuredevops/DEPLOY.md)
+   - **Purpose:** Automates the validation, planning, inspection (security scanning), and application of Terraform configurations.
+   - **Features:**
+     - Validates Terraform configurations.
+     - Generates execution plans.
+     - Scans configurations for security vulnerabilities.
+     - Applies the Terraform configurations to manage infrastructure across different environments.
+
+ 2. [Unlock Pipeline](./.azuredevops/UNLOCK.md)
+   - **Purpose:** Automates the unlocking process of Terraform state files, ensuring that locked states due to failed or interrupted operations can be safely unlocked.
+   - **Features:**
+     - Unlocks Terraform state files to allow further operations.
+     - Validates that the state has been successfully unlocked.
+     - Supports multiple environments and is fully parameterized.
+
+[^ back to top ^](#table-of-contents)
 
 ## Getting Started
 
@@ -75,3 +95,5 @@ Please ensure your code adheres to the standards outlined in this document befor
 ## License
 
 This project is licensed under the Apache License. See the [LICENSE](LICENSE) file for more details.
+
+[^ back to top ^](#table-of-contents)
