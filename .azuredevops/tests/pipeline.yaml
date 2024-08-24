@@ -5,10 +5,12 @@ trigger:
   branches:
     include:
       - main
+      - develop
   paths:
     include:
-      - .azuredevops/environments/dev.tfvars
+      - .azuredevops/tests/environments/*
       - .azuredevops/tests/*.tf
+      - .azuredevops/tests/pipeline.yaml
 
 resources:
   repositories:
@@ -27,7 +29,7 @@ stages:
   - template: .azuredevops/stages.deploy.yml@templates
     parameters:
       workload: terraform-pipeline
-      working_directory: terraform
+      working_directory: ./.azuredevops/tests/terraform
       environments: 
       - stage: Test_Global
         pool: default
