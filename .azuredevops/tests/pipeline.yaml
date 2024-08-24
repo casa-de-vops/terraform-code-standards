@@ -8,8 +8,9 @@ trigger:
       - develop
   paths:
     include:
-      - .azuredevops/environments/dev.tfvars
+      - .azuredevops/tests/environments/*
       - .azuredevops/tests/*.tf
+      - .azuredevops/tests/pipeline.yaml
 
 resources:
   repositories:
