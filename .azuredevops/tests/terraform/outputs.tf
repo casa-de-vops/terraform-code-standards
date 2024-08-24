@@ -9,6 +9,6 @@ output "output_validation" {
   }
 }
 
-output "null" {
-  value = module.null
+output "this" {
+  value = module.this
 }

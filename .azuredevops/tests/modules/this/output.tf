@@ -1,3 +1,3 @@
-output "this" {
+output "out" {
   value = var.this
 }
