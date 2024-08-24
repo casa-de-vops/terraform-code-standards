@@ -1,7 +1,7 @@
 name: $(SourceBranchName)-$(Date:yyyyMMdd)-$(Rev:rrr)
 
 parameters:
-  - name: lock_id
+  - name: loock_id
     type: string
     default: '00000000-0000-0000-0000-000000000000'
 
