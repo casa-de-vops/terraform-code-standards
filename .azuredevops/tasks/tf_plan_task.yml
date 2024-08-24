@@ -54,7 +54,8 @@ steps:
       commandOptions: '-input=false -parallelism=${{ parameters.parallelism }} -var-file=${{ parameters.tfvars_file }} ${{ parameters.command_option_args }} -out=${{ parameters.plan_file_name }} -detailed-exitcode'
     workingDirectory: ${{ parameters.working_directory }}
     environmentServiceName: ${{ parameters.azurerm_service_connection }}
-    runAzLogin: true
+    publishPlanResults: $(publishPlanResults)
+    runAzLogin: $(run_azlogin)
     ${{ if not(eq(parameters.securevars_file, '')) }}:
       secureVarsFile: ${{ parameters.securevars_file }}
 

@@ -39,6 +39,7 @@ steps:
       command: 'apply'
       workingDirectory: ${{ parameters.working_directory }}
       environmentServiceName: ${{ parameters.azurerm_service_connection }}
+      runAzLogin: $(run_azlogin)
       ${{ if eq(parameters.destroy_mode, true) }}:
         commandOptions: '-destroy -input=false -parallelism=${{ parameters.parallelism }} -auto-approve ${{ parameters.plan_file_name }}'
       ${{ else }}:
