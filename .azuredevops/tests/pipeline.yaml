@@ -17,7 +17,7 @@ resources:
     - repository: templates
       type: github
       name: 'casa-de-vops/terraform-code-standards'
-      ref: 'refs/heads/main'
+      ref: 'refs/heads/develop'
       endpoint: 'GitHub'
       mapping: '.azuredevops'
 
@@ -32,18 +32,19 @@ stages:
       workload: terraform-pipeline
       working_directory: ./.azuredevops/tests/terraform
       environments: 
-      - stage: Test_Global
+      - stage: Dev_Global
         pool: default
         azure_service_connection: terraform
         tfvars_file: ../environments/dev.tfvars
-        environment: test
-        ado_environment: terraform-pipeline-test
+        environment: dev
+        ado_environment: nonprod
         security_tools: '$(security_tools)'
         backend_service_connection: terraform
         backend_azure_rm_resource_group_name: rg-terraform-ops
         backend_azure_rm_storage_account_name: casadevopsterraform
         backend_azure_rm_container_name: ops-terraform-state      
-        backend_azure_rm_key: stages.deploy.tfstate
+        backend_azure_rm_key: pipeline-test.dev.tfstate
         command_option_args: '-var command_option_args="$(input_variable)"'
         # destroy_mode: true ## runs the -destroy flag in the terraform plan & apply stages
         # step_apply_command_option_args: '-no-color'
+
