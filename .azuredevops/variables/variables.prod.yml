@@ -5,4 +5,4 @@ variables:
   run_tfsec: true
   security_tools: "iacfilescanner, trivy, terrascan" #comma separated list of security tools to run by Azure Defender for DevOps.
   publishPlanResults: true
-  default_agent_vm_image: 'ubuntu-latest'
+  default_agent_image: 'ubuntu-latest'

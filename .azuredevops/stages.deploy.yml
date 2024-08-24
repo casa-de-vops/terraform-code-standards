@@ -30,7 +30,7 @@ stages:
           pool: ${{ variables['environment.pool'] }}
         ${{ if and(or(not(variables['environment.pool']), eq(lower(variables['environment.pool']), 'default')), eq(variables['environment.vmImage'], '')) }}:
           pool:
-            vmImage: Ubuntu-20.04
+            vmImage: $(default_agent_image)
         ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
           pool:
             vmImage: ${{ variables['environment.vmImage'] }}
@@ -71,7 +71,7 @@ stages:
           pool: ${{ variables['environment.pool'] }}
         ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
           pool:
-            vmImage: Ubuntu-20.04
+            vmImage: $(default_agent_image)
         ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
           pool:
             vmImage: ${{ variables['environment.vmImage'] }}
@@ -149,7 +149,7 @@ stages:
           pool: ${{ variables['environment.pool'] }}
         ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
           pool:
-            vmImage: Ubuntu-20.04
+            vmImage: $(default_agent_image)
         ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
           pool:
             vmImage: ${{ variables['environment.vmImage'] }}
