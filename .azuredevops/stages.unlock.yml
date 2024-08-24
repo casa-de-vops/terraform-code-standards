@@ -34,13 +34,13 @@ stages:
           - template: ./tasks/tf_install_task.yml
             parameters:
               tf_version: '${{ parameters.tf_version }}'
-          - template: ./tasks/tf_init_task.yml
+          - template: ./tasks/tf_unlock_task.yml
             parameters:
               working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
+              azure_service_connection: '${{ environment.azure_service_connection }}'
               backend_service_connection:  '${{ coalesce(environment.backend_service_connection, environment.azure_service_connection) }}'
               backend_azure_rm_resource_group_name: '${{ environment.backend_azure_rm_resource_group_name }}'
               backend_azure_rm_storage_account_name: '${{ environment.backend_azure_rm_storage_account_name }}'
               backend_azure_rm_container_name: '${{ environment.backend_azure_rm_container_name }}'
               backend_azure_rm_key: '${{ environment.backend_azure_rm_key }}' 
-              azure_service_connection: '${{ environment.azure_service_connection }}'
               lock_id: '${{ parameters.lock_id }}'
