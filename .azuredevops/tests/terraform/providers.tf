@@ -4,7 +4,3 @@ terraform {
     use_oidc         = true
   }
 }
-
-provider "null" {
-  # Configuration options
-}

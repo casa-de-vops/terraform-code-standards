@@ -1,4 +1,4 @@
-variable "trigger" {
+variable "this" {
   type = string
   default = "Hello, World!"
 }

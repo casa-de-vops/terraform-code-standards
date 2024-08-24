@@ -8,3 +8,7 @@ output "output_variable" {
     eh_version  = local.eh_keeper
   }
 }
+
+output "null" {
+  value = module.null
+}
