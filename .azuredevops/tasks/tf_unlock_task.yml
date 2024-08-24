@@ -15,11 +15,31 @@ parameters:
     type: string
   - name: working_directory
     type: string
+  - name: backend_service_connection
+    type: string
+  - name: backend_azure_rm_resource_group_name
+    type: string
+  - name: backend_azure_rm_storage_account_name
+    type: string
+  - name: backend_azure_rm_container_name
+    type: string
+  - name: backend_azure_rm_key
+    type: string
   - name: lock_id
     type: string
 
 steps:
-     
+  - task: TerraformCLI@0
+    displayName: 'Initialize TF with the tfstate backend and download all remote modules being used'
+    inputs:
+      command: 'init'
+      backendType: 'azurerm'
+      workingDirectory: '${{ parameters.working_directory }}'
+      backendServiceArm: '${{ parameters.backend_service_connection }}'
+      backendAzureRmResourceGroupName: '${{ parameters.backend_azure_rm_resource_group_name }}'
+      backendAzureRmStorageAccountName: '${{ parameters.backend_azure_rm_storage_account_name }}'
+      backendAzureRmContainerName: '${{ parameters.backend_azure_rm_container_name }}'
+      backendAzureRmKey: '${{ parameters.backend_azure_rm_key }}'
   - task: TerraformCLI@0
     displayName: 'Terraform Force Unlock'
     inputs:
