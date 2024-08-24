@@ -17,6 +17,7 @@ parameters:
     type: string
   - name: logLevel
     type: string
+    default: "debug"
   - name: tokenPattern
     type: string
     default: "doubleunderscores"
