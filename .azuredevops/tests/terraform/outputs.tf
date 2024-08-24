@@ -1,5 +1,5 @@
 
-output "output_variable" {
+output "output_validation" {
   value = {
     config      = var.config_variable
     cmd_options = var.command_option_args
