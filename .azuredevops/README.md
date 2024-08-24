@@ -116,7 +116,7 @@ A sample trigger pipeline can be set up in Azure DevOps to call these templates 
 
 You can find a full example of the pipeline configuration at the following link:
 
-[Sample Trigger Pipeline](https://github.com/casa-de-vops/terraform-code-standards/blob/main/.azuredevops/tests/pipeline.yaml)
+[Sample Trigger Pipeline](./tests/Readme.md)
 
 ---
 
