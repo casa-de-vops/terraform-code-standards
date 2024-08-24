@@ -27,7 +27,7 @@ stages:
   - template: .azuredevops/stages.deploy.yml@templates
     parameters:
       workload: terraform-pipeline
-      working_directory: terraform
+      working_directory: ./.azuredevops/tests/terraform
       environments: 
       - stage: Test_Global
         pool: default
