@@ -115,9 +115,9 @@ stages:
         displayName: 'Terraform Security Scan'
         ${{ if variables['environment.pool'] }}:
           pool: ${{ variables['environment.pool'] }}
-        ${{ if and(or(not(variables['environment.pool']), eq(lower(variables['environment.pool']), 'default')), eq(variables['environment.vmImage'], '')) }}:
+        ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
           pool:
-            vmImage: $(default_agent_vm_image)
+            vmImage: $(default_agent_image)
         ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
           pool:
             vmImage: ${{ variables['environment.vmImage'] }}
