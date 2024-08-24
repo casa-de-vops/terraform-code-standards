@@ -28,7 +28,7 @@ resources:
 
     - repository: local
       type: git
-      name: 'casa-de-vops/terraform-code-standards'
+      name: 'terraform-code-standards'
 
 stages:
   - template: .azuredevops/stages.unlock.yml@local
