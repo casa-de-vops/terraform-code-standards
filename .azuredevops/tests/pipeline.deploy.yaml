@@ -17,7 +17,7 @@ resources:
     - repository: templates
       type: github
       name: 'casa-de-vops/terraform-code-standards'
-      ref: 'refs/heads/develop'
+      ref: 'refs/heads/main'
       endpoint: 'GitHub'
       mapping: '.azuredevops'
 
