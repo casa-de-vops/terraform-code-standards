@@ -1,5 +1,5 @@
 
 locals {
-  kv_keeper = "__kv_module_version__"
-  eh_keeper = "__eh_module_version__"
+  keeper_old = "__keeper_old__"
+  keeper_new = "__keeper_new__"
 }

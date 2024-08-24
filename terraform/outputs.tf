@@ -6,8 +6,8 @@ output "validation" {
     environment_variable = var.environment_variable
 
     module_versions = {
-      kv_keeper = local.kv_keeper
-      eh_keeper = local.eh_keeper
+      keeper_old = local.keeper_old
+      keeper_new = local.keeper_new
     }
   }
 }

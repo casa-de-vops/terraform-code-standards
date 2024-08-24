@@ -1,8 +1,0 @@
-variables:
-  input_variable: command_option_prod #used to validate inputs to the command_option_args parameter in the test pipeline.
-  install_ssh: true
-  run_azlogin: true
-  run_tfsec: true
-  security_tools: "iacfilescanner, trivy, terrascan" #comma separated list of security tools to run by Azure Defender for DevOps.
-  publishPlanResults: true
-  default_agent_image: 'ubuntu-latest'
