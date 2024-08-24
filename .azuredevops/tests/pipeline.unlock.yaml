@@ -1,7 +1,7 @@
 name: $(SourceBranchName)-$(Date:yyyyMMdd)-$(Rev:rrr)
 
 parameters:
-  - name: loock_id
+  - name: lock_id
     type: string
     default: '00000000-0000-0000-0000-000000000000'
 
@@ -32,6 +32,7 @@ stages:
       workload: terraform-pipeline
       working_directory: ./.azuredevops/tests/terraform
       environments: 
+      lock_id: '${{ parameters.lock_id }}'
       - stage: Dev_Global
         pool: default
         azure_service_connection: terraform
@@ -42,4 +43,3 @@ stages:
         backend_azure_rm_storage_account_name: casadevopsterraform
         backend_azure_rm_container_name: ops-terraform-state      
         backend_azure_rm_key: pipeline-test.dev.tfstate
-        lock_id: '${{ parameters.loock_id }}'
