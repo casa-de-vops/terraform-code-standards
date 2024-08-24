@@ -1,14 +1,14 @@
 variable "config_variable" {
   type    = string
-  default = "config_value"
+  default = "default_value"
 }
 
-variable "command_option_args" {
+variable "pipeline_variable" {
   type    = string
   default = "default_value"
 }
 
-variable "input_environment_file" {
+variable "environment_variable" {
   type    = string
   default = "default_value"
 }

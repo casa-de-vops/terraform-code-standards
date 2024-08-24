@@ -44,7 +44,7 @@ stages:
         backend_azure_rm_storage_account_name: casadevopsterraform
         backend_azure_rm_container_name: ops-terraform-state      
         backend_azure_rm_key: pipeline-test.dev.tfstate
-        command_option_args: '-var command_option_args="$(input_variable)"'
+        command_option_args: '-var pipeline_variable="$(input_variable)"'
         # destroy_mode: true ## runs the -destroy flag in the terraform plan & apply stages
         # step_apply_command_option_args: '-no-color'
 
