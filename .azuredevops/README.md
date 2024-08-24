@@ -91,9 +91,30 @@ Each environment specified in the `environments` parameter should contain the fo
 - **`destroy_mode`** (`boolean`, optional): If true, the pipeline will run in destroy mode.
 - **`command_option_args`** (`string`, optional): Additional command options for the Terraform plan or apply command.
 
-## Sample Trigger Pipeline
+## Sample Azure DevOps Pipeline
+A sample trigger pipeline can be set up in Azure DevOps to call these templates and deploy the latest version of this workflow source. This pipeline configuration is designed to be executed within Azure DevOps and can be triggered automatically based on changes to specific branches or files.
 
-A sample trigger pipeline can be set up in Azure DevOps to call these templates. You can find an example at the following link:
+### Prerequisites
+
+1. **Service Connection:**
+   - Ensure that a service connection is created in Azure DevOps. This service connection is required to authenticate and authorize the pipeline to interact with Azure resources.
+
+2. **SSH Configuration (Optional):**
+   - If your Terraform modules or templates are sourced from a Git repository that requires SSH authentication, additional setup is required:
+     - Create an Azure DevOps Library Variable Group (e.g., `ssh_host`) containing the following variables:
+       - `knownHostsEntry`: The SSH known hosts entry for the source control.
+       - `sshPublicKey`: The public SSH key used for authentication.
+       - `sshPassphrase`: The passphrase for the SSH key, if any.
+       - `sshKeySecureFile`: The secure file that contains the private SSH key.
+     - Configure this variable group in the pipeline to ensure the agent has the necessary SSH credentials.
+     - If the modules are public or local, then set install_ssh parameter to **false**.
+
+3. **Backend Service Connection:**
+   - A separate service connection should be used for managing the backend layer of the Terraform environment. If the `backend_service_connection` parameter is not specified in the pipeline, the `azure_service_connection` parameter will be used by default.
+
+### Full Pipeline Template
+
+You can find a full example of the pipeline configuration at the following link:
 
 [Sample Trigger Pipeline](https://github.com/casa-de-vops/terraform-code-standards/blob/main/.azuredevops/tests/pipeline.yaml)
 

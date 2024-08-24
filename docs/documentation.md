@@ -1,7 +1,7 @@
 ## Table of Contents
 
 - [Overview](../README.md)
-- Coding Standards
+- [Coding Standards](../README.md#coding-standards)
   - [Directory Structure](./directory_structure.md)
   - [Domain Specific Files](./domain_specific_files.md)
   - [Naming Conventions](./naming_conventions.md#naming-conventions)
