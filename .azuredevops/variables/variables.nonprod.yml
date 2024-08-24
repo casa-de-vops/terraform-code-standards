@@ -1,4 +1,3 @@
 variables:
   input_variable: command_option_nonprod
-  kv_module_version: 1.1.0
-  eh_module_version: 1.1.0
+  security_tools: "iacfilescanner, trivy, terrascan"
