@@ -21,7 +21,6 @@ stages:
     jobs:
       - job: TerraformForceUnlockJob
         displayName: 'Terraform Force-Unlock'
-        # environment: '${{ parameters.workload }}-${{ environment.ado_environment }}'
         ${{ if variables['environment.pool'] }}:
           pool: ${{ variables['environment.pool'] }}
         ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
