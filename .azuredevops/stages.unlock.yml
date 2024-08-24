@@ -17,6 +17,7 @@ stages:
 - ${{ each environment in parameters.environments }}:
   - stage: ForceUnlock${{ environment.environment }}
     displayName: "Force-Unlock [${{ parameters.workload }}-${{ environment.environment }}]"
+    environment: '${{ parameters.workload }}-${{ environment.ado_environment }}'
     dependsOn: []
     variables:
       - ${{ if eq(environment.environment, 'prod') }}:
