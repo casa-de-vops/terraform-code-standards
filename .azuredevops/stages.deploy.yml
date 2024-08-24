@@ -165,13 +165,13 @@ stages:
         displayName: 'Terraform Apply'
         environment: '${{ parameters.workload }}-${{ environment.ado_environment }}'
         ${{ if variables['environment.pool'] }}:
-          pool: ${{ variables['environment.pool'] }}
+          pool: '${{ variables['environment.pool'] }}'
         ${{ if and(not(variables['environment.pool']), eq(variables['environment.agent_image'], '')) }}:
           pool:
-            vmImage: ${{ variables['environment.vmImage'] }}
+            vmImage: '${{ variables['environment.vmImage'] }}'
         ${{ if and(not(variables['environment.pool']), ne(variables['environment.agent_image'], '')) }}:
           pool:
-            vmImage: $(default_agent_image)
+            vmImage: '$(default_agent_image)'
         strategy:
           runOnce:
             deploy:
