@@ -15,7 +15,13 @@
 
 - **Use consistent naming conventions for all Azure resources** to ensure clarity, manageability, and compliance with best practices. A well-defined naming convention should help identify the resource type, its associated workload, environment, and location.
 
-- **Adopt Azure resource naming patterns** based on the Microsoft Cloud Adoption Framework (CAF) guidelines. These patterns should include components such as resource type, environment, location, and instance identifiers. For example, a resource group for a shared account lookup service might be named `rg-acctlookupsvc-shared-prod-westus-001`.
+- **Standardize Naming with Terraform Modules:**
+  - Utilize naming modules like the [Cloud Posse Null Label Module](https://github.com/cloudposse/terraform-null-label) and the [Azure CAF Naming Module](https://registry.terraform.io/providers/aztfmod/azurecaf/latest/docs/resources/azurecaf_name) to enforce consistent naming conventions across all resources. These modules simplify the process of generating descriptive, standardized names by consolidating naming logic into reusable components that adhere to best practices.
+  - **Key Features:**
+    - **Consistency Across Environments:** Ensure that resource names are standardized across different environments and services, following a consistent format.
+    - **Automated Naming Logic:** Automatically generate resource names based on predefined rules, reducing the chance of human error and enhancing the maintainability of your infrastructure.
+    - **Simplified Implementation:** Streamline the application of complex naming conventions by using these modules, especially in large or multi-environment setups.
+    - **Enhanced Collaboration:** Provide a consistent naming schema that all team members can follow, improving collaboration and reducing confusion.
 
 - **Apply naming patterns consistently across all environments and stages** to maintain predictability and ease of management. Consistency in naming helps in resource identification, management, and automation.
 
@@ -24,8 +30,7 @@
   - **Virtual Network:** `vnet-prod-westus-001`
   - **Public IP Address:** `pip-sharepoint-prod-westus-001`
   
-  For detailed guidance on constructing Azure naming conventions, refer to the [Azure Cloud Adoption Framework (CAF)](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming).
-  For standardized abbreviations and further guidance on Terraform resource naming, see the [Recommended abbreviations for Azure resource types](https://github.com/MicrosoftDocs/cloud-adoption-framework/blob/main/docs/ready/azure-best-practices/resource-abbreviations.md).
+For detailed guidance on constructing Azure naming conventions, refer to the [Azure Cloud Adoption Framework (CAF)](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming). For standardized abbreviations and further guidance on Terraform resource naming, see the [Recommended abbreviations for Azure resource types](https://github.com/MicrosoftDocs/cloud-adoption-framework/blob/main/docs/ready/azure-best-practices/resource-abbreviations.md).
   
 [^ back to top ^](#table-of-contents)
 
