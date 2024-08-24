@@ -1,5 +1,10 @@
 name: $(SourceBranchName)-$(Date:yyyyMMdd)-$(Rev:rrr)
 
+parameters:
+  - name: lock_id
+    type: string
+    default: '00000000-0000-0000-0000-000000000000'
+
 trigger:
   batch: true
   branches:
@@ -37,4 +42,4 @@ stages:
         backend_azure_rm_storage_account_name: casadevopsterraform
         backend_azure_rm_container_name: ops-terraform-state      
         backend_azure_rm_key: pipeline-test.dev.tfstate
-
+        lock_id: '${{ parameters.lock_id }}'
