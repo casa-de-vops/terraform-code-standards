@@ -1,8 +1,7 @@
 ## Table of Contents
 
-- [Overview](../README.md)
-- [Azure DevOps Workflows](../README.md#azure-devops-workflows)
-  - [Workflow Overview](./README.md)
+- [Overview](../../README.md)
+- [Workflow Overview](../README.md)
   - [Terraform CI/CD Workflow](./DEPLOY.md)
   - [Terraform Force-Unlock Workflow](./UNLOCK.md)
 

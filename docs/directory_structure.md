@@ -1,7 +1,6 @@
 ## Table of Contents
 
 - [Overview](../README.md)
-- [Coding Standards](../README.md#coding-standards)
   - [Directory Structure](./directory_structure.md)
   - [Domain Specific Files](./domain_specific_files.md)
   - [Naming Conventions](./naming_conventions.md#naming-conventions)
@@ -17,36 +16,36 @@
 - Organize Terraform configuration and workflows logically to separate environments, stages, and manage resource module versioning.
 - Example structure:
 
-```plaintext
-├── workflows
-│   └── template.yml
-├── versions
-│   ├── production.yml
-│   ├── staging.yml
-│   └── development.yml
-├── environments
-│   ├── production.tfvars
-│   ├── staging.tfvars
-│   └── development.tfvars
-├── modules
-│   ├── network
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   ├── variables.tf
-│   ├── compute
-│   │   ├── main.tf
-│   │   ├── outputs.tf
-│   │   ├── variables.tf
-├── terraform
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── outputs.tf
-│   ├── backend.tf
-│   └── provider.tf
-└── README.md
-└── pipeline.development.yaml
-└── pipeline.staging.yaml
-└── pipeline.production.yaml
+  ```plaintext
+    ├── workflows
+    │   └── template.yml
+    ├── versions
+    │   ├── production.yml
+    │   ├── staging.yml
+    │   └── development.yml
+    ├── environments
+    │   ├── production.tfvars
+    │   ├── staging.tfvars
+    │   └── development.tfvars
+    ├── modules
+    │   ├── network
+    │   │   ├── main.tf
+    │   │   ├── outputs.tf
+    │   │   ├── variables.tf
+    │   ├── compute
+    │   │   ├── main.tf
+    │   │   ├── outputs.tf
+    │   │   ├── variables.tf
+    ├── terraform
+    │   ├── main.tf
+    │   ├── variables.tf
+    │   ├── outputs.tf
+    │   ├── backend.tf
+    │   └── provider.tf
+    └── README.md
+    └── pipeline.development.yaml
+    └── pipeline.staging.yaml
+    └── pipeline.production.yaml
 
 ```
 

@@ -1,8 +1,7 @@
 ## Table of Contents
 
 - [Overview](../README.md)
-- [Coding Standards](../README.md#coding-standards)
-  - [Back to Version Control](./version_control.md)
+- [Back to Version Control](./version_control.md)
 
 ## **Examples**
 ### **Example Major Number Increments**

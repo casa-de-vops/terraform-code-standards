@@ -1,7 +1,6 @@
 ## Table of Contents
 
 - [Overview](../README.md)
-- [Coding Standards](../README.md#coding-standards)
   - [Directory Structure](./directory_structure.md)
   - [Domain Specific Files](./domain_specific_files.md)
   - [Naming Conventions](./naming_conventions.md#naming-conventions)
@@ -18,7 +17,8 @@
 - Utilize a structured directory layout that reflects the separation of concerns or solution alignment, ensuring that each domain or solution's files are logically grouped. This organization enhances maintainability and provides clarity when navigating the codebase, especially in complex enterprise environments.
 
 - Example structure:
-  ```
+
+  ```plaintext
     ├── workflows
     ├── versions
     ├── modules

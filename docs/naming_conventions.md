@@ -1,7 +1,6 @@
 ## Table of Contents
 
 - [Overview](../README.md)
-- [Coding Standards](../README.md#coding-standards)
   - [Directory Structure](./directory_structure.md)
   - [Domain Specific Files](./domain_specific_files.md)
   - [Naming Conventions](./naming_conventions.md#naming-conventions)
@@ -12,7 +11,7 @@
   - [Documentation](./documentation.md)
   - [Testing and Validation](./testing_and_validation.md)
 
-## 1. Azure Resource Naming Conventions
+## Azure Resource Naming Conventions
 
 - **Use consistent naming conventions for all Azure resources** to ensure clarity, manageability, and compliance with best practices. A well-defined naming convention should help identify the resource type, its associated workload, environment, and location.
 
@@ -30,7 +29,7 @@
   
 [^ back to top ^](#table-of-contents)
 
-## 2. Terraform Symbolic Naming Conventions
+## Terraform Symbolic Naming Conventions
 
 - **Use consistent naming conventions for Terraform resources, variables, and outputs** to ensure clarity and maintainability across your Terraform configurations. Terraform symbolic names should be descriptive yet concise, reflecting the purpose and type of resource they represent.
 
