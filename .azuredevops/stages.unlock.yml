@@ -17,7 +17,6 @@ stages:
 - ${{ each environment in parameters.environments }}:
   - stage: ForceUnlock${{ environment.environment }}
     displayName: "Force-Unlock [${{ parameters.workload }}-${{ environment.environment }}]"
-    environment: '${{ parameters.workload }}-${{ environment.ado_environment }}'
     dependsOn: []
     variables:
       - ${{ if eq(environment.environment, 'prod') }}:
@@ -27,6 +26,7 @@ stages:
     jobs:
       - job: TerraformForceUnlockJob
         displayName: 'Terraform Force-Unlock'
+        environment: '${{ parameters.workload }}-${{ environment.ado_environment }}'
         ${{ if variables['environment.pool'] }}:
           pool: ${{ variables['environment.pool'] }}
         ${{ if and(or(not(variables['environment.pool']), eq(lower(variables['environment.pool']), 'default')), eq(variables['environment.vmImage'], '')) }}:
