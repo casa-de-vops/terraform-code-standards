@@ -11,13 +11,13 @@
 # provided.
 
 parameters:
+  - name: azure_service_connection
+    type: string
   - name: working_directory
     type: string
   - name: lock_id
     type: string
     default: true
-  - name: azure_service_connection
-    type: string
 
 steps:
      
