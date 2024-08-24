@@ -23,7 +23,7 @@ stages:
 # TF Validate
 - ${{ each environment in parameters.environments }}:
   - stage: ValidateStage${{ environment.environment }}
-    displayName: "Validate [${{ parameters.environment }}-${{ environment.workload }}]"
+    displayName: "Validate [${{ environment.environment }}-${{ parameters.workload }}]"
     dependsOn: []
     jobs:
       - job: TerraformValidateJob
@@ -64,7 +64,7 @@ stages:
 ## TF Plan
 - ${{ each environment in parameters.environments }}:
   - stage: PlanStage${{environment.environment}}
-    displayName: "Plan [${{ parameters.environment }}-${{ environment.workload }}]"
+    displayName: "Plan [${{ environment.environment }}-${{ parameters.workload }}]"
     dependsOn:
       - ValidateStage${{environment.environment}}
     jobs:
@@ -110,7 +110,7 @@ stages:
 # TF Security Scan
 - ${{ each environment in parameters.environments }}:
   - stage: InspectStage${{ environment.environment }}
-    displayName: "Inspect [${{ parameters.environment }}-${{ environment.workload }}]"
+    displayName: "Inspect [${{ environment.environment }}-${{ parameters.workload }}]"
     dependsOn:
       - ValidateStage${{environment.environment}}
     jobs:
@@ -135,9 +135,9 @@ stages:
 - ${{ each environment in parameters.environments }}:
   - stage: ApplyStage${{environment.environment}}
     ${{ if eq(parameters.tf_destroy_mode, true) }}:
-      displayName: 'Apply (Destroy) [${{ parameters.environment }}-${{ environment.workload }}]'
+      displayName: 'Apply (Destroy) [${{ environment.environment }}-${{ parameters.workload }}]'
     ${{ else }}:
-      displayName: 'Apply [${{ parameters.environment }}-${{ environment.workload }}]'
+      displayName: 'Apply [${{ environment.environment }}-${{ parameters.workload }}]'
     dependsOn:
       - InspectStage${{environment.environment}}
       - PlanStage${{environment.environment}}
@@ -147,7 +147,7 @@ stages:
       - deployment: TerraformApplyJob
         timeoutInMinutes: 180
         displayName: 'Terraform Apply'
-        environment: '${{ parameters.environment }}-${{ environment.workload }}'
+        environment: '${{ environment.environment }}-${{ parameters.workload }}'
         ${{ if variables['environment.pool'] }}:
           pool: ${{ variables['environment.pool'] }}
         ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
