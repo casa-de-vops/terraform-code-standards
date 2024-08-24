@@ -1,0 +1,20 @@
+# .github/workflows/apply.yml
+name: Terraform Apply
+
+on:
+  workflow_call:
+    inputs:
+      working_directory:
+        required: true
+        type: string
+      plan_file_name:
+        required: true
+        type: string
+
+jobs:
+  apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    steps:
+      - name: Terraform Apply
+        run: terraform apply -auto-approve ${{ inputs.plan_file_name }} -chdir=${{ inputs.working_directory }}

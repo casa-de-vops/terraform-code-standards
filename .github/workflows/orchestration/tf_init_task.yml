@@ -1,0 +1,25 @@
+# .github/workflows/init.yml
+name: Terraform Init
+
+on:
+  workflow_call:
+    inputs:
+      working_directory:
+        required: true
+        type: string
+      backend_configs:
+        required: true
+        type: object
+
+jobs:
+  init:
+    name: Terraform Init
+    runs-on: ubuntu-latest
+    steps:
+      - name: Terraform Init
+        run: terraform init \
+             -backend-config="resource_group_name=${{ inputs.backend_configs.resource_group_name }}" \
+             -backend-config="storage_account_name=${{ inputs.backend_configs.storage_account_name }}" \
+             -backend-config="container_name=${{ inputs.backend_configs.container_name }}" \
+             -backend-config="key=${{ inputs.backend_configs.key }}" \
+             -reconfigure

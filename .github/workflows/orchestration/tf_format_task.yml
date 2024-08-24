@@ -1,0 +1,17 @@
+# .github/workflows/format.yml
+name: Terraform Format
+
+on:
+  workflow_call:
+    inputs:
+      working_directory:
+        required: true
+        type: string
+
+jobs:
+  format:
+    name: Terraform Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Terraform Format Check
+        run: terraform fmt -check -diff -chdir=${{ inputs.working_directory }}
