@@ -17,7 +17,6 @@ parameters:
     type: string
   - name: lock_id
     type: string
-    default: true
 
 steps:
      
