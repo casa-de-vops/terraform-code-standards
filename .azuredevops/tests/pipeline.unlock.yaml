@@ -31,8 +31,8 @@ stages:
     parameters:
       workload: terraform-pipeline
       working_directory: ./.azuredevops/tests/terraform
-      environments: 
       lock_id: '${{ parameters.lock_id }}'
+      environments: 
       - stage: Dev_Global
         pool: default
         azure_service_connection: terraform
