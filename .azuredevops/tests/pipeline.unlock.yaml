@@ -19,15 +19,19 @@ trigger:
 
 resources:
   repositories:
-    - repository: templates
+    - repository: remote
       type: github
       name: 'casa-de-vops/terraform-code-standards'
       ref: 'refs/heads/main'
       endpoint: 'GitHub'
       mapping: '.azuredevops'
+      
+    - repository: local
+      type: azureRepos
+      name: 'casa-de-vops/terraform-code-standards'
 
 stages:
-  - template: .azuredevops/stages.unlock.yml@templates
+  - template: .azuredevops/stages.unlock.yml@local
     parameters:
       workload: terraform-pipeline
       working_directory: ./.azuredevops/tests/terraform
