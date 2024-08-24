@@ -1,3 +1,3 @@
 output "out" {
-  value = var.this
+  value = var.in
 }
