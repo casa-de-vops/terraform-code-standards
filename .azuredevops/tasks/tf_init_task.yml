@@ -33,10 +33,10 @@ steps:
     displayName: 'Install the SSH key info used to clone terraform modules'
     condition: and(succeeded(), and(ne('$(install_ssh)', false), ${{ parameters.install_ssh }}))
     inputs:
-      knownHostsEntry: '$(knownHostsEntry)'
-      sshPublicKey: '$(sshPublicKey)'
-      sshPassphrase: '$(sshPassphrase)'
-      sshKeySecureFile: '$(sshKeySecureFile)'
+      knownHostsEntry: '${{ coalesce($(knownHostsEntry), '') }'
+      sshPublicKey: '${{ coalesce($(sshPublicKey), '') }'
+      sshPassphrase: '${{ coalesce($(sshPassphrase), '') }'
+      sshKeySecureFile: '${{ coalesce($(sshKeySecureFile), '') }'
 
   - task: TerraformCLI@0
     displayName: 'Initialize TF with the tfstate backend and download all remote modules being used'
