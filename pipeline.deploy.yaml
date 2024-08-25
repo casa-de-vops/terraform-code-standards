@@ -29,7 +29,7 @@ resources:
 
 variables:
   - group: ssh_host #library group containing knownHostsEntry, sshPublicKey, sshPassphrase, sshKeySecureFile
-  - template: '../versions/modules.nonprod.yml'
+  - template: 'versions/modules.nonprod.yml'
 
 stages:
   - template: .azuredevops/stages.deploy.yml@local #Change this to @remote to use the remote templates from casa-de-vops/terraform-code-standards
