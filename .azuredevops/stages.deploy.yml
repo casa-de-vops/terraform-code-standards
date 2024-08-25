@@ -46,7 +46,7 @@ stages:
             parameters:
               sources: '**/*.tf; **/${{ parameters.working_directory }}/** => out/*.json'
               missingVarAction: 'keep'
-              logLevel: 'error'
+              logLevel: 'debug'
           - template: ./tasks/tf_init_task.yml
             parameters:
               working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 

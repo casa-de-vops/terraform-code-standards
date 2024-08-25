@@ -21,7 +21,7 @@ resources:
       ref: 'refs/heads/main'
       endpoint: 'GitHub'
       mapping: '.azuredevops'
-
+      
     - repository: local
       type: git
       name: 'terraform-code-standards'
@@ -39,7 +39,7 @@ stages:
       - stage: Dev_Global
         vmImage: 'ubuntu-latest'
         azure_service_connection: terraform
-        tfvars_file: environments/dev.tfvars
+        tfvars_file: ../environments/dev.tfvars
         environment: dev
         ado_environment: nonprod
         backend_service_connection: terraform
