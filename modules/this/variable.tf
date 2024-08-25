@@ -1,4 +1,4 @@
 variable "in" {
-  type = string
+  type    = string
   default = "Hello, World!"
 }

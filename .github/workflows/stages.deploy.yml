@@ -1,0 +1,89 @@
+# .github/workflows/stages.deploy.yml
+name: Terraform CI/CD Orchestration
+
+on:
+  workflow_call:
+    inputs:
+      tf_version:
+        description: 'Terraform version'
+        required: false
+        default: 'latest'
+        type: string
+      working_directory:
+        description: 'Working directory'
+        required: true
+        type: string
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: string
+      gh_environment:
+        description: 'GitHub environment'
+        required: true
+        type: string
+      backend_azure_rm_resource_group_name:
+        description: 'Azure Resource Group Name'
+        required: true
+        type: string
+      backend_azure_rm_storage_account_name:
+        description: 'Azure Storage Account Name'
+        required: true
+        type: string
+      backend_azure_rm_container_name:
+        description: 'Azure Container Name'
+        required: true
+        type: string
+      backend_azure_rm_key:
+        description: 'Azure Key'
+        required: true
+        type: string
+      plan_file_name:
+        description: 'Terraform plan file name'
+        required: false
+        default: 'terraform.tfplan'
+        type: string
+      var_file:
+        description: 'Terraform variables file'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  validate:
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@main
+    secrets: inherit
+    with:
+      gh_environment: ${{ inputs.gh_environment }}
+      working_directory: ${{ inputs.working_directory }}
+      backend_azure_rm_resource_group_name: ${{ inputs.backend_azure_rm_resource_group_name }}
+      backend_azure_rm_storage_account_name: ${{ inputs.backend_azure_rm_storage_account_name }}
+      backend_azure_rm_container_name: ${{ inputs.backend_azure_rm_container_name }}
+      backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
+      
+  plan:
+    needs: validate
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_plan_task.yml@main
+    secrets: inherit
+    with:
+      gh_environment: ${{ inputs.gh_environment }}
+      working_directory: ${{ inputs.working_directory }}
+      backend_azure_rm_resource_group_name: ${{ inputs.backend_azure_rm_resource_group_name }}
+      backend_azure_rm_storage_account_name: ${{ inputs.backend_azure_rm_storage_account_name }}
+      backend_azure_rm_container_name: ${{ inputs.backend_azure_rm_container_name }}
+      backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
+      plan_file_name: ${{ inputs.plan_file_name }}
+      var_file: ${{ inputs.var_file }}
+
+  apply:
+    needs: plan
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_apply_task.yml@main
+    secrets: inherit
+    with:
+      gh_environment: ${{ inputs.gh_environment }}
+      working_directory: ${{ inputs.working_directory }}
+      backend_azure_rm_resource_group_name: ${{ inputs.backend_azure_rm_resource_group_name }}
+      backend_azure_rm_storage_account_name: ${{ inputs.backend_azure_rm_storage_account_name }}
+      backend_azure_rm_container_name: ${{ inputs.backend_azure_rm_container_name }}
+      backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
+      plan_file_name: ${{ inputs.plan_file_name }}
+      var_file: ${{ inputs.var_file }}
