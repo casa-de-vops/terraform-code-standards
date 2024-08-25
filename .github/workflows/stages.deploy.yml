@@ -61,15 +61,15 @@ jobs:
       - name: Hello World Step
         run: echo "Hello World! ${{ inputs.tf_version }}"
       
-      - name: Check Runtime Configs
+      - name: Debug Secrets Access
         run: |
-          echo "Client Credentials:"
-          echo "client_id=${{ secrets.AZURE_CLIENT_ID }}"
-          echo "tenant_id=${{ secrets.AZURE_TENANT_ID }}"
-          echo "subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-          echo "environment=${{ inputs.environment }}"
-          echo "gh_environment=${{ inputs.gh_environment }}"
-          echo "Backend Configurations:"
+          echo "Environment: ${{ inputs.gh_environment }}"
+          echo "AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}"
+          echo "AZURE_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}"
+          echo "AZURE_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+      
+      - name: Debug Backend Configs
+        run: |
           echo "backend_service_connection=${{ inputs.backend_service_connection }}"
           echo "backend_azure_rm_resource_group_name=${{ inputs.backend_azure_rm_resource_group_name }}"
           echo "backend_azure_rm_storage_account_name=${{ inputs.backend_azure_rm_storage_account_name }}"
