@@ -60,8 +60,9 @@ jobs:
     uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_install_task.yml@github_actions
 
   validate:
-    # needs: install
+    needs: install
     uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@github_actions
+    secrets: inherit
     with:
       working_directory: ${{ inputs.working_directory }}
       backend_azure_rm_resource_group_name: ${{ inputs.backend_azure_rm_resource_group_name }}
