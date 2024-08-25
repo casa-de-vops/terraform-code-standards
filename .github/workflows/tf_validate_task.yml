@@ -29,7 +29,9 @@ jobs:
         run: ls -la
 
       - name: List Terraform Directory Contents
-        run: ls -la terraform/      - name: Check Terraform Formatting
+        run: ls -la terraform/      
+        
+      - name: Check Terraform Formatting
         run: terraform fmt --check --diff -recursive
         working-directory: ${{ inputs.working_directory }}
 
