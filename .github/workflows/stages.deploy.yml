@@ -60,14 +60,7 @@ jobs:
     steps:
       - name: Hello World Step
         run: echo "Hello World! ${{ inputs.tf_version }}"
-      
-      - name: Debug Secrets Access
-        run: |
-          echo "Environment: ${{ inputs.gh_environment }}"
-          echo "AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}"
-          echo "AZURE_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}"
-          echo "AZURE_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-      
+            
       - name: Debug Backend Configs
         run: |
           echo "backend_service_connection=${{ inputs.backend_service_connection }}"
