@@ -16,6 +16,7 @@ jobs:
     name: Login Test
     runs-on: ubuntu-latest
     environment: 'nonprod'
+    secrets: inherit
     steps:
       - name: Debug Secrets Access
         run: |
