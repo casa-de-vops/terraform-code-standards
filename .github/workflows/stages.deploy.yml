@@ -61,6 +61,7 @@ jobs:
 
   install:
     uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_install_task.yml@github_actions
+    depends-on: login
 
   # validate:
   #   name: Validate Stage
