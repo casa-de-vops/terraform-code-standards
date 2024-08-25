@@ -35,11 +35,16 @@ jobs:
     steps:
       - name: Hello World Step
         run: echo "Hello World! ${{ inputs.tf_version }}"
-        
+
+
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ inputs.tf_version }}
+
+      - name: Check Terraform Formatting
+        run: terraform fmt --check --diff -recursive
+        working-directory: ${{ inputs.working_directory }}
 
       - name: Initialize Terraform
         run: terraform init -input=false -backend-config="${{ inputs.backend_configs }}"
