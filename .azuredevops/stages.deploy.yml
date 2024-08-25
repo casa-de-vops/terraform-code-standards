@@ -30,14 +30,9 @@ stages:
     jobs:
       - job: TerraformValidateJob
         displayName: 'Terraform Validate'
-        ${{ if variables['environment.pool'] }}:
-          pool: ${{ variables['environment.pool'] }}
-        ${{ if and(or(not(variables['environment.pool']), eq(lower(variables['environment.pool']), 'default')), eq(variables['environment.vmImage'], '')) }}:
-          pool:
-            vmImage: $(default_agent_image)
-        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
-          pool:
-            vmImage: ${{ variables['environment.vmImage'] }}
+        pool:
+          name: ${{ coalesce( variables['environment.pool'], 'Default') }}
+          vmImage: ${{ coalesce( variables['environment.vmImage'], $(default_agent_image)) }}
         steps:
           - template: ./tasks/tf_install_task.yml
             parameters:
@@ -76,14 +71,9 @@ stages:
     jobs:
       - job: TerraformPlanJob
         displayName: 'Terraform Plan'
-        ${{ if variables['environment.pool'] }}:
-          pool: ${{ variables['environment.pool'] }}
-        ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
-          pool:
-            vmImage: $(default_agent_image)
-        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
-          pool:
-            vmImage: ${{ variables['environment.vmImage'] }}
+        pool:
+          name: ${{ coalesce( variables['environment.pool'], 'Default') }}
+          vmImage: ${{ coalesce( variables['environment.vmImage'], $(default_agent_image)) }}
         steps:
           - template: ./tasks/tf_install_task.yml
             parameters:
@@ -127,14 +117,9 @@ stages:
     jobs:
       - job: TerraformInspectJob
         displayName: 'Terraform Security Scan'
-        ${{ if variables['environment.pool'] }}:
-          pool: ${{ variables['environment.pool'] }}
-        ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
-          pool:
-            vmImage: $(default_agent_image)
-        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
-          pool:
-            vmImage: ${{ variables['environment.vmImage'] }}
+        pool:
+          name: ${{ coalesce( variables['environment.pool'], 'Default') }}
+          vmImage: ${{ coalesce( variables['environment.vmImage'], $(default_agent_image)) }}
         steps:
           - template: ./tasks/tf_sec.yml
             parameters:
@@ -165,14 +150,9 @@ stages:
         timeoutInMinutes: 180
         displayName: 'Terraform Apply'
         environment: '${{ parameters.workload }}-${{ environment.ado_environment }}'
-        ${{ if variables['environment.pool'] }}:
-          pool: ${{ variables['environment.pool'] }}
-        ${{ if and(not(variables['environment.pool']), not(variables['environment.vmImage'])) }}:
-          pool:
-            vmImage: $(default_agent_image)
-        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
-          pool:
-            vmImage: ${{ variables['environment.vmImage'] }}
+        pool:
+          name: ${{ coalesce( variables['environment.pool'], 'Default') }}
+          vmImage: ${{ coalesce( variables['environment.vmImage'], $(default_agent_image)) }}
         strategy:
           runOnce:
             deploy:
