@@ -17,6 +17,10 @@ on:
         description: 'Environment to deploy to'
         required: true
         type: string
+      backend_configs:
+        description: 'Backend configurations'
+        required: true
+        type: object
       plan_file_name:
         description: 'Terraform plan file name'
         required: false
