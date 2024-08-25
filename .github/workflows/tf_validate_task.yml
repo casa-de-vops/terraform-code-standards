@@ -25,11 +25,14 @@ jobs:
     name: Validate Terraform Code
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
       - name: List Current Directory Contents
         run: ls -la ${{ github.workspace}}
 
       - name: List Terraform Directory Contents
-        run: ls -la terraform/      
+        run: ls -la ${{ github.workspace}}/terraform/      
         
       - name: Check Terraform Formatting
         run: terraform fmt --check --diff -recursive
