@@ -4,6 +4,13 @@ name: Terraform Validate
 on:
   workflow_call:
     inputs:
+      gh_environment:
+        required: true
+        type: string
+      tf_version:
+        required: false
+        type: string
+        default: 'latest'
       working_directory:
         required: true
         type: string
@@ -45,6 +52,11 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ inputs.tf_version || 'latest' }}
 
       - name: Initialize Terraform
         run: |
