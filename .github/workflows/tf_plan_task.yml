@@ -53,7 +53,7 @@ jobs:
         id: load_vars
         run: |
           # Parse YAML file and export variables
-          awk -F ": " '/:/{gsub(/ /, "", $1); gsub(/"/, "", $2); print $1"="$2}' versions/modules.${{ inputs.environments }}.yml | while read var; do
+          awk -F ": " '/:/{gsub(/ /, "", $1); gsub(/"/, "", $2); print $1"="$2}' versions/modules.${{ inputs.gh_environment }}.yml | while read var; do
             echo "Exporting $var"
             echo "$var" >> $GITHUB_ENV
           done
