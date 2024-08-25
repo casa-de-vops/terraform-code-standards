@@ -37,71 +37,41 @@ jobs:
     name: Validate Stage
     runs-on: ubuntu-latest
     steps:
-      - name: my-step
+      - name: Hello World Step
         run: echo "Hello World!"
 
-  #     - name: Call Install Workflow
-  #       uses: ./tf_install_task.yml
-  #       with:
-  #         tf_version: ${{ inputs.tf_version }}
-
-  #     - name: Call Init Workflow
-  #       uses: ./tf_init_task.yml
-  #       with:
-  #         working_directory: ${{ inputs.working_directory }}
-  #         backend_configs: ${{ inputs.backend_configs }}
-
-  #     - name: Call Validate Workflow
-  #       uses: ./tf_validate_task.yml
-  #       with:
-  #         working_directory: ${{ inputs.working_directory }}
-
-  #     - name: Call Format Workflow
-  #       uses: ./tf_format_task.yml
-  #       with:
-  #         working_directory: ${{ inputs.working_directory }}
-
-  # plan:
-  #   name: Plan Stage
+  # install:
+  #   name: Install Terraform
   #   runs-on: ubuntu-latest
   #   needs: validate
-  #   steps:
-  #     - name: Call Install Workflow
-  #       uses: ./tf_install_task.yml
-  #       with:
-  #         tf_version: ${{ inputs.tf_version }}
+  #   uses: ./.github/workflows/tf_install_task.yml
+  #   with:
+  #     tf_version: ${{ inputs.tf_version }}
 
-  #     - name: Call Init Workflow
-  #       uses: ./tf_init_task.yml
-  #       with:
-  #         working_directory: ${{ inputs.working_directory }}
-  #         backend_configs: ${{ inputs.backend_configs }}
+  # init:
+  #   name: Initialize Terraform
+  #   runs-on: ubuntu-latest
+  #   needs: install
+  #   uses: ./.github/workflows/tf_init_task.yml
+  #   with:
+  #     working_directory: ${{ inputs.working_directory }}
+  #     backend_configs: ${{ inputs.backend_configs }}
 
-  #     - name: Call Plan Workflow
-  #       uses: ./tf_plan_task.yml
-  #       with:
-  #         working_directory: ${{ inputs.working_directory }}
-  #         plan_file_name: ${{ inputs.plan_file_name }}
-  #         var_file: ${{ inputs.var_file }}
+  # plan:
+  #   name: Plan Terraform
+  #   runs-on: ubuntu-latest
+  #   needs: init
+  #   uses: ./.github/workflows/tf_plan_task.yml
+  #   with:
+  #     working_directory: ${{ inputs.working_directory }}
+  #     plan_file_name: ${{ inputs.plan_file_name }}
+  #     var_file: ${{ inputs.var_file }}
 
   # apply:
-  #   name: Apply Stage
+  #   name: Apply Terraform
   #   runs-on: ubuntu-latest
   #   needs: plan
-  #   steps:
-  #     - name: Call Install Workflow
-  #       uses: ./tf_install_task.yml
-  #       with:
-  #         tf_version: ${{ inputs.tf_version }}
-
-  #     - name: Call Init Workflow
-  #       uses: ./tf_init_task.yml
-  #       with:
-  #         working_directory: ${{ inputs.working_directory }}
-  #         backend_configs: ${{ inputs.backend_configs }}
-
-  #     - name: Call Apply Workflow
-  #       uses: ./tf_apply_task.yml
-  #       with:
-  #         working_directory: ${{ inputs.working_directory }}
-  #         plan_file_name: ${{ inputs.plan_file_name }}
+  #   uses: ./.github/workflows/tf_apply_task.yml
+  #   with:
+  #     working_directory: ${{ inputs.working_directory }}
+  #     plan_file_name: ${{ inputs.plan_file_name }}
