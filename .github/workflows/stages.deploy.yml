@@ -50,60 +50,15 @@ on:
 
 jobs:
   validate:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
-    - name: List Current Directory Contents
-      run: ls -la ${{ github.workspace}}
-
-    - name: List Terraform Directory Contents
-      run: ls -la ${{ github.workspace}}/terraform/      
-      
-    - name: Check Terraform Formatting
-      run: terraform fmt --check --diff -recursive
-      working-directory: ${{ inputs.working_directory }}
-    
-    - name: Azure login
-      uses: azure/login@v2
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: ${{ inputs.tf_version }}
-
-    - name: Set Azure Environment Variables
-      run: |
-        echo "ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> $GITHUB_ENV
-        echo "ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
-        echo "ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
-
-    - name: Initialize Terraform
-      run: |
-        set -x
-        terraform init -input=false \
-        -backend-config="storage_account_name=${{ inputs.backend_azure_rm_storage_account_name }}" \
-        -backend-config="container_name=${{ inputs.backend_azure_rm_container_name }}" \
-        -backend-config="key=${{ inputs.backend_azure_rm_key }}" \
-        -backend-config="resource_group_name=${{ inputs.backend_azure_rm_resource_group_name }}"
-      working-directory: ${{ inputs.working_directory }}
-    
-    - name: Validate Terraform
-      run: terraform validate
-      working-directory: ${{ inputs.working_directory }}
-
-    # uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@github_actions
-    # secrets: inherit
-    # with:
-    #   gh_environment: ${{ inputs.gh_environment }}
-    #   working_directory: ${{ inputs.working_directory }}
-    #   backend_azure_rm_resource_group_name: ${{ inputs.backend_azure_rm_resource_group_name }}
-    #   backend_azure_rm_storage_account_name: ${{ inputs.backend_azure_rm_storage_account_name }}
-    #   backend_azure_rm_container_name: ${{ inputs.backend_azure_rm_container_name }}
-    #   backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@github_actions
+    secrets: inherit
+    with:
+      gh_environment: ${{ inputs.gh_environment }}
+      working_directory: ${{ inputs.working_directory }}
+      backend_azure_rm_resource_group_name: ${{ inputs.backend_azure_rm_resource_group_name }}
+      backend_azure_rm_storage_account_name: ${{ inputs.backend_azure_rm_storage_account_name }}
+      backend_azure_rm_container_name: ${{ inputs.backend_azure_rm_container_name }}
+      backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
 
 
   # plan:
