@@ -6,45 +6,16 @@ on:
     branches:
       - github_actions
   workflow_dispatch:
-    inputs:
-      tf_version:
-        description: 'Terraform version'
-        required: false
-        default: 'latest'
-        type: string
-      working_directory:
-        description: 'Working directory'
-        required: true
-        default: './terraform/'
-        type: string
-      environment:
-        description: 'Environment of the infrastructure workload'
-        required: true
-        default: 'dev'
-        type: string
-      gh_environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'nonprod'
-        type: string
-      plan_file_name:
-        description: 'Terraform plan file name'
-        required: false
-        default: 'terraform.tfplan'
-        type: string
-      var_file:
-        description: 'Terraform variables file'
-        required: false
-        default: './environments/dev.tfvars'
-        type: string
+
 
 jobs:
   tf-orchestrations:
     uses: casa-de-vops/terraform-code-standards/.github/workflows/stages.deploy.yml@github_actions
     with:
-      tf_version: ${{ github.event.inputs.tf_version }}
-      working_directory: ${{ github.event.inputs.working_directory }}
-      environment: ${{ github.event.inputs.environment }}
+      tf_version: 'latest'
+      working_directory: './terraform/'
+      environment: 'dev'
+      gh_environment: 'nonprod'
       backend_configs: |
         {
           "backend_service_connection": "terraform",
@@ -53,5 +24,4 @@ jobs:
           "backend_azure_rm_container_name": "ops-terraform-state",
           "backend_azure_rm_key": "pipeline-test.dev.tfstate"
         }
-      plan_file_name: ${{ github.event.inputs.plan_file_name }}
-      var_file: ${{ github.event.inputs.var_file }}
+      var_file: './environments/dev.tfvars'

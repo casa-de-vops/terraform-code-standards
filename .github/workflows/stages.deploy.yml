@@ -17,6 +17,10 @@ on:
         description: 'Environment to deploy to'
         required: true
         type: string
+      gh_environment:
+        description: 'GitHub environment'
+        required: true
+        type: string
       backend_configs:
         description: 'Backend configurations'
         required: true
@@ -42,7 +46,7 @@ jobs:
       
       - name: Checkout Code
         uses: actions/checkout@v3
-              
+
       - name: List Contents of Current Directory and Terraform Directory
         run: |
           echo "Listing contents of the current directory:"
