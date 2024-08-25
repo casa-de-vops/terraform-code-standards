@@ -75,4 +75,5 @@ jobs:
         working-directory: ${{ inputs.working_directory }}
 
       - name: Terraform Plan
-        run: terraform plan -out=${{ inputs.plan_file_name }} -var-file=${{ inputs.var_file }} -chdir=${{ inputs.working_directory }}
+        run: terraform plan -out=${{ inputs.plan_file_name }} -var-file=${{ inputs.var_file }}
+        working-directory: ${{ inputs.working_directory }}
