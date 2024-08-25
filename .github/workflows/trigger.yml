@@ -18,7 +18,7 @@ jobs:
     secrets: inherit
     with:
       tf_version: 'latest'
-      working_directory: '../terraform/'
+      working_directory: 'terraform/'
       environment: 'dev'
       gh_environment: 'nonprod'
       backend_azure_rm_resource_group_name: 'rg-terraform-ops'
