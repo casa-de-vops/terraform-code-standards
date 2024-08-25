@@ -62,8 +62,8 @@ jobs:
     needs: setup
     uses: casa-de-vops/terraform-code-standards/.github/workflows/stages.deploy.yml@github_actions
     with:
-      tf_version: ${{ github.event.inputs.tf_version }}
-      working_directory: ${{ github.event.inputs.working_directory }}
-      environment: ${{ github.event.inputs.environment }}
-      plan_file_name: ${{ github.event.inputs.plan_file_name }}
-      var_file: ${{ github.event.inputs.var_file }}
+      tf_version: ${{ inputs.tf_version }}
+      working_directory: ${{ inputs.working_directory }}
+      environment: ${{ inputs.environment }}
+      plan_file_name: ${{ inputs.plan_file_name }}
+      var_file: ${{ inputs.var_file }}
