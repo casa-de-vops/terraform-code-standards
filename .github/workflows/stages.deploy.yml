@@ -60,7 +60,7 @@ jobs:
   #   uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_install_task.yml@github_actions
 
   validate:
-    needs: install
+    # needs: install
     uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@github_actions
     with:
       working_directory: ${{ inputs.working_directory }}
