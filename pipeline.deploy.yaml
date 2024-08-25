@@ -15,18 +15,23 @@ trigger:
 
 resources:
   repositories:
-    - repository: templates
+    - repository: remote
       type: github
       name: 'casa-de-vops/terraform-code-standards'
       ref: 'refs/heads/main'
       endpoint: 'GitHub'
       mapping: '.azuredevops'
+      
+    - repository: local
+      type: git
+      name: 'terraform-code-standards'
+      ref: 'refs/heads/main'
 
 variables:
   - group: ssh_host #library group containing knownHostsEntry, sshPublicKey, sshPassphrase, sshKeySecureFile
 
 stages:
-  - template: .azuredevops/stages.deploy.yml@templates
+  - template: .azuredevops/stages.deploy.yml@local #Change this to @remote to use the remote templates from casa-de-vops/terraform-code-standards
     parameters:
       workload: terraform-pipeline
       working_directory: terraform/
