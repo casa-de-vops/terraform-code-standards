@@ -61,7 +61,7 @@ jobs:
       backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
       
   plan:
-    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@github_actions
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_plan_task.yml@github_actions
     secrets: inherit
     with:
       gh_environment: ${{ inputs.gh_environment }}
@@ -73,7 +73,7 @@ jobs:
       plan_file_name: ${{ inputs.plan_file_name }}
       var_file: ${{ inputs.var_file }}
 
-# plan:
+  # plan:
   #     name: Plan Stage
   #     runs-on: ubuntu-latest
   #     needs: validate
