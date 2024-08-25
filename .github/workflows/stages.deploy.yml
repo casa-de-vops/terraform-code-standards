@@ -43,10 +43,10 @@ jobs:
       - name: List Current Directory
         run: |
           echo "Listing contents of the current directory:"
-          ls -la
+          ls
           echo "Listing contents of the Terraform working directory:"
-          ls -la ${{ inputs.working_directory }}
-          
+          ls ${{ inputs.working_directory }}
+
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
