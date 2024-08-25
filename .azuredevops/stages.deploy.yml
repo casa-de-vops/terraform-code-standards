@@ -30,23 +30,18 @@ stages:
     jobs:
       - job: TerraformValidateJob
         displayName: 'Terraform Validate'
-        ${{ if variables['environment.pool'] }}:
-          pool: ${{ variables['environment.pool'] }}
-        ${{ if and(not(variables['environment.pool']), eq(variables['environment.agent_image'], '')) }}:
-          pool:
-            vmImage: ${{ variables['environment.vmImage'] }}
-        ${{ if and(not(variables['environment.pool']), ne(variables['environment.agent_image'], '')) }}:
-          pool:
-            vmImage: $(default_agent_image)
+        pool:
+          name: ${{ coalesce( variables['environment.pool'], 'Azure Pipelines') }}
+          vmImage: ${{ coalesce( variables['environment.vmImage'], variables.default_agent_image) }}
         steps:
           - template: ./tasks/tf_install_task.yml
             parameters:
               tf_version: '${{ parameters.tf_version }}'
           - template: ./tasks/tf_replace_token.yml
             parameters:
-              sources: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}/**'
+              sources: '**/*.tf; **/${{ parameters.working_directory }}/** => out/*.json'
               missingVarAction: 'keep'
-              logLevel: 'error'
+              logLevel: 'debug'
           - template: ./tasks/tf_init_task.yml
             parameters:
               working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}' 
@@ -76,14 +71,9 @@ stages:
     jobs:
       - job: TerraformPlanJob
         displayName: 'Terraform Plan'
-        ${{ if variables['environment.pool'] }}:
-          pool: ${{ variables['environment.pool'] }}
-        ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
-          pool:
-            vmImage: $(default_agent_image)
-        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
-          pool:
-            vmImage: ${{ variables['environment.vmImage'] }}
+        pool:
+          name: ${{ coalesce( variables['environment.pool'], 'Azure Pipelines') }}
+          vmImage: ${{ coalesce( variables['environment.vmImage'], variables.default_agent_image) }}
         steps:
           - template: ./tasks/tf_install_task.yml
             parameters:
@@ -127,20 +117,16 @@ stages:
     jobs:
       - job: TerraformInspectJob
         displayName: 'Terraform Security Scan'
-        ${{ if variables['environment.pool'] }}:
-          pool: ${{ variables['environment.pool'] }}
-        ${{ if and(not(variables['environment.pool']), eq(variables['environment.agent_image'], '')) }}:
-          pool:
-            vmImage: ${{ variables['environment.vmImage'] }}
-        ${{ if and(not(variables['environment.pool']), ne(variables['environment.agent_image'], '')) }}:
-          pool:
-            vmImage: $(default_agent_image)
+        pool:
+          name: ${{ coalesce( variables['environment.pool'], 'Azure Pipelines') }}
+          vmImage: ${{ coalesce( variables['environment.vmImage'], variables.default_agent_image) }}
         steps:
           - template: ./tasks/tf_sec.yml
             parameters:
               working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}'
               run_tfsec: '${{ coalesce(environment.run_tfsec, true) }}'
               run_msdefender: '${{ coalesce(environment.run_msdefender, true) }}'
+              security_tools: '$(security_tools)'
               
 ## TF Apply
 - ${{ each environment in parameters.environments }}:
@@ -164,14 +150,9 @@ stages:
         timeoutInMinutes: 180
         displayName: 'Terraform Apply'
         environment: '${{ parameters.workload }}-${{ environment.ado_environment }}'
-        ${{ if variables['environment.pool'] }}:
-          pool: '${{ variables['environment.pool'] }}'
-        ${{ if and(not(variables['environment.pool']), eq(variables['environment.agent_image'], '')) }}:
-          pool:
-            vmImage: '${{ variables['environment.vmImage'] }}'
-        ${{ if and(not(variables['environment.pool']), ne(variables['environment.agent_image'], '')) }}:
-          pool:
-            vmImage: '$(default_agent_image)'
+        pool:
+          name: ${{ coalesce( variables['environment.pool'], 'Azure Pipelines') }}
+          vmImage: ${{ coalesce( variables['environment.vmImage'], variables.default_agent_image) }}
         strategy:
           runOnce:
             deploy:

@@ -32,6 +32,8 @@ Each environment specified in the `environments` parameter should contain the fo
 
 | Name                        | Description                                                                                     | Type       | Default Value | Required |
 |-----------------------------|-------------------------------------------------------------------------------------------------|------------|---------------|----------|
+| `pool`               | The name or identifier for the agent pool (e.g., `Azure Pipelines`, `Default`).                               | `string`   | n/a           | no      |
+| `vmImage`               | The name or identifier for the vm-image to use for the agent pool (e.g., `ubuntu-latest`).                               | `string`   | n/a           | no      |
 | `environment`               | The name or identifier for the environment (e.g., `dev`, `prod`).                               | `string`   | n/a           | yes      |
 | `azure_service_connection`  | The Azure service connection to use for deploying resources.                                    | `string`   | n/a           | yes      |
 | `tfvars_file`               | Path to the Terraform variables file specific to the environment.                               | `string`   | n/a           | yes      |

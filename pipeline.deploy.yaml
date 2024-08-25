@@ -15,29 +15,34 @@ trigger:
 
 resources:
   repositories:
-    - repository: templates
+    - repository: remote
       type: github
       name: 'casa-de-vops/terraform-code-standards'
       ref: 'refs/heads/main'
       endpoint: 'GitHub'
       mapping: '.azuredevops'
+      
+    - repository: local
+      type: git
+      name: 'terraform-code-standards'
+      ref: 'refs/heads/main'
 
 variables:
   - group: ssh_host #library group containing knownHostsEntry, sshPublicKey, sshPassphrase, sshKeySecureFile
+  - template: 'versions/modules.nonprod.yml'
 
 stages:
-  - template: .azuredevops/stages.deploy.yml@templates
+  - template: .azuredevops/stages.deploy.yml@local #Change this to @remote to use the remote templates from casa-de-vops/terraform-code-standards
     parameters:
       workload: terraform-pipeline
-      working_directory: terraform
+      working_directory: terraform/
       environments: 
       - stage: Dev_Global
-        agent_image: 'ubuntu-latest'
+        vmImage: 'ubuntu-latest'
         azure_service_connection: terraform
         tfvars_file: ../environments/dev.tfvars
         environment: dev
         ado_environment: nonprod
-        security_tools: '$(security_tools)'
         backend_service_connection: terraform
         backend_azure_rm_resource_group_name: rg-terraform-ops
         backend_azure_rm_storage_account_name: casadevopsterraform

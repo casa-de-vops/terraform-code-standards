@@ -1,5 +1,9 @@
 # Terraform Coding Standards for Azure Infrastructure Projects
 
+### ⚠️ **Advisory: Active Development** ⚠️
+
+This repository is in **active** development. Until finished, use at your own discretion.
+
 ## Overview
 
 This project aims to establish a comprehensive set of Terraform coding standards designed for enterprise-level projects. The goal is to ensure consistency, maintainability, and best practices across all Terraform configurations within the organization. These standards will guide Terraform code development, enabling teams to collaborate effectively and create robust, scalable, and secure infrastructure.
