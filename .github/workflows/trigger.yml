@@ -55,7 +55,7 @@ jobs:
         run: echo "Hello World!"
             
   tf-orchestrations:
-    uses: casa-de-vops/terraform-code-standards/.github/workflows/orchestration/stages.deploy.yml.yml@github_actions
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/stages.deploy.yml.yml@github_actions
     with:
       tf_version: ${{ github.event.inputs.tf_version }}
       working_directory: ${{ github.event.inputs.working_directory }}
