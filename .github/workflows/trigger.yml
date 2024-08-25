@@ -48,11 +48,11 @@ env:
     }
             
 jobs:
-  my-job:
-    runs-on: ubuntu-latest
-    steps:
-      - name: my-step
-        run: echo "Hello World!"
+  # my-job:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: my-step
+  #       run: echo "Hello World!"
             
   tf-orchestrations:
     uses: casa-de-vops/terraform-code-standards/.github/workflows/stages.deploy.yml.yml@github_actions
