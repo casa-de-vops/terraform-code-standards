@@ -70,6 +70,12 @@ jobs:
           -backend-config="resource_group_name=${{ inputs.backend_azure_rm_resource_group_name }}"
         working-directory: ${{ inputs.working_directory }}
       
-      - name: Terraform Apply
-        run: terraform apply -input=false -auto-approve -var-file=${{ inputs.var_file }} ${{ inputs.plan_file_name }}
-        working-directory: ${{ inputs.working_directory }}
+      - name: Download Terraform plan
+        uses: actions/download-artifact@v3
+        with:
+          name: terraform-plan
+          path: ${{ inputs.working_directory }}
+
+      - name: Apply Terraform Plan
+        run: terraform apply -input=false -auto-approve ${{ inputs.working_directory }}/${{ inputs.plan_file_name }}
+        working-directory: ${{ inputs.working_directory }}        

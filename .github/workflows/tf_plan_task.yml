@@ -73,3 +73,9 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -out=${{ inputs.plan_file_name }} -var-file=${{ inputs.var_file }}
         working-directory: ${{ inputs.working_directory }}
+
+      - name: Upload Terraform plan
+        uses: actions/upload-artifact@v3
+        with:
+          name: terraform-plan
+          path: ${{ inputs.working_directory }}/${{ inputs.plan_file_name }}
