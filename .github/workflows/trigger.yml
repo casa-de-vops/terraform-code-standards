@@ -27,16 +27,6 @@ on:
         required: true
         default: 'nonprod'
         type: string
-      backend_configs:
-        description: 'Backend configuration settings'
-        required: true
-        default: 
-          backend_service_connection: "terraform"
-          backend_azure_rm_resource_group_name: "rg-terraform-ops"
-          backend_azure_rm_storage_account_name: "casadevopsterraform"
-          backend_azure_rm_container_name: "ops-terraform-state"
-          backend_azure_rm_key: "pipeline-test.dev.tfstate"        
-        type: object
       plan_file_name:
         description: 'Terraform plan file name'
         required: false
@@ -48,12 +38,23 @@ on:
         default: '../environments/dev.tfvars'
         type: string
 
+variables:
+  backend_config: |
+    {
+      "backend_service_connection": "terraform",
+      "backend_azure_rm_resource_group_name": "rg-terraform-ops",
+      "backend_azure_rm_storage_account_name": "casadevopsterraform",
+      "backend_azure_rm_container_name": "ops-terraform-state",
+      "backend_azure_rm_key": "pipeline-test.dev.tfstate"
+    }
+            
 jobs:
   my-job:
     runs-on: ubuntu-latest
     steps:
       - name: my-step
         run: echo "Hello World!"
+
 
   # Trigger on push to main or release branches
   # push:
