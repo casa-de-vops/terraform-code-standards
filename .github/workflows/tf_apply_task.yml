@@ -35,7 +35,7 @@ on:
 
 jobs:
   validate:
-    name: Create Terraform Plan
+    name: Apply Terraform Changes
     runs-on: ubuntu-latest
     environment: ${{ inputs.gh_environment }}
     steps:

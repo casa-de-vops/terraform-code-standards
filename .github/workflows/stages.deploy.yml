@@ -74,9 +74,9 @@ jobs:
       plan_file_name: ${{ inputs.plan_file_name }}
       var_file: ${{ inputs.var_file }}
 
-  plan:
-    needs: validate
-    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_plan_task.yml@github_actions
+  apply:
+    needs: plan
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_apply_task.yml@github_actions
     secrets: inherit
     with:
       gh_environment: ${{ inputs.gh_environment }}
@@ -87,68 +87,3 @@ jobs:
       backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
       plan_file_name: ${{ inputs.plan_file_name }}
       var_file: ${{ inputs.var_file }}
-
-  # plan:
-  #     name: Plan Stage
-  #     runs-on: ubuntu-latest
-  #     needs: validate
-  #     steps:
-  #       - name: Checkout Code
-  #         uses: actions/checkout@v3
-
-  #       - name: Azure login
-  #         uses: azure/login@v2
-  #         with:
-  #           client-id: ${{ secrets.AZURE_CLIENT_ID }}
-  #           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-  #           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-  #       - name: Install Terraform
-  #         uses: hashicorp/setup-terraform@v2
-  #         with:
-  #           terraform_version: ${{ inputs.tf_version }}
-
-  #       - name: Initialize Terraform
-  #         run: |
-  #           terraform init -input=false \
-  #           -backend-config="storage_account_name=${{ inputs.backend_configs.backend_azure_rm_storage_account_name }}" \
-  #           -backend-config="container_name=${{ inputs.backend_configs.backend_azure_rm_container_name }}" \
-  #           -backend-config="key=${{ inputs.backend_configs.backend_azure_rm_key }}" \
-  #           -backend-config="resource_group_name=${{ inputs.backend_configs.backend_azure_rm_resource_group_name }}"
-  #         working-directory: ${{ inputs.working_directory }}
-
-  #       - name: Plan Terraform
-  #         run: terraform plan -out=${{ inputs.plan_file_name }} -var-file=${{ inputs.var_file }}
-  #         working-directory: ${{ inputs.working_directory }}
-
-  # apply:
-  #   name: Apply Stage
-  #   runs-on: ubuntu-latest
-  #   needs: plan
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v3
-
-  #     - name: Login to Azure
-  #       uses: azure/login@v1
-  #       with:
-  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-  #     - name: Install Terraform
-  #       uses: hashicorp/setup-terraform@v2
-  #       with:
-  #         terraform_version: ${{ inputs.tf_version }}
-
-  #     - name: Initialize Terraform
-  #       run: |
-  #         terraform init -input=false \
-  #         -backend-config="storage_account_name=${{ inputs.backend_configs.backend_azure_rm_storage_account_name }}" \
-  #         -backend-config="container_name=${{ inputs.backend_configs.backend_azure_rm_container_name }}" \
-  #         -backend-config="key=${{ inputs.backend_configs.backend_azure_rm_key }}" \
-  #         -backend-config="resource_group_name=${{ inputs.backend_configs.backend_azure_rm_resource_group_name }}"
-  #       working-directory: ${{ inputs.working_directory }}
-
-  #     - name: Apply Terraform
-  #       run: terraform apply -input=false -auto-approve -var-file=${{ inputs.var_file }} ${{
-  #           inputs.plan_file_name }}
-  #       working-directory: ${{ inputs.working_directory }}
