@@ -54,36 +54,39 @@ jobs:
         run: terraform validate
         working-directory: ${{ inputs.working_directory }}
         
-  # plan:
-  #   name: Plan Stage
-  #   runs-on: ubuntu-latest
-  #   needs: validate
-  #   steps:
-  #     - name: Install Terraform
-  #       run: echo "Installing Terraform version ${{ inputs.tf_version }}..."
-  #       # Add your actual Terraform installation command here
+    plan:
+        name: Plan Stage
+        runs-on: ubuntu-latest
+        needs: validate
+        steps:
+          - name: Install Terraform
+            uses: hashicorp/setup-terraform@v2
+            with:
+              terraform_version: ${{ inputs.tf_version }}
 
-  #     - name: Initialize Terraform
-  #       run: echo "Initializing Terraform in ${{ inputs.working_directory }}..."
-  #       # Add your actual Terraform init command here
+          - name: Initialize Terraform
+            run: terraform init -input=false -backend-config="${{ inputs.backend_configs }}"
+            working-directory: ${{ inputs.working_directory }}
 
-  #     - name: Plan Terraform
-  #       run: echo "Planning Terraform..."
-  #       # Add your actual Terraform plan command here
+          - name: Plan Terraform
+            run: terraform plan -out=${{ inputs.plan_file_name }} -var-file=${{ inputs.var_file }}
+            working-directory: ${{ inputs.working_directory }}
 
-  # apply:
-  #   name: Apply Stage
-  #   runs-on: ubuntu-latest
-  #   needs: plan
-  #   steps:
-  #     - name: Install Terraform
-  #       run: echo "Installing Terraform version ${{ inputs.tf_version }}..."
-  #       # Add your actual Terraform installation command here
+      apply:
+        name: Apply Stage
+        runs-on: ubuntu-latest
+        needs: plan
+        steps:
+          - name: Install Terraform
+            uses: hashicorp/setup-terraform@v2
+            with:
+              terraform_version: ${{ inputs.tf_version }}
 
-  #     - name: Initialize Terraform
-  #       run: echo "Initializing Terraform in ${{ inputs.working_directory }}..."
-  #       # Add your actual Terraform init command here
+          - name: Initialize Terraform
+            run: terraform init -input=false -backend-config="${{ inputs.backend_configs }}"
+            working-directory: ${{ inputs.working_directory }}
 
-  #     - name: Apply Terraform
-  #       run: echo "Applying Terraform..."
-  #       # Add your actual Terraform apply command here
+          - name: Apply Terraform
+            run: terraform apply -input=false -auto-approve ${{
+                inputs.plan_file_name }}
+            working-directory: ${{ inputs.working_directory }}
