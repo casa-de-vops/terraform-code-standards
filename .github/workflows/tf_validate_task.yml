@@ -24,6 +24,7 @@ jobs:
   validate:
     name: Validate Terraform Code
     runs-on: ubuntu-latest
+    environment: ${{ inputs.gh_environment }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3

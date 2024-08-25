@@ -64,6 +64,7 @@ jobs:
     uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@github_actions
     secrets: inherit
     with:
+      gh_environment: ${{ inputs.gh_environment }}
       working_directory: ${{ inputs.working_directory }}
       backend_azure_rm_resource_group_name: ${{ inputs.backend_azure_rm_resource_group_name }}
       backend_azure_rm_storage_account_name: ${{ inputs.backend_azure_rm_storage_account_name }}
