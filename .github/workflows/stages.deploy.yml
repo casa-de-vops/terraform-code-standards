@@ -35,7 +35,8 @@ jobs:
     steps:
       - name: Hello World Step
         run: echo "Hello World! ${{ inputs.tf_version }}"
-
+      - name: Hello World Step
+        run: ls -la
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
