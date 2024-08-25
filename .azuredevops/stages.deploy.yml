@@ -141,6 +141,7 @@ stages:
               working_directory: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}'
               run_tfsec: '${{ coalesce(environment.run_tfsec, true) }}'
               run_msdefender: '${{ coalesce(environment.run_msdefender, true) }}'
+              security_tools: '$(security_tools)'
               
 ## TF Apply
 - ${{ each environment in parameters.environments }}:
