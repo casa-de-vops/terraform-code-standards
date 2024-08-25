@@ -38,7 +38,7 @@ jobs:
         run: terraform fmt --check --diff -recursive
         working-directory: ${{ inputs.working_directory }}
       
-       name: Azure login
+      - name: Azure login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
