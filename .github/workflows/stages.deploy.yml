@@ -61,7 +61,7 @@ jobs:
       - name: Hello World Step
         run: echo "Hello World! ${{ inputs.tf_version }}"
       
-      - name: Check Backend Configs
+      - name: Check Runtime Configs
         run: |
           echo "Client Credentials:"
           echo "client_id=${{ secrets.AZURE_CLIENT_ID }}"
