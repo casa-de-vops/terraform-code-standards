@@ -14,7 +14,6 @@ permissions:
 jobs:
   tf-orchestrations:
     uses: casa-de-vops/terraform-code-standards/.github/workflows/stages.deploy.yml@github_actions
-    environment: nonprod
     with:
       tf_version: 'latest'
       working_directory: './terraform/'
