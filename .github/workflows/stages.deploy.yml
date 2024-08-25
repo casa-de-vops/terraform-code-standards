@@ -53,12 +53,15 @@ on:
         type: string
 
 jobs:
-  login:
+  validate:
     uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_az_login_task.yml@github_actions
     secrets: inherit
     with:
       gh_environment: ${{ inputs.gh_environment }}
-
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_az_login_task.yml@github_actions
+    secrets: inherit
+    with:
+      gh_environment: ${{ inputs.gh_environment }}
 
   # validate:
   #   name: Validate Stage
