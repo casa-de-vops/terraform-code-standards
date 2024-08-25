@@ -20,13 +20,13 @@
     ├── workflows
     │   └── template.yml
     ├── versions
-    │   ├── production.yml
-    │   ├── staging.yml
-    │   └── development.yml
+    │   ├── modules.prod.yml
+    │   ├── modules.stage.yml
+    │   └── modules.dev.yml
     ├── environments
-    │   ├── production.tfvars
-    │   ├── staging.tfvars
-    │   └── development.tfvars
+    │   ├── prod.tfvars
+    │   ├── stage.tfvars
+    │   └── dev.tfvars
     ├── modules
     │   ├── network
     │   │   ├── main.tf
