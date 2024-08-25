@@ -73,11 +73,17 @@ jobs:
       backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
       plan_file_name: ${{ inputs.plan_file_name }}
       var_file: ${{ inputs.var_file }}
+  
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print GitHub Ref
+        run: echo "GITHUB REF: ${{ github.ref }}"
 
   apply:
     needs: plan
-    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_apply_task.yml@main
     if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/release/')
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_apply_task.yml@main
     secrets: inherit
     with:
       gh_environment: ${{ inputs.gh_environment }}
