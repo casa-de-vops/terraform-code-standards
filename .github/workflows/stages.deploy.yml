@@ -49,6 +49,12 @@ on:
         type: string
 
 jobs:
+- name: Set Azure Environment Variables
+  run: |
+    echo "ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> $GITHUB_ENV
+    echo "ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
+    echo "ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+
   validate:
     uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@github_actions
     secrets: inherit
@@ -61,6 +67,7 @@ jobs:
       backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
       
   plan:
+    needs: validate
     uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_plan_task.yml@github_actions
     secrets: inherit
     with:
