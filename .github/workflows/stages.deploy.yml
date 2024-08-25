@@ -55,13 +55,9 @@ on:
 jobs:
   login:
     uses: casa-de-vops/terraform-code-standards/.github/workflows/az_login_task.yml@github_actions
-    secrets: inherit
-    with:
-      gh_environment: ${{ inputs.gh_environment }}
 
   install:
     uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_install_task.yml@github_actions
-    depends-on: login
 
   # validate:
   #   name: Validate Stage
