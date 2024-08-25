@@ -7,6 +7,9 @@ on:
       - github_actions
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   tf-orchestrations:
