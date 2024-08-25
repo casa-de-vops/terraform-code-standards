@@ -44,6 +44,20 @@ jobs:
       - name: Hello World Step
         run: echo "Hello World! ${{ inputs.tf_version }}"
       
+      - name: Check Backend Configs
+        run: |
+          echo "Client Credentials:"
+          echo "client_id=${{ secrets.AZURE_CLIENT_ID }}"
+          echo "tenant_id=${{ secrets.AZURE_TENANT_ID }}"
+          echo "subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+          echo ""
+          echo "Backend Configurations:"
+          echo "backend_service_connection=${{ inputs.backend_configs.backend_service_connection }}"
+          echo "backend_azure_rm_resource_group_name=${{ inputs.backend_configs.backend_azure_rm_resource_group_name }}"
+          echo "backend_azure_rm_storage_account_name=${{ inputs.backend_configs.backend_azure_rm_storage_account_name }}"
+          echo "backend_azure_rm_container_name=${{ inputs.backend_configs.backend_azure_rm_container_name }}"
+          echo "backend_azure_rm_key=${{ inputs.backend_configs.backend_azure_rm_key }}"
+
       - name: Checkout Code
         uses: actions/checkout@v3
 
@@ -66,20 +80,6 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ inputs.tf_version }}
-
-      - name: Check Backend Configs
-        run: |
-          echo "Client Credentials:"
-          echo "client_id=${{ secrets.AZURE_CLIENT_ID }}"
-          echo "tenant_id=${{ secrets.AZURE_TENANT_ID }}"
-          echo "subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-          echo ""
-          echo "Backend Configurations:"
-          echo "backend_service_connection=${{ inputs.backend_configs.backend_service_connection }}"
-          echo "backend_azure_rm_resource_group_name=${{ inputs.backend_configs.backend_azure_rm_resource_group_name }}"
-          echo "backend_azure_rm_storage_account_name=${{ inputs.backend_configs.backend_azure_rm_storage_account_name }}"
-          echo "backend_azure_rm_container_name=${{ inputs.backend_configs.backend_azure_rm_container_name }}"
-          echo "backend_azure_rm_key=${{ inputs.backend_configs.backend_azure_rm_key }}"
 
       - name: Check Terraform Formatting
         run: terraform fmt --check --diff -recursive
