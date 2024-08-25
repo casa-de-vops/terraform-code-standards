@@ -59,7 +59,8 @@ jobs:
       backend_azure_rm_storage_account_name: ${{ inputs.backend_azure_rm_storage_account_name }}
       backend_azure_rm_container_name: ${{ inputs.backend_azure_rm_container_name }}
       backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
-
+      plan_file_name: ${{ inputs.plan_file_name }}
+      var_file: ${{ inputs.var_file }}
 
   # plan:
   #     name: Plan Stage
