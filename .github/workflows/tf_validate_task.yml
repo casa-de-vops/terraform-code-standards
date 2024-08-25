@@ -37,11 +37,13 @@ jobs:
       - name: Check Terraform Formatting
         run: terraform fmt --check --diff -recursive
         working-directory: ${{ inputs.working_directory }}
-
-      uses: casa-de-vops/terraform-code-standards/.github/workflows/az_login_task.yml@github_actions
-        secrets: inherit
+      
+       name: Azure login
+        uses: azure/login@v2
         with:
-          gh_environment: ${{ inputs.gh_environment }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Initialize Terraform
         run: |
