@@ -15,7 +15,7 @@ on:
       working_directory:
         description: 'Working directory'
         required: true
-        default: 'terraform/'
+        default: './terraform/'
         type: string
       environment:
         description: 'Environment of the infrastructure workload'
@@ -35,7 +35,7 @@ on:
       var_file:
         description: 'Terraform variables file'
         required: false
-        default: '../environments/dev.tfvars'
+        default: './environments/dev.tfvars'
         type: string
 
 jobs:
