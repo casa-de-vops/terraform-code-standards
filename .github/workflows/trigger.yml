@@ -1,4 +1,4 @@
-# .github/tests/pipeline.deploy.yaml
+# .github/workflows/trigger.yml
 name: Trigger Terraform Orchestration
 
 on:
@@ -35,35 +35,23 @@ on:
       var_file:
         description: 'Terraform variables file'
         required: false
-        default: 'environments/dev.tfvars'
+        default: '../environments/dev.tfvars'
         type: string
-env:
-  backend_config: |
-    {
-      "backend_service_connection": "terraform",
-      "backend_azure_rm_resource_group_name": "rg-terraform-ops",
-      "backend_azure_rm_storage_account_name": "casadevopsterraform",
-      "backend_azure_rm_container_name": "ops-terraform-state",
-      "backend_azure_rm_key": "pipeline-test.dev.tfstate"
-    }
-            
-jobs:
-  setup:
-    runs-on: ubuntu-latest
-    outputs:
-      backend_config: ${{ steps.set-backend-config.outputs.backend_config }}
-    steps:
-      - name: Set backend_config
-        id: set-backend-config
-        run: |
-          echo "backend_config={\"backend_service_connection\": \"terraform\", \"backend_azure_rm_resource_group_name\": \"rg-terraform-ops\", \"backend_azure_rm_storage_account_name\": \"casadevopsterraform\", \"backend_azure_rm_container_name\": \"ops-terraform-state\", \"backend_azure_rm_key\": \"pipeline-test.dev.tfstate\"}" >> $GITHUB_OUTPUT
 
+jobs:
   tf-orchestrations:
-    needs: setup
     uses: casa-de-vops/terraform-code-standards/.github/workflows/stages.deploy.yml@github_actions
     with:
-      tf_version: ${{ inputs.tf_version }}
-      working_directory: ${{ inputs.working_directory }}
-      environment: ${{ inputs.environment }}
-      plan_file_name: ${{ inputs.plan_file_name }}
-      var_file: ${{ inputs.var_file }}
+      tf_version: ${{ github.event.inputs.tf_version }}
+      working_directory: ${{ github.event.inputs.working_directory }}
+      environment: ${{ github.event.inputs.environment }}
+      backend_configs: |
+        {
+          "backend_service_connection": "terraform",
+          "backend_azure_rm_resource_group_name": "rg-terraform-ops",
+          "backend_azure_rm_storage_account_name": "casadevopsterraform",
+          "backend_azure_rm_container_name": "ops-terraform-state",
+          "backend_azure_rm_key": "pipeline-test.dev.tfstate"
+        }
+      plan_file_name: ${{ github.event.inputs.plan_file_name }}
+      var_file: ${{ github.event.inputs.var_file }}
