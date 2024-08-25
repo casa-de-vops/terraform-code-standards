@@ -36,18 +36,19 @@ jobs:
       - name: Hello World Step
         run: echo "Hello World! ${{ inputs.tf_version }}"
         
-  #     - name: Install Terraform
-  #       run: echo "Installing Terraform version ${{ inputs.tf_version }}..."
-  #       # Add your actual Terraform installation command here
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ inputs.tf_version }}
 
-  #     - name: Initialize Terraform
-  #       run: echo "Initializing Terraform in ${{ inputs.working_directory }}..."
-  #       # Add your actual Terraform init command here
+      - name: Initialize Terraform
+        run: terraform init -input=false -backend-config="${{ inputs.backend_configs }}"
+        working-directory: ${{ inputs.working_directory }}
 
-  #     - name: Validate Terraform
-  #       run: echo "Validating Terraform configuration..."
-  #       # Add your actual Terraform validate command here
-
+      - name: Validate Terraform
+        run: terraform validate
+        working-directory: ${{ inputs.working_directory }}
+        
   # plan:
   #   name: Plan Stage
   #   runs-on: ubuntu-latest
