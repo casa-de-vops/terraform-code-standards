@@ -38,10 +38,10 @@ jobs:
         run: terraform fmt --check --diff -recursive
         working-directory: ${{ inputs.working_directory }}
 
-      # - uses: casa-de-vops/terraform-code-standards/.github/workflows/az_login_task.yml@github_actions
-      #   secrets: inherit
-      #   with:
-      #     gh_environment: ${{ inputs.gh_environment }}
+      uses: casa-de-vops/terraform-code-standards/.github/workflows/az_login_task.yml@github_actions
+        secrets: inherit
+        with:
+          gh_environment: ${{ inputs.gh_environment }}
 
       - name: Initialize Terraform
         run: |
