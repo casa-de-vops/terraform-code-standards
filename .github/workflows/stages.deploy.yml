@@ -50,7 +50,6 @@ on:
 
 jobs:
   validate:
-    needs: install
     uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@github_actions
     secrets: inherit
     with:
