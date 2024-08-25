@@ -57,6 +57,7 @@ jobs:
     uses: casa-de-vops/terraform-code-standards/.github/workflows/az_login_task.yml@github_actions
 
   install:
+    needs: login
     uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_install_task.yml@github_actions
 
   # validate:
