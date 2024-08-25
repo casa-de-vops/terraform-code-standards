@@ -52,6 +52,9 @@ on:
         default: ''
         type: string
 
+permissions:
+  id-token: write
+  contents: read
 jobs:
   validate:
     name: Validate Stage
@@ -84,68 +87,75 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: List Contents of Current Directory and Terraform Directory
-        run: |
-          echo "Listing contents of the current directory:"
-          find . || echo "No files found in the current directory."
-          
-          echo "Listing contents of the Terraform working directory:"
-          find ${{ inputs.working_directory }} || echo "No files found in the Terraform working directory."
-
-      - name: Install Terraform
-        uses: hashicorp/setup-terraform@v2
+      - name: Azure CLI script
+        uses: azure/cli@v2
         with:
-          terraform_version: ${{ inputs.tf_version }}
+          azcliversion: latest
+          inlineScript: |
+            az account show
 
-      - name: Check Terraform Formatting
-        run: terraform fmt --check --diff -recursive
-        working-directory: ${{ inputs.working_directory }}
+  #     - name: List Contents of Current Directory and Terraform Directory
+  #       run: |
+  #         echo "Listing contents of the current directory:"
+  #         find . || echo "No files found in the current directory."
+          
+  #         echo "Listing contents of the Terraform working directory:"
+  #         find ${{ inputs.working_directory }} || echo "No files found in the Terraform working directory."
 
-      - name: Initialize Terraform
-        run: |
-          terraform init -input=false \
-          -backend-config="storage_account_name=${{ inputs.backend_configs.backend_azure_rm_storage_account_name }}" \
-          -backend-config="container_name=${{ inputs.backend_configs.backend_azure_rm_container_name }}" \
-          -backend-config="key=${{ inputs.backend_configs.backend_azure_rm_key }}" \
-          -backend-config="resource_group_name=${{ inputs.backend_configs.backend_azure_rm_resource_group_name }}"
-        working-directory: ${{ inputs.working_directory }}
+  #     - name: Install Terraform
+  #       uses: hashicorp/setup-terraform@v2
+  #       with:
+  #         terraform_version: ${{ inputs.tf_version }}
+
+  #     - name: Check Terraform Formatting
+  #       run: terraform fmt --check --diff -recursive
+  #       working-directory: ${{ inputs.working_directory }}
+
+  #     - name: Initialize Terraform
+  #       run: |
+  #         terraform init -input=false \
+  #         -backend-config="storage_account_name=${{ inputs.backend_configs.backend_azure_rm_storage_account_name }}" \
+  #         -backend-config="container_name=${{ inputs.backend_configs.backend_azure_rm_container_name }}" \
+  #         -backend-config="key=${{ inputs.backend_configs.backend_azure_rm_key }}" \
+  #         -backend-config="resource_group_name=${{ inputs.backend_configs.backend_azure_rm_resource_group_name }}"
+  #       working-directory: ${{ inputs.working_directory }}
       
-      - name: Validate Terraform
-        run: terraform validate
-        working-directory: ${{ inputs.working_directory }}
+  #     - name: Validate Terraform
+  #       run: terraform validate
+  #       working-directory: ${{ inputs.working_directory }}
         
-  plan:
-      name: Plan Stage
-      runs-on: ubuntu-latest
-      needs: validate
-      steps:
-        - name: Checkout Code
-          uses: actions/checkout@v3
+  # plan:
+  #     name: Plan Stage
+  #     runs-on: ubuntu-latest
+  #     needs: validate
+  #     steps:
+  #       - name: Checkout Code
+  #         uses: actions/checkout@v3
 
-        - name: Azure login
-          uses: azure/login@v2
-          with:
-            client-id: ${{ secrets.AZURE_CLIENT_ID }}
-            tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-            subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  #       - name: Azure login
+  #         uses: azure/login@v2
+  #         with:
+  #           client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-        - name: Install Terraform
-          uses: hashicorp/setup-terraform@v2
-          with:
-            terraform_version: ${{ inputs.tf_version }}
+  #       - name: Install Terraform
+  #         uses: hashicorp/setup-terraform@v2
+  #         with:
+  #           terraform_version: ${{ inputs.tf_version }}
 
-        - name: Initialize Terraform
-          run: |
-            terraform init -input=false \
-            -backend-config="storage_account_name=${{ inputs.backend_configs.backend_azure_rm_storage_account_name }}" \
-            -backend-config="container_name=${{ inputs.backend_configs.backend_azure_rm_container_name }}" \
-            -backend-config="key=${{ inputs.backend_configs.backend_azure_rm_key }}" \
-            -backend-config="resource_group_name=${{ inputs.backend_configs.backend_azure_rm_resource_group_name }}"
-          working-directory: ${{ inputs.working_directory }}
+  #       - name: Initialize Terraform
+  #         run: |
+  #           terraform init -input=false \
+  #           -backend-config="storage_account_name=${{ inputs.backend_configs.backend_azure_rm_storage_account_name }}" \
+  #           -backend-config="container_name=${{ inputs.backend_configs.backend_azure_rm_container_name }}" \
+  #           -backend-config="key=${{ inputs.backend_configs.backend_azure_rm_key }}" \
+  #           -backend-config="resource_group_name=${{ inputs.backend_configs.backend_azure_rm_resource_group_name }}"
+  #         working-directory: ${{ inputs.working_directory }}
 
-        - name: Plan Terraform
-          run: terraform plan -out=${{ inputs.plan_file_name }} -var-file=${{ inputs.var_file }}
-          working-directory: ${{ inputs.working_directory }}
+  #       - name: Plan Terraform
+  #         run: terraform plan -out=${{ inputs.plan_file_name }} -var-file=${{ inputs.var_file }}
+  #         working-directory: ${{ inputs.working_directory }}
 
   # apply:
   #   name: Apply Stage
