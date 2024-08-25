@@ -40,9 +40,13 @@ jobs:
       - name: Hello World Step
         run: echo "Hello World! ${{ inputs.tf_version }}"
       
-      - name: List Directory Files
-        run: ls
-
+      - name: List Current Directory
+        run: |
+          echo "Listing contents of the current directory:"
+          ls -la
+          echo "Listing contents of the Terraform working directory:"
+          ls -la ${{ inputs.working_directory }}
+          
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
