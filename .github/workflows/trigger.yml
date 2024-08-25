@@ -48,19 +48,22 @@ env:
     }
             
 jobs:
-  tf-orchestrations:
+  setup:
     runs-on: ubuntu-latest
+    outputs:
+      backend_config: ${{ steps.set-backend-config.outputs.backend_config }}
     steps:
       - name: Set backend_config
         id: set-backend-config
-        run: echo "::set-output name=backend_config::${{ env.backend_config }}"
+        run: echo "backend_config=${{ env.backend_config }}" >> $GITHUB_OUTPUT
 
-      - name: Trigger Reusable Workflow
-        uses: casa-de-vops/terraform-code-standards/.github/workflows/stages.deploy.yml@github_actions
-        with:
-          tf_version: ${{ github.event.inputs.tf_version }}
-          working_directory: ${{ github.event.inputs.working_directory }}
-          environment: ${{ github.event.inputs.environment }}
-          backend_configs: ${{ steps.set-backend-config.outputs.backend_config }}
-          plan_file_name: ${{ github.event.inputs.plan_file_name }}
-          var_file: ${{ github.event.inputs.var_file }}
+  tf-orchestrations:
+    needs: setup
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/stages.deploy.yml@github_actions
+    with:
+      tf_version: ${{ github.event.inputs.tf_version }}
+      working_directory: ${{ github.event.inputs.working_directory }}
+      environment: ${{ github.event.inputs.environment }}
+      backend_configs: ${{ needs.setup.outputs.backend_config }}
+      plan_file_name: ${{ github.event.inputs.plan_file_name }}
+      var_file: ${{ github.event.inputs.var_file }}
