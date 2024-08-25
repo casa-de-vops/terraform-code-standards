@@ -19,7 +19,6 @@ jobs:
     steps:
       - name: Debug Secrets Access
         run: |
-          echo "Environment: ${{ inputs.gh_environment }}"
           echo "AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}"
           echo "AZURE_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}"
           echo "AZURE_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}"
@@ -38,17 +37,17 @@ jobs:
           inlineScript: |
             az account show    
 
-  # tf-orchestrations:
-  #   uses: casa-de-vops/terraform-code-standards/.github/workflows/stages.deploy.yml@github_actions
-  #   with:
-  #     tf_version: 'latest'
-  #     working_directory: './terraform/'
-  #     environment: 'dev'
-  #     gh_environment: 'nonprod'
-  #     backend_service_connection: 'terraform'
-  #     backend_azure_rm_resource_group_name: 'rg-terraform-ops'
-  #     backend_azure_rm_storage_account_name: 'casadevopsterraform'
-  #     backend_azure_rm_container_name: 'ops-terraform-state'
-  #     backend_azure_rm_key: 'pipeline-test.dev.tfstate'
-  #     plan_file_name: 'terraform.tfplan'
-  #     var_file: './environments/dev.tfvars'
+  tf-orchestrations:
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/stages.deploy.yml@github_actions
+    with:
+      tf_version: 'latest'
+      working_directory: './terraform/'
+      environment: 'dev'
+      gh_environment: 'nonprod'
+      backend_service_connection: 'terraform'
+      backend_azure_rm_resource_group_name: 'rg-terraform-ops'
+      backend_azure_rm_storage_account_name: 'casadevopsterraform'
+      backend_azure_rm_container_name: 'ops-terraform-state'
+      backend_azure_rm_key: 'pipeline-test.dev.tfstate'
+      plan_file_name: 'terraform.tfplan'
+      var_file: './environments/dev.tfvars'

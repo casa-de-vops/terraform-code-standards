@@ -56,7 +56,7 @@ jobs:
   validate:
     name: Validate Stage
     runs-on: ubuntu-latest
-    environment: ${{ inputs.gh_environment }}
+    environment: '${{ inputs.gh_environment }}'
     steps:
       - name: Hello World Step
         run: echo "Hello World! ${{ inputs.tf_version }}"
