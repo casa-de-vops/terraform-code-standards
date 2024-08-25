@@ -55,7 +55,7 @@ jobs:
         run: echo "Hello World!"
             
   tf-orchestrations:
-    uses: ./orchestrations/stages.deploy.yml
+    uses: ./.github/workflows/orchestration/stages.deploy.yml
     with:
       tf_version: ${{ github.event.inputs.tf_version }}
       working_directory: ${{ github.event.inputs.working_directory }}
