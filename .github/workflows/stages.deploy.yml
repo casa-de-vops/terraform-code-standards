@@ -20,7 +20,7 @@ on:
       backend_configs:
         description: 'Backend configurations'
         required: true
-        type: object
+        type: string
       plan_file_name:
         description: 'Terraform plan file name'
         required: false
