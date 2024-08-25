@@ -2,7 +2,7 @@
 name: Terraform CI/CD Orchestration
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       tf_version:
         description: 'Terraform version'
