@@ -1,7 +1,7 @@
 # .github/tests/pipeline.deploy.yaml
 name: Trigger Terraform Orchestration
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       tf_version:
