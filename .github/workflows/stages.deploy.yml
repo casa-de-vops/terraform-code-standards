@@ -1,4 +1,4 @@
-# orchestration.yml
+# .github/workflows/stages.deploy.yml
 name: Terraform CI/CD Orchestration
 
 on:
@@ -40,30 +40,26 @@ jobs:
       - name: my-step
         run: echo "Hello World!"
 
-  # validate:
-  #   name: Validate Stage
-  #   runs-on: ubuntu-latest
-  #   steps:
   #     - name: Call Install Workflow
   #       uses: ./tf_install_task.yml
   #       with:
-  #         tf_version: ${{ github.event.inputs.tf_version }}
+  #         tf_version: ${{ inputs.tf_version }}
 
   #     - name: Call Init Workflow
   #       uses: ./tf_init_task.yml
   #       with:
-  #         working_directory: ${{ github.event.inputs.working_directory }}
-  #         backend_configs: ${{ github.event.inputs.backend_configs }}
+  #         working_directory: ${{ inputs.working_directory }}
+  #         backend_configs: ${{ inputs.backend_configs }}
 
   #     - name: Call Validate Workflow
   #       uses: ./tf_validate_task.yml
   #       with:
-  #         working_directory: ${{ github.event.inputs.working_directory }}
+  #         working_directory: ${{ inputs.working_directory }}
 
   #     - name: Call Format Workflow
   #       uses: ./tf_format_task.yml
   #       with:
-  #         working_directory: ${{ github.event.inputs.working_directory }}
+  #         working_directory: ${{ inputs.working_directory }}
 
   # plan:
   #   name: Plan Stage
@@ -73,20 +69,20 @@ jobs:
   #     - name: Call Install Workflow
   #       uses: ./tf_install_task.yml
   #       with:
-  #         tf_version: ${{ github.event.inputs.tf_version }}
+  #         tf_version: ${{ inputs.tf_version }}
 
   #     - name: Call Init Workflow
   #       uses: ./tf_init_task.yml
   #       with:
-  #         working_directory: ${{ github.event.inputs.working_directory }}
-  #         backend_configs: ${{ github.event.inputs.backend_configs }}
+  #         working_directory: ${{ inputs.working_directory }}
+  #         backend_configs: ${{ inputs.backend_configs }}
 
   #     - name: Call Plan Workflow
   #       uses: ./tf_plan_task.yml
   #       with:
-  #         working_directory: ${{ github.event.inputs.working_directory }}
-  #         plan_file_name: ${{ github.event.inputs.plan_file_name }}
-  #         var_file: ${{ github.event.inputs.var_file }}
+  #         working_directory: ${{ inputs.working_directory }}
+  #         plan_file_name: ${{ inputs.plan_file_name }}
+  #         var_file: ${{ inputs.var_file }}
 
   # apply:
   #   name: Apply Stage
@@ -96,16 +92,16 @@ jobs:
   #     - name: Call Install Workflow
   #       uses: ./tf_install_task.yml
   #       with:
-  #         tf_version: ${{ github.event.inputs.tf_version }}
+  #         tf_version: ${{ inputs.tf_version }}
 
   #     - name: Call Init Workflow
   #       uses: ./tf_init_task.yml
   #       with:
-  #         working_directory: ${{ github.event.inputs.working_directory }}
-  #         backend_configs: ${{ github.event.inputs.backend_configs }}
+  #         working_directory: ${{ inputs.working_directory }}
+  #         backend_configs: ${{ inputs.backend_configs }}
 
   #     - name: Call Apply Workflow
   #       uses: ./tf_apply_task.yml
   #       with:
-  #         working_directory: ${{ github.event.inputs.working_directory }}
-  #         plan_file_name: ${{ github.event.inputs.plan_file_name }}
+  #         working_directory: ${{ inputs.working_directory }}
+  #         plan_file_name: ${{ inputs.plan_file_name }}
