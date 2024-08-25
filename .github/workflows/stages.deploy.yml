@@ -53,12 +53,29 @@ on:
         type: string
 
 jobs:
-  validate:
-    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@github_actions
+  login:
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/az_login_task.yml@github_actions
     secrets: inherit
     with:
       gh_environment: ${{ inputs.gh_environment }}
 
+  install:
+    needs: login
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_install_task.yml@github_actions
+
+  validate:
+    needs: install
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@github_actions
+    with:
+      tf_version: ${{ inputs.tf_version }}
+      working_directory: ${{ inputs.working_directory }}
+      backend_service_connection: ${{ inputs.backend_service_connection }}
+      backend_azure_rm_resource_group_name: ${{ inputs.backend_azure_rm_resource_group_name }}
+      backend_azure_rm_storage_account_name: ${{ inputs.backend_azure_rm_storage_account_name }}
+      backend_azure_rm_container_name: ${{ inputs.backend_azure_rm_container_name }}
+      backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
+
+      
   # validate:
   #   name: Validate Stage
   #   runs-on: ubuntu-latest
