@@ -21,10 +21,6 @@ on:
         description: 'GitHub environment'
         required: true
         type: string
-      backend_service_connection:
-        description: 'Backend service connection'
-        required: true
-        type: string
       backend_azure_rm_resource_group_name:
         description: 'Azure Resource Group Name'
         required: true
@@ -67,15 +63,13 @@ jobs:
     needs: install
     uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@github_actions
     with:
-      tf_version: ${{ inputs.tf_version }}
       working_directory: ${{ inputs.working_directory }}
-      backend_service_connection: ${{ inputs.backend_service_connection }}
       backend_azure_rm_resource_group_name: ${{ inputs.backend_azure_rm_resource_group_name }}
       backend_azure_rm_storage_account_name: ${{ inputs.backend_azure_rm_storage_account_name }}
       backend_azure_rm_container_name: ${{ inputs.backend_azure_rm_container_name }}
       backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
 
-      
+
   # validate:
   #   name: Validate Stage
   #   runs-on: ubuntu-latest
@@ -93,7 +87,6 @@ jobs:
       
   #     - name: Debug Backend Configs
   #       run: |
-  #         echo "backend_service_connection=${{ inputs.backend_service_connection }}"
   #         echo "backend_azure_rm_resource_group_name=${{ inputs.backend_azure_rm_resource_group_name }}"
   #         echo "backend_azure_rm_storage_account_name=${{ inputs.backend_azure_rm_storage_account_name }}"
   #         echo "backend_azure_rm_container_name=${{ inputs.backend_azure_rm_container_name }}"
