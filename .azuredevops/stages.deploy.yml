@@ -31,7 +31,7 @@ stages:
       - job: TerraformValidateJob
         displayName: 'Terraform Validate'
         pool:
-          name: ${{ coalesce( variables['environment.pool'], 'Default') }}
+          name: ${{ coalesce( variables['environment.pool'], 'Azure Pipelines') }}
           vmImage: ${{ coalesce( variables['environment.vmImage'], variables.default_agent_image) }}
         steps:
           - template: ./tasks/tf_install_task.yml
@@ -72,7 +72,7 @@ stages:
       - job: TerraformPlanJob
         displayName: 'Terraform Plan'
         pool:
-          name: ${{ coalesce( variables['environment.pool'], 'Default') }}
+          name: ${{ coalesce( variables['environment.pool'], 'Azure Pipelines') }}
           vmImage: ${{ coalesce( variables['environment.vmImage'], variables.default_agent_image) }}
         steps:
           - template: ./tasks/tf_install_task.yml
@@ -118,7 +118,7 @@ stages:
       - job: TerraformInspectJob
         displayName: 'Terraform Security Scan'
         pool:
-          name: ${{ coalesce( variables['environment.pool'], 'Default') }}
+          name: ${{ coalesce( variables['environment.pool'], 'Azure Pipelines') }}
           vmImage: ${{ coalesce( variables['environment.vmImage'], variables.default_agent_image) }}
         steps:
           - template: ./tasks/tf_sec.yml
