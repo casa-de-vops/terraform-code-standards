@@ -53,31 +53,16 @@ on:
         type: string
 
 jobs:
-  validate:
-    name: Validate Stage
+  login:
+    name: Login Test
     runs-on: ubuntu-latest
     environment: 'nonprod'
     steps:
-      - name: Hello World Step
-        run: echo "Hello World! ${{ inputs.tf_version }}"
-      
       - name: Debug Secrets Access
         run: |
-          echo "Environment: ${{ inputs.gh_environment }}"
           echo "AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}"
           echo "AZURE_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}"
           echo "AZURE_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-      
-      - name: Debug Backend Configs
-        run: |
-          echo "backend_service_connection=${{ inputs.backend_service_connection }}"
-          echo "backend_azure_rm_resource_group_name=${{ inputs.backend_azure_rm_resource_group_name }}"
-          echo "backend_azure_rm_storage_account_name=${{ inputs.backend_azure_rm_storage_account_name }}"
-          echo "backend_azure_rm_container_name=${{ inputs.backend_azure_rm_container_name }}"
-          echo "backend_azure_rm_key=${{ inputs.backend_azure_rm_key }}"
-
-      - name: Checkout Code
-        uses: actions/checkout@v3
 
       - name: Azure login
         uses: azure/login@v2
@@ -91,7 +76,48 @@ jobs:
         with:
           azcliversion: latest
           inlineScript: |
-            az account show
+            az account show    
+
+
+  # validate:
+  #   name: Validate Stage
+  #   runs-on: ubuntu-latest
+  #   environment: 'nonprod'
+  #   steps:
+  #     - name: Hello World Step
+  #       run: echo "Hello World! ${{ inputs.tf_version }}"
+      
+  #     - name: Debug Secrets Access
+  #       run: |
+  #         echo "Environment: ${{ inputs.gh_environment }}"
+  #         echo "AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}"
+  #         echo "AZURE_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}"
+  #         echo "AZURE_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+      
+  #     - name: Debug Backend Configs
+  #       run: |
+  #         echo "backend_service_connection=${{ inputs.backend_service_connection }}"
+  #         echo "backend_azure_rm_resource_group_name=${{ inputs.backend_azure_rm_resource_group_name }}"
+  #         echo "backend_azure_rm_storage_account_name=${{ inputs.backend_azure_rm_storage_account_name }}"
+  #         echo "backend_azure_rm_container_name=${{ inputs.backend_azure_rm_container_name }}"
+  #         echo "backend_azure_rm_key=${{ inputs.backend_azure_rm_key }}"
+
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+
+  #     - name: Azure login
+  #       uses: azure/login@v2
+  #       with:
+  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  #     - name: Azure CLI script
+  #       uses: azure/cli@v2
+  #       with:
+  #         azcliversion: latest
+  #         inlineScript: |
+  #           az account show
 
   #     - name: List Contents of Current Directory and Terraform Directory
   #       run: |
