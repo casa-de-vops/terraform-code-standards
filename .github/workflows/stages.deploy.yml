@@ -50,7 +50,7 @@ on:
 
 jobs:
   validate:
-    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@github_actions
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@main
     secrets: inherit
     with:
       gh_environment: ${{ inputs.gh_environment }}
@@ -62,7 +62,7 @@ jobs:
       
   plan:
     needs: validate
-    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_plan_task.yml@github_actions
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_plan_task.yml@main
     secrets: inherit
     with:
       gh_environment: ${{ inputs.gh_environment }}
@@ -76,7 +76,7 @@ jobs:
 
   apply:
     needs: plan
-    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_apply_task.yml@github_actions
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_apply_task.yml@main
     secrets: inherit
     with:
       gh_environment: ${{ inputs.gh_environment }}
