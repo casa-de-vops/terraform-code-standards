@@ -151,7 +151,7 @@ stages:
         displayName: 'Terraform Apply'
         environment: '${{ parameters.workload }}-${{ environment.ado_environment }}'
         pool:
-          name: ${{ coalesce( variables['environment.pool'], 'Default') }}
+          name: ${{ coalesce( variables['environment.pool'], 'Azure Pipelines') }}
           vmImage: ${{ coalesce( variables['environment.vmImage'], variables.default_agent_image) }}
         strategy:
           runOnce:
