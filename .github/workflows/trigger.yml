@@ -12,12 +12,13 @@ permissions:
   contents: read
 
 jobs:
-  tf-orchestrations:
+  terraform:
+    name: Terraform CI/CD Orchestration
     uses: casa-de-vops/terraform-code-standards/.github/workflows/stages.deploy.yml@github_actions
     secrets: inherit
     with:
       tf_version: 'latest'
-      working_directory: './terraform/'
+      working_directory: '../terraform/'
       environment: 'dev'
       gh_environment: 'nonprod'
       backend_azure_rm_resource_group_name: 'rg-terraform-ops'
