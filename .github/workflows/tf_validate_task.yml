@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: List Current Directory Contents
-        run: ls -la
+        run: ls -la ${{ github.workspace}}
 
       - name: List Terraform Directory Contents
         run: ls -la terraform/      
