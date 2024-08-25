@@ -13,5 +13,6 @@ jobs:
     name: Terraform Format
     runs-on: ubuntu-latest
     steps:
-      - name: Terraform Format Check
-        run: terraform fmt -check -diff -chdir=${{ inputs.working_directory }}
+      - name: Check Terraform Formatting
+        run: terraform fmt --check --diff -recursive
+        working-directory: ${{ inputs.working_directory }}

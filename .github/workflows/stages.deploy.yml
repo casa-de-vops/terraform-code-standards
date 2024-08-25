@@ -50,86 +50,29 @@ on:
 
 jobs:
   validate:
-    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@github_actions
+    - name: Checkout Code
+    uses: actions/checkout@v3
+
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_format_task.yml@github_actions
+    with:
+      working_directory: ${{ inputs.working_directory }}
+
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/az_login_task.yml@github_actions
     secrets: inherit
     with:
       gh_environment: ${{ inputs.gh_environment }}
-      working_directory: ${{ inputs.working_directory }}
-      backend_azure_rm_resource_group_name: ${{ inputs.backend_azure_rm_resource_group_name }}
-      backend_azure_rm_storage_account_name: ${{ inputs.backend_azure_rm_storage_account_name }}
-      backend_azure_rm_container_name: ${{ inputs.backend_azure_rm_container_name }}
-      backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
+
+    # uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_validate_task.yml@github_actions
+    # secrets: inherit
+    # with:
+    #   gh_environment: ${{ inputs.gh_environment }}
+    #   working_directory: ${{ inputs.working_directory }}
+    #   backend_azure_rm_resource_group_name: ${{ inputs.backend_azure_rm_resource_group_name }}
+    #   backend_azure_rm_storage_account_name: ${{ inputs.backend_azure_rm_storage_account_name }}
+    #   backend_azure_rm_container_name: ${{ inputs.backend_azure_rm_container_name }}
+    #   backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
 
 
-  # validate:
-  #   name: Validate Stage
-  #   runs-on: ubuntu-latest
-  #   environment: 'nonprod'
-  #   steps:
-  #     - name: Hello World Step
-  #       run: echo "Hello World! ${{ inputs.tf_version }}"
-      
-  #     - name: Debug Secrets Access
-  #       run: |
-  #         echo "Environment: ${{ inputs.gh_environment }}"
-  #         echo "AZURE_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}"
-  #         echo "AZURE_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}"
-  #         echo "AZURE_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-      
-  #     - name: Debug Backend Configs
-  #       run: |
-  #         echo "backend_azure_rm_resource_group_name=${{ inputs.backend_azure_rm_resource_group_name }}"
-  #         echo "backend_azure_rm_storage_account_name=${{ inputs.backend_azure_rm_storage_account_name }}"
-  #         echo "backend_azure_rm_container_name=${{ inputs.backend_azure_rm_container_name }}"
-  #         echo "backend_azure_rm_key=${{ inputs.backend_azure_rm_key }}"
-
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v3
-
-  #     - name: Azure login
-  #       uses: azure/login@v2
-  #       with:
-  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
-  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-  #     - name: Azure CLI script
-  #       uses: azure/cli@v2
-  #       with:
-  #         azcliversion: latest
-  #         inlineScript: |
-  #           az account show
-
-  #     - name: List Contents of Current Directory and Terraform Directory
-  #       run: |
-  #         echo "Listing contents of the current directory:"
-  #         find . || echo "No files found in the current directory."
-          
-  #         echo "Listing contents of the Terraform working directory:"
-  #         find ${{ inputs.working_directory }} || echo "No files found in the Terraform working directory."
-
-  #     - name: Install Terraform
-  #       uses: hashicorp/setup-terraform@v2
-  #       with:
-  #         terraform_version: ${{ inputs.tf_version }}
-
-  #     - name: Check Terraform Formatting
-  #       run: terraform fmt --check --diff -recursive
-  #       working-directory: ${{ inputs.working_directory }}
-
-  #     - name: Initialize Terraform
-  #       run: |
-  #         terraform init -input=false \
-  #         -backend-config="storage_account_name=${{ inputs.backend_configs.backend_azure_rm_storage_account_name }}" \
-  #         -backend-config="container_name=${{ inputs.backend_configs.backend_azure_rm_container_name }}" \
-  #         -backend-config="key=${{ inputs.backend_configs.backend_azure_rm_key }}" \
-  #         -backend-config="resource_group_name=${{ inputs.backend_configs.backend_azure_rm_resource_group_name }}"
-  #       working-directory: ${{ inputs.working_directory }}
-      
-  #     - name: Validate Terraform
-  #       run: terraform validate
-  #       working-directory: ${{ inputs.working_directory }}
-        
   # plan:
   #     name: Plan Stage
   #     runs-on: ubuntu-latest
