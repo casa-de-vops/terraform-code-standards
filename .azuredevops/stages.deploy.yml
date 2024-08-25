@@ -31,13 +31,13 @@ stages:
       - job: TerraformValidateJob
         displayName: 'Terraform Validate'
         ${{ if variables['environment.pool'] }}:
-          pool: '${{ variables['environment.pool'] }}'
-        ${{ if and(not(variables['environment.pool']), ne(variables['environment.agent_image'], '')) }}:
+          pool: ${{ variables['environment.pool'] }}
+        ${{ if and(or(not(variables['environment.pool']), eq(lower(variables['environment.pool']), 'default')), eq(variables['environment.vmImage'], '')) }}:
           pool:
-            vmImage: '${{ variables['environment.agent_image'] }}'
-        ${{ if and(not(variables['environment.pool']), not(variables['environment.agent_image'])) }}:
+            vmImage: $(default_agent_image)
+        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
           pool:
-            vmImage: '$(default_agent_image)'
+            vmImage: ${{ variables['environment.vmImage'] }}
         steps:
           - template: ./tasks/tf_install_task.yml
             parameters:
@@ -77,13 +77,13 @@ stages:
       - job: TerraformPlanJob
         displayName: 'Terraform Plan'
         ${{ if variables['environment.pool'] }}:
-          pool: '${{ variables['environment.pool'] }}'
-        ${{ if and(not(variables['environment.pool']), ne(variables['environment.agent_image'], '')) }}:
+          pool: ${{ variables['environment.pool'] }}
+        ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
           pool:
-            vmImage: '${{ variables['environment.agent_image'] }}'
-        ${{ if and(not(variables['environment.pool']), not(variables['environment.agent_image'])) }}:
+            vmImage: $(default_agent_image)
+        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
           pool:
-            vmImage: '$(default_agent_image)'
+            vmImage: ${{ variables['environment.vmImage'] }}
         steps:
           - template: ./tasks/tf_install_task.yml
             parameters:
@@ -128,13 +128,13 @@ stages:
       - job: TerraformInspectJob
         displayName: 'Terraform Security Scan'
         ${{ if variables['environment.pool'] }}:
-          pool: '${{ variables['environment.pool'] }}'
-        ${{ if and(not(variables['environment.pool']), ne(variables['environment.agent_image'], '')) }}:
+          pool: ${{ variables['environment.pool'] }}
+        ${{ if and(not(variables['environment.pool']), eq(variables['environment.vmImage'], '')) }}:
           pool:
-            vmImage: '${{ variables['environment.agent_image'] }}'
-        ${{ if and(not(variables['environment.pool']), not(variables['environment.agent_image'])) }}:
+            vmImage: $(default_agent_image)
+        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
           pool:
-            vmImage: '$(default_agent_image)'
+            vmImage: ${{ variables['environment.vmImage'] }}
         steps:
           - template: ./tasks/tf_sec.yml
             parameters:
@@ -165,13 +165,13 @@ stages:
         displayName: 'Terraform Apply'
         environment: '${{ parameters.workload }}-${{ environment.ado_environment }}'
         ${{ if variables['environment.pool'] }}:
-          pool: '${{ variables['environment.pool'] }}'
-        ${{ if and(not(variables['environment.pool']), ne(variables['environment.agent_image'], '')) }}:
+          pool: ${{ variables['environment.pool'] }}
+        ${{ if and(not(variables['environment.pool']), not(variables['environment.vmImage'])) }}:
           pool:
-            vmImage: '${{ variables['environment.agent_image'] }}'
-        ${{ if and(not(variables['environment.pool']), not(variables['environment.agent_image'])) }}:
+            vmImage: $(default_agent_image)
+        ${{ if and(not(variables['environment.pool']), ne(variables['environment.vmImage'], '')) }}:
           pool:
-            vmImage: '$(default_agent_image)'
+            vmImage: ${{ variables['environment.vmImage'] }}
         strategy:
           runOnce:
             deploy:

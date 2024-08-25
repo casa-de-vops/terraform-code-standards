@@ -32,7 +32,7 @@ stages:
       working_directory: terraform
       environments: 
       - stage: Dev_Global
-        agent_image: 'ubuntu-latest'
+        vmImage: 'ubuntu-latest'
         azure_service_connection: terraform
         tfvars_file: ../environments/dev.tfvars
         environment: dev
