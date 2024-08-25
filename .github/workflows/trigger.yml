@@ -35,7 +35,7 @@ on:
       var_file:
         description: 'Terraform variables file'
         required: false
-        default: '../environments/dev.tfvars'
+        default: 'environments/dev.tfvars'
         type: string
 env:
   backend_config: |
