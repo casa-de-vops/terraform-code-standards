@@ -30,37 +30,54 @@ on:
 
 jobs:
   validate:
-    name: Validate Terraform Configuration
+    name: Validate Stage
     runs-on: ubuntu-latest
-    needs: validate
-    uses: ./.github/workflows/tf_validate_task.yml
-    with:
-      tf_version: ${{ inputs.tf_version }}
+    steps:
+      - name: Hello World Step
+        run: echo "Hello World! ${{ inputs.tf_version }}"
+        
+  #     - name: Install Terraform
+  #       run: echo "Installing Terraform version ${{ inputs.tf_version }}..."
+  #       # Add your actual Terraform installation command here
 
-  # init:
-  #   name: Initialize Terraform
-  #   runs-on: ubuntu-latest
-  #   needs: install
-  #   uses: ./.github/workflows/tf_init_task.yml
-  #   with:
-  #     working_directory: ${{ inputs.working_directory }}
-  #     backend_configs: ${{ inputs.backend_configs }}
+  #     - name: Initialize Terraform
+  #       run: echo "Initializing Terraform in ${{ inputs.working_directory }}..."
+  #       # Add your actual Terraform init command here
+
+  #     - name: Validate Terraform
+  #       run: echo "Validating Terraform configuration..."
+  #       # Add your actual Terraform validate command here
 
   # plan:
-  #   name: Plan Terraform
+  #   name: Plan Stage
   #   runs-on: ubuntu-latest
-  #   needs: init
-  #   uses: ./.github/workflows/tf_plan_task.yml
-  #   with:
-  #     working_directory: ${{ inputs.working_directory }}
-  #     plan_file_name: ${{ inputs.plan_file_name }}
-  #     var_file: ${{ inputs.var_file }}
+  #   needs: validate
+  #   steps:
+  #     - name: Install Terraform
+  #       run: echo "Installing Terraform version ${{ inputs.tf_version }}..."
+  #       # Add your actual Terraform installation command here
+
+  #     - name: Initialize Terraform
+  #       run: echo "Initializing Terraform in ${{ inputs.working_directory }}..."
+  #       # Add your actual Terraform init command here
+
+  #     - name: Plan Terraform
+  #       run: echo "Planning Terraform..."
+  #       # Add your actual Terraform plan command here
 
   # apply:
-  #   name: Apply Terraform
+  #   name: Apply Stage
   #   runs-on: ubuntu-latest
   #   needs: plan
-  #   uses: ./.github/workflows/tf_apply_task.yml
-  #   with:
-  #     working_directory: ${{ inputs.working_directory }}
-  #     plan_file_name: ${{ inputs.plan_file_name }}
+  #   steps:
+  #     - name: Install Terraform
+  #       run: echo "Installing Terraform version ${{ inputs.tf_version }}..."
+  #       # Add your actual Terraform installation command here
+
+  #     - name: Initialize Terraform
+  #       run: echo "Initializing Terraform in ${{ inputs.working_directory }}..."
+  #       # Add your actual Terraform init command here
+
+  #     - name: Apply Terraform
+  #       run: echo "Applying Terraform..."
+  #       # Add your actual Terraform apply command here
