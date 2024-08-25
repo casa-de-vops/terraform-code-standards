@@ -49,13 +49,24 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Install yq
+        run: sudo apt-get install -y yq
+
+      - name: Load Variables from YAML
+        id: load_vars
+        run: |
+          # Iterate over each key-value pair in the YAML file and export them as environment variables
+          for var in $(yq e 'keys | .[]' versions/modules.${{ inputs.gh_environment }}.yml); do
+            value=$(yq e ".$var" versions/modules.${{ inputs.gh_environment }}.yml)
+            echo "Exporting $var with value $value"
+            echo "${var}=${value}" >> $GITHUB_ENV
+          done
+
       - uses: cschleiden/replace-tokens@v1
         with:
           tokenPrefix: '__'
           tokenSuffix: '__'
           files: '["**/*.tf"]'
-        # env:
-        #   CDN: https://somecdn.com/...
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
