@@ -37,8 +37,7 @@ on:
         required: false
         default: '../environments/dev.tfvars'
         type: string
-
-variables:
+env:
   backend_config: |
     {
       "backend_service_connection": "terraform",
