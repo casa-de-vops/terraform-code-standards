@@ -4,14 +4,21 @@ name: Terraform Validate
 on:
   workflow_call:
     inputs:
-      working_directory:
+      tf_version:
         required: true
         type: string
 
 jobs:
+#   validate:
+#     name: Terraform Validate
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Terraform Validate
+#         run: terraform validate -chdir=${{ inputs.working_directory }}
+
   validate:
-    name: Terraform Validate
+    name: Validate Stage
     runs-on: ubuntu-latest
     steps:
-      - name: Terraform Validate
-        run: terraform validate -chdir=${{ inputs.working_directory }}
+      - name: Hello World Step
+        run: echo "Hello World! ${{ inputs.tf_version }}"

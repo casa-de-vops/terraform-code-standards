@@ -30,19 +30,12 @@ on:
 
 jobs:
   validate:
-    name: Validate Stage
+    name: Validate Terraform Configuration
     runs-on: ubuntu-latest
-    steps:
-      - name: Hello World Step
-        run: echo "Hello World!"
-
-  # install:
-  #   name: Install Terraform
-  #   runs-on: ubuntu-latest
-  #   needs: validate
-  #   uses: ./.github/workflows/tf_install_task.yml
-  #   with:
-  #     tf_version: ${{ inputs.tf_version }}
+    needs: validate
+    uses: ./.github/workflows/tf_validate_task.yml
+    with:
+      tf_version: ${{ inputs.tf_version }}
 
   # init:
   #   name: Initialize Terraform
