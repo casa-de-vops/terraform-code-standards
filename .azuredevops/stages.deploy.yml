@@ -44,7 +44,7 @@ stages:
               tf_version: '${{ parameters.tf_version }}'
           - template: ./tasks/tf_replace_token.yml
             parameters:
-              sources: '$(System.DefaultWorkingDirectory)/${{ parameters.working_directory }}/**'
+              sources: '**/*.tf; **/${{ parameters.working_directory }}/** => out/*.json'
               missingVarAction: 'keep'
               logLevel: 'error'
           - template: ./tasks/tf_init_task.yml
