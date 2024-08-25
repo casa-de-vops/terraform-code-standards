@@ -29,7 +29,7 @@ stages:
   - template: .azuredevops/stages.deploy.yml@templates
     parameters:
       workload: terraform-pipeline
-      working_directory: terraform
+      working_directory: terraform/
       environments: 
       - stage: Dev_Global
         vmImage: 'ubuntu-latest'
