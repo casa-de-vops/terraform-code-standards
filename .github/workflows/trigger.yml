@@ -64,6 +64,5 @@ jobs:
       tf_version: ${{ github.event.inputs.tf_version }}
       working_directory: ${{ github.event.inputs.working_directory }}
       environment: ${{ github.event.inputs.environment }}
-      backend_configs: ${{ needs.setup.outputs.backend_config }}
       plan_file_name: ${{ github.event.inputs.plan_file_name }}
       var_file: ${{ github.event.inputs.var_file }}
