@@ -83,7 +83,7 @@ jobs:
 
 
   apply:
-    needs: plan
+    needs: plan, inspect
     if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/release/')
     uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_apply_task.yml@main
     secrets: inherit
