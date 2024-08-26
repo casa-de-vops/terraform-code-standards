@@ -22,22 +22,22 @@ jobs:
         run: |
           curl -sSL https://aka.ms/defender-install | bash
 
-      - name: Run Microsoft Defender for DevOps
-        run: |
-          defender-scan --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
-                        --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-                        --client-id ${{ secrets.AZURE_CLIENT_ID }} \
-                        --tenant-id ${{ secrets.AZURE_TENANT_ID }} \
-                        --client-secret ${{ secrets.AZURE_CLIENT_SECRET }} \
-                        --repository $GITHUB_REPOSITORY \
-                        --branch $GITHUB_REF_NAME
+      # - name: Run Microsoft Defender for DevOps
+      #   run: |
+      #     defender-scan --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
+      #                   --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+      #                   --client-id ${{ secrets.AZURE_CLIENT_ID }} \
+      #                   --tenant-id ${{ secrets.AZURE_TENANT_ID }} \
+      #                   --client-secret ${{ secrets.AZURE_CLIENT_SECRET }} \
+      #                   --repository $GITHUB_REPOSITORY \
+      #                   --branch $GITHUB_REF_NAME
 
-      - name: Upload Scan Results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: defender-scan-results
-          path: ./defender-scan-results/
+      # - name: Upload Scan Results
+      #   if: always()
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: defender-scan-results
+      #     path: ./defender-scan-results/
 
     # steps:
     #   - name: Checkout Code
