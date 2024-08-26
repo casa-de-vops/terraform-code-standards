@@ -1,28 +1,60 @@
-name: Release
+name: Tag and Release
 
 on:
   push:
     branches:
-      - 'release/*'
+      - main
+      - release/*
+  workflow_dispatch:
 
 jobs:
-  release:
-    name: Release
+  TagStage:
+    name: Bump Git Tag with Semverbot
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
+
     steps:
-      - name: Checkout code
+      - name: Checkout Source Repository
         uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          repository: ${{ github.repository }}
+          ref: ${{ github.ref }}
+          persist-credentials: true
 
-      - name: Install dependencies
-        run: npm install
+      - name: Set up Git
+        run: |
+          git config --global user.name 'semverbot'
+          git config --global user.email 'semverbot@github.com'
 
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+      - name: Bump Git Tag to Next Version
+        run: |
+          semverbot bump \
+            --working-directory "${{ github.workspace }}" \
+            --config-file "${{ github.workspace }}/template-repo/src/pipelines/shared/config/semverbot-config.toml" \
+            --branch "${{ github.ref_name }}" \
+            --git-user-email "semverbot@github.com" \
+            --git-user-name "semverbot"
+
+      - name: Add Current and Next Version Tags
+        run: |
+          echo "::set-output name=current_version::$(semverbot predict --current)"
+          echo "::set-output name=next_version::$(semverbot predict --next)"
+
+      - name: Push New Tag to Repository
+        run: |
+          git push origin --tags
+
+      - name: Add Tags as Build Metadata
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const currentVersion = '${{ steps.BumpGitTag.outputs.current_version }}';
+            const nextVersion = '${{ steps.BumpGitTag.outputs.next_version }}';
+
+            core.setOutput('current_version', currentVersion);
+            core.setOutput('next_version', nextVersion);
+            core.info(`Current version: ${currentVersion}`);
+            core.info(`Next version: ${nextVersion}`);
