@@ -7,6 +7,9 @@ on:
       - release/*
   workflow_dispatch:
 
+env:
+  SEMVERBOT_VERSION: "1.0.0"  # Replace with the desired version of semverbot
+
 jobs:
   TagStage:
     name: Bump Git Tag with Semverbot
@@ -36,38 +39,25 @@ jobs:
           echo "$(pwd)/bin" >> $GITHUB_PATH
           curl -o bin/sbot -L https://github.com/restechnica/semverbot/releases/download/v$SEMVERBOT_VERSION/sbot-linux-amd64
           chmod +x bin/sbot
-          
+
       - name: Set up Git
         run: |
           git config --global user.name 'semverbot'
           git config --global user.email 'semverbot@github.com'
 
-      - name: Bump Git Tag to Next Version
+      - name: Update Version Information
         run: |
-          semverbot bump \
-            --working-directory "${{ github.workspace }}" \
-            --config-file "${{ github.workspace }}/template-repo/src/pipelines/shared/config/semverbot-config.toml" \
-            --branch "${{ github.ref_name }}" \
-            --git-user-email "semverbot@github.com" \
-            --git-user-name "semverbot"
+          sbot update version
+          current_version="$(sbot get version)"
+          release_version="$(sbot predict version)"
+          
+          echo "CURRENT_VERSION=${current_version}" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=${release_version}" >> $GITHUB_ENV
+          
+          echo "current version: ${current_version}"
+          echo "next version: ${release_version}"
 
-      - name: Add Current and Next Version Tags
+      - name: Release and Push Version
         run: |
-          echo "::set-output name=current_version::$(semverbot predict --current)"
-          echo "::set-output name=next_version::$(semverbot predict --next)"
-
-      - name: Push New Tag to Repository
-        run: |
-          git push origin --tags
-
-      - name: Add Tags as Build Metadata
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const currentVersion = '${{ steps.BumpGitTag.outputs.current_version }}';
-            const nextVersion = '${{ steps.BumpGitTag.outputs.next_version }}';
-
-            core.setOutput('current_version', currentVersion);
-            core.setOutput('next_version', nextVersion);
-            core.info(`Current version: ${currentVersion}`);
-            core.info(`Next version: ${nextVersion}`);
+          sbot release version
+          sbot push version
