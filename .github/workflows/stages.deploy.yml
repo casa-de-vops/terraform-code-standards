@@ -78,7 +78,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print GitHub Ref
-        run: echo "GITHUB REF: ${{ github.ref }}"
+        run: |
+          echo "GITHUB REF: ${{ github.ref }}"
+
 
   apply:
     needs: plan
