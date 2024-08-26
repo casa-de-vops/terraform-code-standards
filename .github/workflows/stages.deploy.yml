@@ -73,7 +73,15 @@ jobs:
       backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
       plan_file_name: ${{ inputs.plan_file_name }}
       var_file: ${{ inputs.var_file }}
-  
+
+  inspect:
+    needs: plan
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_inspect_task.yml@main
+    secrets: inherit
+    with:
+      gh_environment: ${{ inputs.gh_environment }}
+
+
   apply:
     needs: plan
     if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/release/')
