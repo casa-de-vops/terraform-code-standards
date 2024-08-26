@@ -4,6 +4,7 @@ name: Trigger Terraform Orchestration
 on:
   push:
     branches:
+      - main
       - github_actions
   workflow_dispatch:
 
