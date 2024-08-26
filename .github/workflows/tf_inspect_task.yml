@@ -14,18 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.gh_environment }}
     
-    steps:
+     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Microsoft Defender for DevOps
+      - name: Install Microsoft Defender for DevOps CLI
         run: |
-          echo "Setting up Microsoft Defender for DevOps..."
+          curl -sSL https://aka.ms/defender-install | bash
 
       - name: Run Microsoft Defender for DevOps
         run: |
-          # Replace with the actual command or script to run Microsoft Defender for DevOps
-          # Example: defender-scan or a script provided by Microsoft
           defender-scan --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
                         --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
                         --client-id ${{ secrets.AZURE_CLIENT_ID }} \
@@ -40,4 +38,31 @@ jobs:
         with:
           name: defender-scan-results
           path: ./defender-scan-results/
+
+    # steps:
+    #   - name: Checkout Code
+    #     uses: actions/checkout@v3
+
+    #   - name: Set up Microsoft Defender for DevOps
+    #     run: |
+    #       echo "Setting up Microsoft Defender for DevOps..."
+
+    #   - name: Run Microsoft Defender for DevOps
+    #     run: |
+    #       # Replace with the actual command or script to run Microsoft Defender for DevOps
+    #       # Example: defender-scan or a script provided by Microsoft
+    #       defender-scan --subscription-id ${{ secrets.AZURE_SUBSCRIPTION_ID }} \
+    #                     --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+    #                     --client-id ${{ secrets.AZURE_CLIENT_ID }} \
+    #                     --tenant-id ${{ secrets.AZURE_TENANT_ID }} \
+    #                     --client-secret ${{ secrets.AZURE_CLIENT_SECRET }} \
+    #                     --repository $GITHUB_REPOSITORY \
+    #                     --branch $GITHUB_REF_NAME
+
+    #   - name: Upload Scan Results
+    #     if: always()
+    #     uses: actions/upload-artifact@v3
+    #     with:
+    #       name: defender-scan-results
+    #       path: ./defender-scan-results/
 
