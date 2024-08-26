@@ -46,12 +46,11 @@
     └── pipeline.development.yaml
     └── pipeline.staging.yaml
     └── pipeline.production.yaml
-
-```
+  ```
 
 ## Directory Breakdown
 
-- **workflows/**: 
+- **workflows/**:
   - Contains reusable pipeline configuration files that can be run by environments for CI/CD workflows, typically in `.yml` format.
   - The `workflows` folder **should** be renamed according to the requirements or best practices of the CI/CD tool being used. For example, it can be named `.github/workflows` for GitHub Actions or `.azuredevops` for Azure DevOps.
   - This folder is only needed if the workflow yml templates in this project are local. If using remote workflows, like shown in the [example](../.azuredevops/tests/pipeline.yaml) workflow, the `workflow` folder may not be necessary.

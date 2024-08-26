@@ -18,17 +18,9 @@ jobs:
     name: Bump Git Tag with Semverbot
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ${{ github.workspace }}
-
     steps:
       - name: Checkout Source Repository
         uses: actions/checkout@v3
-        with:
-          repository: ${{ github.repository }}
-          ref: ${{ github.ref }}
-          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v3
