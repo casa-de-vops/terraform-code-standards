@@ -11,12 +11,18 @@ on:
 jobs:
   inspect:
     name: Inspect Code
-    runs-on: windows-latest
+    runs-on: linux-latest
     environment: ${{ inputs.gh_environment }}
     steps:
 
       # Checkout your code repository to scan
     - uses: actions/checkout@v3
+
+      # Run tfsec to scan Terraform files
+    - name: tfsec
+      uses: aquasecurity/tfsec-action@v1.0.0
+      with:
+        soft_fail: true
 
       # Run analyzers
     - name: Run Microsoft Security DevOps
