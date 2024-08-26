@@ -134,8 +134,8 @@ The workflow can be customized using the following inputs:
 - **Job:**
   - Runs security tools to scan the Terraform configuration for vulnerabilities.
 - **Steps:**
-  1. Run `tfsec` for static analysis security scanning.
-  2. Optionally run Microsoft Defender for Cloud checks.
+  1. Run [`tfsec`](https://github.com/aquasecurity/tfsec-action?tab=readme-ov-file) for static analysis security scanning.
+  2. Run [`Microsoft Defender for Cloud`](https://learn.microsoft.com/en-us/azure/defender-for-cloud/github-action) checks.
 
 ### 4. **Apply**
 - **Purpose:** Applies the Terraform plan to the specified environment.
