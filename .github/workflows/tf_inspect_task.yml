@@ -20,9 +20,9 @@ jobs:
 
       # Run tfsec to scan Terraform files
     - name: tfsec
-        uses: aquasecurity/tfsec-action@v1.0.0
-        with:
-          soft_fail: true
+      uses: aquasecurity/tfsec-action@v1.0.0
+      with:
+        soft_fail: true
 
       # Run analyzers
     - name: Run Microsoft Security DevOps
