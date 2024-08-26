@@ -24,6 +24,8 @@ This project aims to establish a comprehensive set of Terraform coding standards
   - [Version Control](./docs/version_control.md)
   - [Documentation](./docs/documentation.md)
   - [Testing and Validation](./docs/testing_and_validation.md)
+- [Azure Github Actions Workflows](#azure-github-actions-workflows)
+  - [Workflow Overview](./.github/workflows/README.md)
 - [Azure DevOps Workflows](#azure-devops-workflows)
   - [Workflow Overview](./.azuredevops/README.md)
   - [Terraform CI/CD Workflow](./.azuredevops/docs/DEPLOY.md)

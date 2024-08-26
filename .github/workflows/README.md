@@ -1,9 +1,7 @@
 ## Table of Contents
 
 - [Overview](../../README.md)
-- [Workflow Overview](../README.md)
-  - [Terraform CI/CD Workflow](./DEPLOY.md)
-  - [Terraform Force-Unlock Workflow](./UNLOCK.md)
+- [Azure Github Actions Workflows](../../README.md#azure-github-actions-workflows)
 
 ## Terraform CI/CD Orchestration
 
