@@ -35,7 +35,7 @@ on:
 
 jobs:
   plan:
-    name: Create Terraform Plan
+    name: Terraform Plan
     runs-on: ubuntu-latest
     environment: ${{ inputs.gh_environment }}
     steps:

@@ -1,0 +1,43 @@
+# .github/workflows/security_inspection.yml
+name: Security Inspection with Microsoft Defender
+
+on:
+  workflow_call:
+    inputs:
+      gh_environment:
+        required: true
+        type: string
+
+jobs:
+  inspect:
+    name: Inspect Code
+    runs-on: windows-latest
+    environment: ${{ inputs.gh_environment }}
+    steps:
+
+      # Checkout your code repository to scan
+    - uses: actions/checkout@v3
+
+      # Run analyzers
+    - name: Run Microsoft Security DevOps
+      uses: microsoft/security-devops-action@latest
+      id: msdo
+      with:
+        # config: string. Optional. A file path to an MSDO configuration file ('*.gdnconfig').
+        # policy: 'GitHub' | 'microsoft' | 'none'. Optional. The name of a well-known Microsoft policy. If no configuration file or list of tools is provided, the policy may instruct MSDO which tools to run. Default: GitHub.
+        # categories: string. Optional. A comma-separated list of analyzer categories to run. Values: 'code', 'artifacts', 'IaC', 'containers'. Example: 'IaC, containers'. Defaults to all.
+        # languages: string. Optional. A comma-separated list of languages to analyze. Example: 'javascript,typescript'. Defaults to all.
+        tools: 'iacfilescanner, trivy, terrascan' #Optional. A comma-separated list of analyzer tools to run. Values: 'bandit', 'binskim', 'checkov', 'eslint', 'templateanalyzer', 'terrascan', 'trivy'.
+
+      # Upload alerts to the Security tab - required for MSDO results to appear in the codeQL security alerts tab on GitHub (Requires GHAS)
+    - name: Upload alerts to Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ steps.msdo.outputs.sarifFile }}
+
+      # Upload alerts file as a workflow artifact - required for MSDO results to appear in the codeQL security alerts tab on GitHub (Requires GHAS)
+    - name: Upload alerts file as a workflow artifact
+      uses: actions/upload-artifact@v3
+      with:  
+        name: alerts
+        path: ${{ steps.msdo.outputs.sarifFile }}
