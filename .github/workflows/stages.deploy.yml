@@ -76,7 +76,7 @@ jobs:
 
   inspect:
     needs: plan
-    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_inspect_task.yml@github_actions
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_inspect_task.yml@main
     secrets: inherit
     with:
       gh_environment: ${{ inputs.gh_environment }}
