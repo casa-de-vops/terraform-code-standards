@@ -19,7 +19,8 @@ permissions:
 jobs:
   terraform:
     name: Terraform CI/CD Orchestration
-    uses: casa-de-vops/terraform-code-standards/.github/workflows/stages.deploy.yml@github_actions
+    # uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_orchestration.yml@main
+    uses: ./.github/workflows/tf_orchestration.yml
     secrets: inherit
     with:
       tf_version: 'latest'
