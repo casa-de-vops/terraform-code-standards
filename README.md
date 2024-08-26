@@ -55,6 +55,20 @@ The **Coding Standards** section provides comprehensive guidelines to ensure con
 
 [^ table of contents ^](#table-of-contents)
 
+## Azure GitHub Actions Workflows
+
+The **GitHub Actions Workflows** section provides a set of reusable and scalable templates designed to automate the Terraform workflow across multiple environments in Azure. This includes validation, planning, security scanning, and applying Terraform configurations. The workflows are parameterized to support different environments and workloads, streamlining infrastructure management and improving deployment efficiency.
+
+1. **[Deployment Workflow](./.github/workflows/README.md)**
+   - **Purpose:** Automates the validation, planning, inspection (security scanning), and application of Terraform configurations.
+   - **Features:**
+     - Validates Terraform configurations.
+     - Generates Terraform execution plans.
+     - Scans configurations for security vulnerabilities.
+     - Applies Terraform configurations to manage infrastructure across various environments.
+
+[^ table of contents ^](#table-of-contents)
+
 ## Azure DevOps Workflows
 
 The Azure DevOps Workflows section offers a set of reusable and scalable templates designed to automate the Terraform workflow across multiple environments in Azure. This includes validation, planning, security scanning, and applying Terraform configurations. The pipelines are parameterized to accommodate different environments and workloads, streamlining infrastructure management and enhancing deployment efficiency.
