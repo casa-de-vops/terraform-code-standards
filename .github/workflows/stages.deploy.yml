@@ -74,14 +74,6 @@ jobs:
       plan_file_name: ${{ inputs.plan_file_name }}
       var_file: ${{ inputs.var_file }}
   
-  debug:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Print GitHub Ref
-        run: |
-          echo "GITHUB REF: ${{ github.ref }}"
-
-
   apply:
     needs: plan
     if: startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/release/')
