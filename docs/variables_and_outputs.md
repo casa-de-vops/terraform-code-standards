@@ -18,7 +18,7 @@
 - **Document each variable** using the `description` field to provide context and usage guidelines. This is particularly important in reusable modules where the end user might not be familiar with the internal details of the module. Clear documentation helps users understand the purpose of each variable and how it should be used, reducing the likelihood of misconfiguration. Use tools like tfdocs to automatically generate documentation for your modules and implement automation to update documentation during the Pull Request process.
 
   ```hcl
-  variable "vnet_name" {
+  variable "name" {
     description = "The name of the Virtual Network"
     type        = string
     default     = "my-vnet"
