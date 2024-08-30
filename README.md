@@ -58,6 +58,7 @@ The **Coding Standards** section provides comprehensive guidelines to ensure con
 [^ table of contents ^](#table-of-contents)
 
 ## Azure GitHub Actions Workflows
+[![Trigger Terraform Orchestration](https://github.com/casa-de-vops/terraform-code-standards/actions/workflows/trigger.yml/badge.svg)](https://github.com/casa-de-vops/terraform-code-standards/actions/workflows/trigger.yml)
 
 The **GitHub Actions Workflows** section provides a set of reusable and scalable templates designed to automate the Terraform workflow across multiple environments in Azure. This includes validation, planning, security scanning, and applying Terraform configurations. The workflows are parameterized to support different environments and workloads, streamlining infrastructure management and improving deployment efficiency.
 
@@ -72,6 +73,7 @@ The **GitHub Actions Workflows** section provides a set of reusable and scalable
 [^ table of contents ^](#table-of-contents)
 
 ## Azure DevOps Workflows
+[![Build Status](https://dev.azure.com/casa-de-vops/Casa%20de%20Terraform/_apis/build/status%2Fterraform-code-standards?repoName=terraform-code-standards&branchName=main)](https://dev.azure.com/casa-de-vops/Casa%20de%20Terraform/_build/latest?definitionId=527&repoName=terraform-code-standards&branchName=main)
 
 The Azure DevOps Workflows section offers a set of reusable and scalable templates designed to automate the Terraform workflow across multiple environments in Azure. This includes validation, planning, security scanning, and applying Terraform configurations. The pipelines are parameterized to accommodate different environments and workloads, streamlining infrastructure management and enhancing deployment efficiency.
 
