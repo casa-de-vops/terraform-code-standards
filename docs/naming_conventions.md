@@ -17,6 +17,9 @@
 
 - **Standardize Naming with Terraform Modules:**
   - Utilize naming modules like the [Cloud Posse Null Label Module](https://github.com/cloudposse/terraform-null-label) and the [Azure CAF Naming Module](https://registry.terraform.io/providers/aztfmod/azurecaf/latest/docs/resources/azurecaf_name) to enforce consistent naming conventions across all resources. These modules simplify the process of generating descriptive, standardized names by consolidating naming logic into reusable components that adhere to best practices.
+  - Standardize [Azure Region](https://github.com/casa-de-vops/terraform-null-label/blob/main/codes.regions.tf) names and region codes. 
+  - Standardize [Azure Resource](https://github.com/casa-de-vops/terraform-null-label/blob/main/codes.resources.tf) naming and label codes.
+  - Standardize [Azure Environment](https://github.com/casa-de-vops/terraform-null-label/blob/main/codes.environment.tf) names and codes.
   - **Key Features:**
     - **Consistency Across Environments:** Ensure that resource names are standardized across different environments and services, following a consistent format.
     - **Automated Naming Logic:** Automatically generate resource names based on predefined rules, reducing the chance of human error and enhancing the maintainability of your infrastructure.
