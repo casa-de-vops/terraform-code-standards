@@ -40,7 +40,7 @@ jobs:
         run: ls -la ${{ github.workspace}}
 
       - name: List Terraform Directory Contents
-        run: ls -la ${{ github.workspace}}/terraform/      
+        run: ls -la ${{ github.workspace}}/${{ inputs.working_directory }}/      
         
       - name: Check Terraform Formatting
         run: terraform fmt --check --diff -recursive
