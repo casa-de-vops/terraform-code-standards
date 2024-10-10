@@ -5,8 +5,9 @@ on:
   workflow_call:
     inputs:
       gh_environment:
-        required: true
+        required: false
         type: string
+        default: null
       tf_version:
         required: false
         type: string
@@ -41,10 +42,6 @@ jobs:
 
       - name: List Terraform Directory Contents
         run: ls -la ${{ github.workspace}}/${{ inputs.working_directory }}/      
-        
-      - name: Check Terraform Formatting
-        run: terraform fmt --check --diff -recursive
-        working-directory: ${{ inputs.working_directory }}
       
       - name: Azure login
         uses: azure/login@v2
@@ -57,6 +54,10 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ inputs.tf_version }}
+
+      - name: Check Terraform Formatting
+        run: terraform fmt --check --diff -recursive
+        working-directory: ${{ inputs.working_directory }}
 
       - name: Set Azure Environment Variables
         run: |
