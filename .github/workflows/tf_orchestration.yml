@@ -19,8 +19,9 @@ on:
         type: string
       gh_environment:
         description: 'GitHub environment'
-        required: true
+        required: false
         type: string
+        default: null
       backend_azure_rm_resource_group_name:
         description: 'Azure Resource Group Name'
         required: true
