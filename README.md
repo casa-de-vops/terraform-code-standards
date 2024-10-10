@@ -14,7 +14,7 @@ This project aims to establish a comprehensive set of Terraform coding standards
 - [Why Coding Standards?](#why-coding-standards)
 - [Scope](#scope)
 - [Getting Started](#getting-started)
-- [Coding Standards]($coding-standards)
+- [Coding Standards](#coding-standards)
   - [Directory Structure](./docs/directory_structure.md)
   - [Domain Specific Files](./docs/domain_specific_files.md)
   - [Naming Conventions](./docs/naming_conventions.md#naming-conventions)
