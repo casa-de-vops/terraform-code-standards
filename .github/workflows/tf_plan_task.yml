@@ -33,6 +33,10 @@ on:
       var_file:
         required: false
         type: string
+      command_option_args:
+        required: false
+        type: string
+        default: ''
 
 jobs:
   plan:
@@ -87,7 +91,12 @@ jobs:
         working-directory: ${{ inputs.working_directory }}
       
       - name: Terraform Plan
-        run: terraform plan -out=${{ inputs.plan_file_name }} -var-file=${{ inputs.var_file }}
+        run: |
+          if [ -n "${{ inputs.var_file }}" ]; then
+            terraform plan -out=${{ inputs.plan_file_name }} -var-file=${{ inputs.var_file }} ${{ inputs.command_option_args }}
+          else
+            terraform plan -out=${{ inputs.plan_file_name }} ${{ inputs.command_option_args }}
+          fi
         working-directory: ${{ inputs.working_directory }}
 
       - name: Upload Terraform plan
