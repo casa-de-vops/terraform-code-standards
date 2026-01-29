@@ -1,0 +1,92 @@
+# .github/workflows/azure/plan/action.yml
+name: Terraform Plan
+description: Create Terraform plan
+
+inputs:
+  gh_environment:
+    required: false
+    description: "GitHub environment (for version variables)"
+    default: ""
+  working_directory:
+    required: true
+    description: "Working directory for Terraform"
+  plan_file_name:
+    required: true
+    description: "Terraform plan file name"
+  var_file:
+    required: false
+    description: "Terraform variables file"
+    default: ""
+  command_option_args:
+    required: false
+    description: "Additional Terraform command options"
+    default: ""
+  location:
+    required: false
+    description: "Location identifier for unique artifact naming"
+    default: ""
+
+outputs:
+  outcome:
+    description: "Outcome of the terraform plan step"
+    value: ${{ steps.plan.outcome }}
+  has_changes:
+    description: "Whether the plan has changes"
+    value: ${{ steps.check_changes.outputs.has_changes }}
+
+runs:
+  using: composite
+  steps:
+    - name: Load Variables from YAML
+      id: load_vars
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.gh_environment }}" ] && [ -f "versions/modules.${{ inputs.gh_environment }}.yml" ]; then
+          # Parse YAML file and export variables
+          awk -F ": " '/:/{gsub(/ /, "", $1); gsub(/"/, "", $2); print $1"="$2}' versions/modules.${{ inputs.gh_environment }}.yml | while read var; do
+            echo "Exporting $var"
+            echo "$var" >> $GITHUB_ENV
+          done
+        fi
+
+    # - name: Replace Tokens
+    #   if: inputs.gh_environment != ''
+    #   uses: cschleiden/replace-tokens@v1
+    #   with:
+    #     tokenPrefix: '__'
+    #     tokenSuffix: '__'
+    #     files: '["**/*.tf"]'
+
+    - name: Terraform Plan
+      id: plan
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.var_file }}" ]; then
+          terraform plan -out=${{ inputs.plan_file_name }} -var-file=${{ inputs.var_file }} ${{ inputs.command_option_args }}
+        else
+          terraform plan -out=${{ inputs.plan_file_name }} ${{ inputs.command_option_args }}
+        fi
+      working-directory: ${{ inputs.working_directory }}
+
+    - name: Check for changes
+      id: check_changes
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        if [ -f "${{ inputs.plan_file_name }}" ]; then
+          PLAN_OUTPUT=$(terraform show -no-color ${{ inputs.plan_file_name }})
+          if echo "$PLAN_OUTPUT" | grep -q "No changes"; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+        else
+          echo "has_changes=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Upload Terraform plan
+      if: steps.plan.outcome == 'success'
+      uses: actions/upload-artifact@v4
+      with:
+        name: terraform-plan${{ inputs.location != '' && format('-{0}', inputs.location) || '' }}
+        path: ${{ inputs.working_directory }}/${{ inputs.plan_file_name }}

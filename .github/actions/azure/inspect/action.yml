@@ -1,0 +1,292 @@
+# .github/workflows/azure/inspect/action.yml
+name: Security Inspection with Microsoft Defender
+description: Inspect Terraform code for security issues
+
+inputs:
+  location:
+    description: 'Location identifier for unique artifact naming'
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    # Run analyzers
+    - name: Run Microsoft Security DevOps
+      uses: microsoft/security-devops-action@latest
+      id: msdo
+      env:
+        # Optional. A comma-separated list of analyzer tools to run.
+        # Values: 'bandit', 'binskim', 'checkov', 'eslint', 'templateanalyzer', 'terrascan', 'trivy'.
+        MSDO_TOOLS: "checkov, trivy, terrascan"
+      with:
+        # config: string. Optional. A file path to an MSDO configuration file ('*.gdnconfig').
+        # policy: 'GitHub' | 'microsoft' | 'none'. Optional. The name of a well-known Microsoft policy. If no configuration file or list of tools is provided, the policy may instruct MSDO which tools to run. Default: GitHub.
+        # categories: string. Optional. A comma-separated list of analyzer categories to run. Values: 'code', 'artifacts', 'IaC', 'containers'. Example: 'IaC, containers'. Defaults to all.
+        # languages: string. Optional. A comma-separated list of languages to analyze. Example: 'javascript,typescript'. Defaults to all.
+        tools: ${{ env.MSDO_TOOLS }}
+
+    # Upload alerts to the Security tab - required for MSDO results to appear in the codeQL security alerts tab on GitHub (Requires GHAS)
+    - name: Upload alerts to Security tab
+      uses: github/codeql-action/upload-sarif@v4
+      with:
+        sarif_file: ${{ steps.msdo.outputs.sarifFile }}
+
+    # Upload alerts file as a workflow artifact - required for MSDO results to appear in the codeQL security alerts tab on GitHub (Requires GHAS)
+    - name: Upload alerts file as a workflow artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: alerts${{ inputs.location != '' && format('-{0}', inputs.location) || '' }}
+        path: ${{ steps.msdo.outputs.sarifFile }}
+
+    # Parse SARIF and write security summary
+    - name: Write Security Summary
+      if: always()
+      shell: python
+      env:
+        MSDO_SARIF_FILE: ${{ steps.msdo.outputs.sarifFile }}
+        TFSEC_SARIF_FILE: results.sarif
+        MSDO_TOOLS: ${{ env.MSDO_TOOLS }}
+      run: |
+        import json
+        import os
+        import glob
+        from collections import defaultdict
+
+        def write_summary(content):
+            summary_file = os.environ.get('GITHUB_STEP_SUMMARY')
+            if summary_file:
+                with open(summary_file, 'a', encoding='utf-8') as f:
+                    f.write(content + '\n')
+
+        def get_severity(result):
+            """Determine severity from SARIF result, handling multiple formats."""
+            # Check properties.severity first (most specific)
+            if 'properties' in result and 'severity' in result['properties']:
+                sev = result['properties']['severity'].lower()
+                if sev in ['critical', 'error']:
+                    return 'critical'
+                elif sev in ['high', 'warning']:
+                    return 'high'
+                elif sev == 'medium':
+                    return 'medium'
+                elif sev == 'low':
+                    return 'low'
+                elif sev in ['info', 'informational', 'note']:
+                    return 'info'
+            
+            # Fall back to level (SARIF standard)
+            level = result.get('level', 'warning').lower()
+            if level == 'error':
+                return 'critical'
+            elif level == 'warning':
+                return 'high'
+            elif level == 'note':
+                return 'info'
+            
+            # Default to high for warnings without specific severity
+            return 'high'
+
+        def format_finding(result, run, index):
+            """Format a single finding with all details."""
+            rule_id = result.get('ruleId', 'Unknown Rule')
+            message = result.get('message', {}).get('text', 'No description available')
+            severity = get_severity(result)
+            
+            # Severity emoji and label
+            severity_map = {
+                'critical': ('🔴', 'Critical'),
+                'high': ('🟠', 'High'),
+                'medium': ('🟡', 'Medium'),
+                'low': ('🟢', 'Low'),
+                'info': ('ℹ️', 'Info')
+            }
+            emoji, label = severity_map.get(severity, ('⚪', 'Unknown'))
+            
+            # Location info
+            location = result.get('locations', [{}])[0]
+            physical_loc = location.get('physicalLocation', {})
+            artifact_loc = physical_loc.get('artifactLocation', {})
+            region = physical_loc.get('region', {})
+            
+            file_path = artifact_loc.get('uri', 'Unknown')
+            start_line = region.get('startLine', 0)
+            end_line = region.get('endLine', start_line)
+            snippet = region.get('snippet', {}).get('text', '')
+            
+            # Build output
+            output = f"#### {rule_id}\n\n"
+            output += f"> **Severity:** {label} {emoji}\n\n"
+            output += f"**Description:** {message}\n\n"
+            output += "**Location:**\n"
+            output += f"- **File:** `{file_path}`\n"
+            if start_line > 0:
+                if end_line > start_line:
+                    output += f"- **Lines:** {start_line} - {end_line}\n\n"
+                else:
+                    output += f"- **Line:** {start_line}\n\n"
+            else:
+                output += "\n"
+            
+            # Code snippet if available
+            if snippet:
+                output += "**Code Snippet:**\n```terraform\n"
+                output += snippet + "\n```\n\n"
+            
+            # Remediation
+            help_text = result.get('properties', {}).get('help') or result.get('help', {})
+            if isinstance(help_text, dict):
+                help_text = help_text.get('text', '')
+            if help_text:
+                output += f"**How to Fix:**\n{help_text}\n\n"
+            
+            # Tags
+            tags = result.get('properties', {}).get('tags', [])
+            if tags:
+                output += f"**Tags:** {', '.join(tags)}\n\n"
+            
+            # Tool name
+            tool_name = run.get('tool', {}).get('driver', {}).get('name', 'Unknown')
+            output += f"**Tool:** {tool_name}\n\n"
+            output += "---\n\n"
+            
+            return output
+
+        # Main execution
+        msdo_sarif_file = os.getenv('MSDO_SARIF_FILE', '')
+        tfsec_sarif_file = os.getenv('TFSEC_SARIF_FILE', 'results.sarif')
+        configured_tools = os.getenv('MSDO_TOOLS', '')
+
+        write_summary("## 🛡️ Security Inspection Results\n")
+
+        # Collect all SARIF files to process
+        sarif_files = []
+
+        # Add MSDO SARIF if it exists
+        if msdo_sarif_file and os.path.exists(msdo_sarif_file):
+            sarif_files.append(msdo_sarif_file)
+            print(f"Found MSDO SARIF file: {msdo_sarif_file}")
+
+        # Add tfsec SARIF if it exists
+        if os.path.exists(tfsec_sarif_file):
+            sarif_files.append(tfsec_sarif_file)
+            print(f"Found tfsec SARIF file: {tfsec_sarif_file}")
+
+        # Also check for any other SARIF files in the workspace
+        for sarif_file in glob.glob('*.sarif'):
+            if sarif_file not in sarif_files:
+                sarif_files.append(sarif_file)
+                print(f"Found additional SARIF file: {sarif_file}")
+
+        if not sarif_files:
+            write_summary("⚠️ Security scan completed but no results files found.\n")
+            write_summary("\n---\n")
+            if configured_tools:
+                write_summary(f"**Configured scan tools:** {configured_tools}\n")
+            write_summary("\n---\n")
+            exit(0)
+
+        # Collect and categorize all findings from all SARIF files
+        findings_by_severity = defaultdict(list)
+        all_findings = []
+        tools_used = set()
+
+        for sarif_file in sarif_files:
+            print(f"Processing SARIF file: {sarif_file}")
+            try:
+                with open(sarif_file, 'r', encoding='utf-8') as f:
+                    sarif_data = json.load(f)
+            except Exception as e:
+                print(f"⚠️ Error reading SARIF file {sarif_file}: {e}")
+                continue
+            
+            for run in sarif_data.get('runs', []):
+                tool_name = run.get('tool', {}).get('driver', {}).get('name', 'Unknown')
+                tools_used.add(tool_name)
+                
+                for idx, result in enumerate(run.get('results', [])):
+                    severity = get_severity(result)
+                    finding_data = {
+                        'result': result,
+                        'run': run,
+                        'index': idx,
+                        'severity': severity
+                    }
+                    findings_by_severity[severity].append(finding_data)
+                    all_findings.append(finding_data)
+
+        # Count by severity
+        counts = {
+            'critical': len(findings_by_severity['critical']),
+            'high': len(findings_by_severity['high']),
+            'medium': len(findings_by_severity['medium']),
+            'low': len(findings_by_severity['low']),
+            'info': len(findings_by_severity['info'])
+        }
+        total = len(all_findings)
+
+        # Write summary table
+        write_summary("### Summary\n")
+        write_summary("| Severity | Count |")
+        write_summary("|----------|-------|")
+        write_summary(f"| 🔴 Critical | {counts['critical']} |")
+        write_summary(f"| 🟠 High | {counts['high']} |")
+        write_summary(f"| 🟡 Medium | {counts['medium']} |")
+        write_summary(f"| 🟢 Low | {counts['low']} |")
+        write_summary(f"| ℹ️ Info | {counts['info']} |")
+        write_summary(f"| **Total** | **{total}** |")
+        write_summary("")
+
+        if total == 0:
+            write_summary("✅ **No security issues detected!** Your infrastructure code passed all security checks.\n")
+        else:
+            # Collapsible details section
+            write_summary(f"<details>")
+            write_summary(f"<summary><strong>📋 View Detailed Findings ({total} total issues)</strong></summary>")
+            write_summary("")
+            
+            # Critical findings
+            if counts['critical'] > 0:
+                write_summary("### 🔴 Critical Severity Issues\n")
+                for finding in findings_by_severity['critical']:
+                    output = format_finding(finding['result'], finding['run'], finding['index'])
+                    write_summary(output)
+            
+            # High findings
+            if counts['high'] > 0:
+                write_summary("### 🟠 High Severity Issues\n")
+                for finding in findings_by_severity['high']:
+                    output = format_finding(finding['result'], finding['run'], finding['index'])
+                    write_summary(output)
+            
+            # Medium findings
+            if counts['medium'] > 0:
+                write_summary("### 🟡 Medium Severity Issues\n")
+                for finding in findings_by_severity['medium']:
+                    output = format_finding(finding['result'], finding['run'], finding['index'])
+                    write_summary(output)
+            
+            # Low findings
+            if counts['low'] > 0:
+                write_summary("### 🟢 Low Severity Issues\n")
+                for finding in findings_by_severity['low']:
+                    output = format_finding(finding['result'], finding['run'], finding['index'])
+                    write_summary(output)
+            
+            # Info findings
+            if counts['info'] > 0:
+                write_summary("### ℹ️ Informational Issues\n")
+                for finding in findings_by_severity['info']:
+                    output = format_finding(finding['result'], finding['run'], finding['index'])
+                    write_summary(output)
+            
+            write_summary("</details>")
+            write_summary("")
+        write_summary("---\n")
+        # Show which tools actually produced results
+        if tools_used:
+            tools_list = ', '.join(sorted(tools_used))
+            write_summary(f"**Tools that reported findings:** {tools_list}\n")
+        if configured_tools:
+            write_summary(f"**Configured scan tools:** {configured_tools}\n")
+        write_summary("\n---\n")

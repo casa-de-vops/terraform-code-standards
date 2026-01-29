@@ -1,0 +1,57 @@
+# .github/workflows/azure/validate/action.yml
+name: Terraform Validate
+description: Validate Terraform configuration (format check and validate)
+
+inputs:
+  working_directory:
+    required: true
+    description: "Working directory for Terraform"
+
+runs:
+  using: composite
+  steps:
+    - name: Check Terraform Formatting
+      id: fmt
+      shell: bash
+      continue-on-error: true
+      run: terraform fmt --check --diff -recursive
+      working-directory: ${{ inputs.working_directory }}
+
+    - name: Validate Terraform
+      id: validate
+      shell: bash
+      continue-on-error: true
+      run: terraform validate -no-color
+      working-directory: ${{ inputs.working_directory }}
+
+    - name: Write Validation Summary
+      if: always()
+      shell: bash
+      run: |
+        echo "## Terraform Validation" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Format check result
+        if [ "${{ steps.fmt.outcome }}" == "success" ]; then
+          echo "✅ **Format Check:** Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Format Check:** Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Run \`terraform fmt -recursive\` to fix formatting issues." >> $GITHUB_STEP_SUMMARY
+        fi
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Validate result
+        if [ "${{ steps.validate.outcome }}" == "success" ]; then
+          echo "✅ **Terraform Validate:** Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Terraform Validate:** Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+    - name: Fail if validation failed
+      if: steps.fmt.outcome != 'success' || steps.validate.outcome != 'success'
+      shell: bash
+      run: exit 1

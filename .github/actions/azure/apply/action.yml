@@ -1,0 +1,29 @@
+# .github/workflows/azure/apply/action.yml
+name: Terraform Apply
+description: Apply Terraform plan
+
+inputs:
+  working_directory:
+    required: true
+    description: "Working directory for Terraform"
+  plan_file_name:
+    required: true
+    description: "Terraform plan file name"
+  location:
+    required: false
+    description: "Location identifier for unique artifact naming"
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Download Terraform plan
+      uses: actions/download-artifact@v4
+      with:
+        name: terraform-plan${{ inputs.location != '' && format('-{0}', inputs.location) || '' }}
+        path: ${{ inputs.working_directory }}
+
+    - name: Apply Terraform Plan
+      shell: bash
+      run: terraform apply -input=false -auto-approve ${{ inputs.plan_file_name }}
+      working-directory: ${{ inputs.working_directory }}

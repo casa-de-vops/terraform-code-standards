@@ -1,0 +1,573 @@
+# .github/actions/azure/plan-summary/action.yml
+name: Terraform Plan Summary
+description: 'Generate detailed summary and AI analysis of Terraform plan'
+
+inputs:
+  plan_file_name:
+    description: 'Terraform plan file name'
+    required: true
+  working_directory:
+    description: 'Working directory'
+    required: true
+  var_file:
+    description: 'Terraform variables file'
+    required: false
+    default: ''
+  backend_azure_rm_key:
+    description: 'Azure Key'
+    required: true
+  init_outcome:
+    description: 'Terraform init outcome'
+    required: true
+  plan_outcome:
+    description: 'Terraform plan outcome'
+    required: true
+  plan_has_changes:
+    description: 'Whether the plan has changes'
+    required: true
+  llm_base_url:
+    description: 'LLM Base URL for AI summaries (optional - leave empty to disable AI summaries)'
+    required: false
+    default: ''
+  llm_api_key:
+    description: 'LLM API Key for AI summaries (optional)'
+    required: false
+    default: ''
+  llm_model_name:
+    description: 'LLM Model Name for AI summaries (optional)'
+    required: false
+    default: ''
+
+outputs:
+  summary_generated:
+    description: 'Whether AI summary was generated successfully'
+    value: ${{ steps.llm_summary.outcome }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Write Plan Header
+      if: always()
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        echo "# Terraform Plan Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Show init and plan status
+        if [ "${{ inputs.init_outcome }}" == "success" ] && [ "${{ inputs.plan_outcome }}" == "success" ]; then
+          if [ "${{ inputs.plan_has_changes }}" == "true" ]; then
+            echo "✅ **Status:** Plan generated successfully with changes" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ **Status:** Plan generated successfully - no changes detected" >> $GITHUB_STEP_SUMMARY
+          fi
+        elif [ "${{ inputs.init_outcome }}" != "success" ]; then
+          echo "❌ **Status:** Init failed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Status:** Plan failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Show plan summary if available
+        if [ "${{ inputs.plan_outcome }}" == "success" ] && [ -f "${{ inputs.plan_file_name }}" ]; then
+          FULL_PLAN=$(terraform show -no-color "${{ inputs.plan_file_name }}" 2>&1 | sed 's/\x1b\[[0-9;]*m//g' | tr -cd '\11\12\15\40-\176')
+          PLAN_SUMMARY=$(echo "$FULL_PLAN" | grep "^Plan:" || echo "")
+          if [ -n "$PLAN_SUMMARY" ]; then
+            echo "**${PLAN_SUMMARY}**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+        fi
+        
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+    - name: Set up Python
+      if: inputs.plan_outcome == 'success' && inputs.plan_has_changes == 'true' && inputs.llm_base_url != ''
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install OpenAI SDK
+      if: inputs.plan_outcome == 'success' && inputs.plan_has_changes == 'true' && inputs.llm_base_url != ''
+      run: pip install openai
+      shell: bash
+
+    - name: Generate Plan Summary
+      id: llm_summary
+      if: inputs.plan_outcome == 'success' && inputs.plan_has_changes == 'true' && inputs.llm_base_url != ''
+      continue-on-error: true
+      shell: python
+      env:
+        LLM_BASE_URL: ${{ inputs.llm_base_url }}
+        LLM_API_KEY: ${{ inputs.llm_api_key }}
+        LLM_MODEL_NAME: ${{ inputs.llm_model_name }}
+        PLAN_FILE_NAME: ${{ inputs.plan_file_name }}
+        WORKING_DIRECTORY: ${{ inputs.working_directory }}
+      run: |
+        import os
+        import sys
+        import time
+        from openai import OpenAI, AzureOpenAI, APIError
+
+        # Sensible defaults - configured for broad compatibility
+        MAX_PLAN_CHARS = 12000
+        TIMEOUT_SECONDS = 30
+        MAX_TOKENS = 1000
+        RETRY_ATTEMPTS = 2
+        RETRY_DELAY_SECONDS = 5
+        AZURE_API_VERSION = '2024-08-01-preview'
+        SYSTEM_PROMPT = 'You are an expert DevOps analyst. Analyze the Terraform plan and provide a concise summary highlighting: what resources are being created/modified/deleted, the overall impact level (Low/Medium/High), any critical risks or breaking changes, and recommended actions before applying. Keep it brief and scannable using bullet points.'
+        USER_PROMPT_TEMPLATE = 'Analyze this Terraform plan and provide a structured summary:\n\n```terraform\n{plan}\n```\n\nProvide the summary following the structure outlined in the system prompt.'
+
+        def write_summary(msg):
+            path = os.getenv('GITHUB_STEP_SUMMARY')
+            if path:
+                with open(path, 'a') as f:
+                    f.write(msg + '\n')
+
+        print("="*70)
+        print("TERRAFORM PLAN AI SUMMARY GENERATOR")
+        print("="*70)
+
+        # Validate config
+        print("\n[1/4] Validating configuration...")
+        api_key = os.getenv('LLM_API_KEY', '')
+        model = os.getenv('LLM_MODEL_NAME', '')
+        endpoint = os.getenv('LLM_BASE_URL', '')
+        plan_file = os.getenv('PLAN_FILE_NAME', '')
+
+        print(f"  API Key: {'Present (len={len(api_key)})' if api_key else 'MISSING'}")
+        print(f"  Model: {model if model else 'MISSING'}")
+        print(f"  Endpoint: {endpoint if endpoint else 'MISSING'}")
+        print(f"  Plan File: {plan_file if plan_file else 'MISSING'}")
+
+        missing_items = []
+        if not api_key:
+            missing_items.append("LLM API Key")
+        if not model:
+            missing_items.append("LLM Model Name")
+        if not endpoint:
+            missing_items.append("LLM Base URL/Endpoint")
+        if not plan_file:
+            missing_items.append("Plan File Name")
+
+        if missing_items:
+            msg = (
+                "## 🤖 AI-Powered Analysis\n\n"
+                "> **Note:** AI summary feature is not configured for this workflow.\n\n"
+                "**Missing configuration:**\n"
+            )
+            for item in missing_items:
+                msg += f"- {item}\n"
+            msg += (
+                "\n<details>\n"
+                "<summary>How to enable AI summaries</summary>\n\n"
+                "To enable AI-powered plan analysis, provide the following:\n\n"
+                "1. `llm_base_url` - Azure OpenAI endpoint or OpenAI API URL\n"
+                "2. `llm_api_key` - API key for authentication\n"
+                "3. `llm_model_name` - Model/deployment name to use\n"
+                "4. `plan_file_name` - Terraform plan file to analyze\n\n"
+                "</details>\n\n"
+                "---\n"
+            )
+            write_summary(msg)
+            print("\n" + "="*70)
+            print("AI Summary Service: Not Active (missing configuration)")
+            print("="*70)
+            sys.exit(0)
+
+        # Read plan
+        print("\n[2/4] Reading Terraform plan...")
+        try:
+            working_dir = os.getenv('WORKING_DIRECTORY', '.')
+            github_workspace = os.getenv('GITHUB_WORKSPACE', '.')
+            full_working_dir = os.path.join(github_workspace, working_dir)
+            plan_path = os.path.join(full_working_dir, plan_file)
+           
+            print(f"  Working directory: {full_working_dir}")
+            print(f"  Plan file path: {plan_path}")
+           
+            # Check if plan file exists
+            if not os.path.exists(plan_path):
+                print(f"  Plan file not found at: {plan_path}")
+                msg = (
+                    "## 🤖 AI-Powered Analysis\n\n"
+                    "> **Note:** AI summary not available - plan file not found.\n\n"
+                    f"**Plan file path:** `{plan_path}`\n\n"
+                    "<details>\n"
+                    "<summary>Why this might happen</summary>\n\n"
+                    "- The Terraform plan step did not complete successfully\n"
+                    "- The plan file path is incorrect\n"
+                    "- File permissions or access issues\n\n"
+                    "</details>\n\n"
+                    "---\n"
+                )
+                write_summary(msg)
+                sys.exit(0)
+           
+            # Change to working directory and run terraform show
+            plan = os.popen(f'cd "{full_working_dir}" && terraform show -no-color "{plan_file}"').read()
+           
+            if not plan or len(plan) == 0:
+                print(f"  Plan file is empty or couldn't be read")
+                msg = (
+                    "## 🤖 AI-Powered Analysis\n\n"
+                    "> **Note:** AI summary not available - plan file is empty or unreadable.\n\n"
+                    "<details>\n"
+                    "<summary>Why this might happen</summary>\n\n"
+                    "- The plan has no changes\n"
+                    "- Permission issues reading the file\n"
+                    "- Terraform is not available in the PATH\n\n"
+                    "</details>\n\n"
+                    "---\n"
+                )
+                write_summary(msg)
+                sys.exit(0)
+           
+            if len(plan) > MAX_PLAN_CHARS:
+                print(f"  Plan is large ({len(plan)} chars), trimming to {MAX_PLAN_CHARS}...")
+                plan = plan[:MAX_PLAN_CHARS] + "\n...(trimmed)"
+            print(f"  Plan read successfully ({len(plan)} chars)")
+        except Exception as e:
+            print(f"  Error reading plan: {e}")
+            msg = (
+                "## 🤖 AI-Powered Analysis\n\n"
+                "> **Note:** AI summary not available - couldn't read plan file.\n\n"
+                f"**Error:** `{e}`\n\n"
+                "<details>\n"
+                "<summary>Why this might happen</summary>\n\n"
+                "- File access permissions issues\n"
+                "- Terraform binary not available\n"
+                "- Working directory path issues\n\n"
+                "</details>\n\n"
+                "---\n"
+            )
+            write_summary(msg)
+            sys.exit(0)
+
+        # Initialize client
+        print("\n[3/4] Initializing AI client...")
+        try:
+            # Determine if this is Azure OpenAI or standard OpenAI
+            is_azure = 'azure.com' in endpoint.lower()
+            
+            if is_azure:
+                # For Azure OpenAI, use AzureOpenAI client
+                from openai import AzureOpenAI
+                
+                # Extract base URL and API version from endpoint
+                if '/openai/deployments/' in endpoint:
+                    # User provided full path, extract base and version
+                    base_url = endpoint.split('/openai/')[0]
+                    if 'api-version=' in endpoint:
+                        api_version = endpoint.split('api-version=')[1].split('&')[0]
+                    else:
+                        api_version = '2024-08-01-preview'
+                else:
+                    # User provided just base URL
+                    base_url = endpoint.rstrip('/')
+                    api_version = AZURE_API_VERSION
+                
+                print(f"  Detected Azure OpenAI")
+                print(f"  Base URL: {base_url}")
+                print(f"  API Version: {api_version}")
+                
+                client = AzureOpenAI(
+                    azure_endpoint=base_url,
+                    api_key=api_key,
+                    api_version=api_version
+                )
+            else:
+                # Standard OpenAI
+                print(f"  Detected standard OpenAI API")
+                client = OpenAI(
+                    base_url=endpoint,
+                    api_key=api_key
+                )
+            
+            print("  Client initialized")
+        except Exception as e:
+            print(f"  Error: {e}")
+            msg = (
+                "## 🤖 AI-Powered Analysis\n\n"
+                "> **Note:** AI summary not available - client initialization failed.\n\n"
+                f"**Error:** `{e}`\n\n"
+                "**Configuration:**\n"
+                f"- Endpoint: `{endpoint}`\n"
+                f"- Model: `{model}`\n\n"
+                "<details>\n"
+                "<summary>Why this might happen</summary>\n\n"
+                "- Invalid endpoint URL format\n"
+                "- Network connectivity issues\n"
+                "- Incompatible OpenAI SDK version\n\n"
+                "</details>\n\n"
+                "---\n"
+            )
+            write_summary(msg)
+            sys.exit(0)
+
+        # Generate summary with retry
+        print("\n[4/4] Generating summary...")
+        for attempt in range(RETRY_ATTEMPTS):
+            try:
+                print(f"  Attempt {attempt+1}/{RETRY_ATTEMPTS}: Calling model '{model}'...")
+                
+                user_prompt = USER_PROMPT_TEMPLATE.replace('{plan}', plan)
+                
+                messages = [
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": user_prompt}
+                ]
+                
+                # Try different parameter combinations to handle various model requirements
+                # Start with minimal parameters for maximum compatibility
+                api_params = {
+                    'model': model,
+                    'messages': messages,
+                    'timeout': TIMEOUT_SECONDS
+                }
+                
+                # Try with no temperature/max_tokens first (some models only accept defaults)
+                try:
+                    resp = client.chat.completions.create(**api_params)
+                    summary = resp.choices[0].message.content
+                    write_summary(
+                        "## 🤖 AI-Powered Analysis\n\n"
+                        "> **Generated by AI:** The following analysis was automatically generated to help you understand the impact of this Terraform plan.\n\n"
+                        f"{summary}\n\n"
+                        "---\n"
+                    )
+                    print("  Summary generated successfully!")
+                    sys.exit(0)
+                except APIError as e:
+                    # If we get 400 error about unsupported values, that's expected - try with parameters
+                    if e.status_code != 400 or 'unsupported' not in str(e).lower():
+                        raise  # Re-raise if it's not a parameter issue
+                    
+                    # Try adding max_completion_tokens (newer models)
+                    try:
+                        api_params['max_completion_tokens'] = MAX_TOKENS
+                        resp = client.chat.completions.create(**api_params)
+                        summary = resp.choices[0].message.content
+                        write_summary(
+                            "## 🤖 AI-Powered Analysis\n\n"
+                            "> **Generated by AI:** The following analysis was automatically generated to help you understand the impact of this Terraform plan.\n\n"
+                            f"{summary}\n\n"
+                            "---\n"
+                        )
+                        print("  Summary generated successfully!")
+                        sys.exit(0)
+                    except (APIError, TypeError, ValueError):
+                        # Fall back to max_tokens (older models)
+                        del api_params['max_completion_tokens']
+                        api_params['max_tokens'] = MAX_TOKENS
+                        resp = client.chat.completions.create(**api_params)
+                        summary = resp.choices[0].message.content
+                        write_summary(
+                            "## 🤖 AI-Powered Analysis\n\n"
+                            "> **Generated by AI:** The following analysis was automatically generated to help you understand the impact of this Terraform plan.\n\n"
+                            f"{summary}\n\n"
+                            "---\n"
+                        )
+                        print("  Summary generated successfully!")
+                        sys.exit(0)
+                        
+            except APIError as e:
+                error_text = str(e.response.text) if hasattr(e.response, 'text') else str(e)
+                print(f"  API Error (Status {e.status_code}): {error_text}")
+               
+                if attempt == RETRY_ATTEMPTS - 1:
+                    # Determine likely cause based on status code
+                    if e.status_code == 400 and 'unsupported_parameter' in error_text.lower():
+                        cause = "Unsupported API parameter"
+                        action = (
+                            f"The model '{model}' does not support the parameter being used.\n\n"
+                            f"This might be due to:\n"
+                            f"1. Using max_tokens vs max_completion_tokens with different model versions\n"
+                            f"2. Model-specific parameter requirements\n\n"
+                            f"**Error details show which parameter is needed.**"
+                        )
+                    elif e.status_code == 500:
+                        cause = "API server error or incorrect model configuration"
+                        action = (
+                            "1. Verify the model name matches your deployment exactly\n"
+                            "2. Check if the API endpoint is operational\n"
+                            "3. Ensure the API key has proper permissions\n"
+                            "4. Try a different model if available"
+                        )
+                    elif e.status_code == 401:
+                        cause = "Authentication failed"
+                        action = "Verify your LLM_API_KEY is correct and has not expired"
+                    elif e.status_code == 403:
+                        cause = "Access denied - insufficient permissions"
+                        action = (
+                            "1. Ensure the API key has access to the specified model\n"
+                            "2. Check that the workflow service principal has Key Vault read permissions\n"
+                            "3. Verify the Azure OpenAI resource allows access from GitHub Actions"
+                        )
+                    elif e.status_code == 404:
+                        cause = "Model or endpoint not found"
+                        action = (
+                            f"**For Azure OpenAI:**\n"
+                            f"1. Verify the endpoint URL format is correct\n"
+                            f"2. Verify LLM_MODEL_NAME matches your Azure deployment name (not the model name like 'gpt-4')\n"
+                            f"3. Ensure your deployment exists in the Azure OpenAI resource\n\n"
+                            f"**For OpenAI API:**\n"
+                            f"1. Endpoint should be: `https://api.openai.com/v1/chat/completions`\n"
+                            f"2. Model name should be like 'gpt-4', 'gpt-4o', 'gpt-3.5-turbo'\n\n"
+                            f"**Current endpoint:** `{endpoint}`\n"
+                            f"**Current model:** `{model}`"
+                        )
+                    else:
+                        cause = f"HTTP {e.status_code} error"
+                        action = "Check API documentation for this error code"
+                   
+                    msg = (
+                        "## 🤖 AI-Powered Analysis\n\n"
+                        "> **Note:** AI summary not available - API error encountered.\n\n"
+                        f"**Error {e.status_code}:** {cause}\n\n"
+                        "<details>\n"
+                        "<summary>How to resolve this issue</summary>\n\n"
+                        f"{action}\n\n"
+                        "**Error details:**\n"
+                        f"```\n{error_text}\n```\n\n"
+                        "</details>\n\n"
+                        "---\n"
+                    )
+                    write_summary(msg)
+                    print("\n" + "="*70)
+                    print(f"AI Summary Service: Not Active (API error {e.status_code})")
+                    print("="*70)
+                    sys.exit(0)
+                print(f"  Retrying in {RETRY_DELAY_SECONDS} seconds...")
+                time.sleep(RETRY_DELAY_SECONDS)
+            except Exception as e:
+                print(f"  Unexpected error: {type(e).__name__}: {e}")
+                if attempt == RETRY_ATTEMPTS - 1:
+                    msg = (
+                        "## 🤖 AI-Powered Analysis\n\n"
+                        "> **Note:** AI summary not available - unexpected error occurred.\n\n"
+                        f"**Error type:** `{type(e).__name__}`\n\n"
+                        f"**Details:** {e}\n\n"
+                        "<details>\n"
+                        "<summary>Why this might happen</summary>\n\n"
+                        "- Network connectivity issues\n"
+                        "- Timeout during API call\n"
+                        "- Service temporary unavailability\n\n"
+                        "</details>\n\n"
+                        "---\n"
+                    )
+                    write_summary(msg)
+                    print("\n" + "="*70)
+                    print(f"AI Summary Service: Not Active (unexpected error)")
+                    print("="*70)
+                    sys.exit(0)
+                print(f"  Retrying in {RETRY_DELAY_SECONDS} seconds...")
+                time.sleep(RETRY_DELAY_SECONDS)
+
+    - name: Show Plan Details
+      if: inputs.plan_outcome == 'success' && (success() || failure())
+      run: |
+        # Show full plan details if plan succeeded and file exists
+        if [ "${{ inputs.plan_outcome }}" == "success" ]; then
+          if [ -f "${{ inputs.plan_file_name }}" ]; then
+            echo "## Plan Details" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+           
+            # Get the full plan output and clean it
+            FULL_PLAN=$(terraform show -no-color "${{ inputs.plan_file_name }}" 2>&1 | \
+              sed 's/\x1b\[[0-9;]*m//g' | \
+              tr -cd '\11\12\15\40-\176')
+           
+            # Extract just the plan portion (up to and including the "Plan:" line)
+            PLAN_OUTPUT=$(echo "$FULL_PLAN" | sed -n '1,/^Plan:/p')
+            
+            # Extract the Plan summary line (e.g., "Plan: 5 to add, 2 to change, 1 to destroy.")
+            PLAN_SUMMARY=$(echo "$FULL_PLAN" | grep "^Plan:" || echo "")
+            
+            # Parse actual counts from the Plan: line
+            if [ -n "$PLAN_SUMMARY" ]; then
+              echo "### Resource Changes" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              
+              # Extract numbers using pattern matching
+              # Plan: X to add, Y to change, Z to destroy.
+              TO_ADD=$(echo "$PLAN_SUMMARY" | grep -oP '\d+(?= to add)' || echo "0")
+              TO_CHANGE=$(echo "$PLAN_SUMMARY" | grep -oP '\d+(?= to change)' || echo "0")
+              TO_DESTROY=$(echo "$PLAN_SUMMARY" | grep -oP '\d+(?= to destroy)' || echo "0")
+              
+              # Handle cases where grep -P is not available (macOS/BSD)
+              if [ -z "$TO_ADD" ] || [ "$TO_ADD" = "0" ]; then
+                TO_ADD=$(echo "$PLAN_SUMMARY" | sed -n 's/.*\([0-9][0-9]*\) to add.*/\1/p')
+              fi
+              if [ -z "$TO_CHANGE" ] || [ "$TO_CHANGE" = "0" ]; then
+                TO_CHANGE=$(echo "$PLAN_SUMMARY" | sed -n 's/.*\([0-9][0-9]*\) to change.*/\1/p')
+              fi
+              if [ -z "$TO_DESTROY" ] || [ "$TO_DESTROY" = "0" ]; then
+                TO_DESTROY=$(echo "$PLAN_SUMMARY" | sed -n 's/.*\([0-9][0-9]*\) to destroy.*/\1/p')
+              fi
+              
+              # Default to 0 if still empty
+              TO_ADD=${TO_ADD:-0}
+              TO_CHANGE=${TO_CHANGE:-0}
+              TO_DESTROY=${TO_DESTROY:-0}
+              
+              if [ "$TO_ADD" -gt 0 ] || [ "$TO_CHANGE" -gt 0 ] || [ "$TO_DESTROY" -gt 0 ]; then
+                echo "| Change Type | Count |" >> $GITHUB_STEP_SUMMARY
+                echo "|-------------|-------|" >> $GITHUB_STEP_SUMMARY
+                echo "| 🟢 Additions | $TO_ADD |" >> $GITHUB_STEP_SUMMARY
+                echo "| 🟡 Changes | $TO_CHANGE |" >> $GITHUB_STEP_SUMMARY
+                echo "| 🔴 Deletions | $TO_DESTROY |" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $GITHUB_STEP_SUMMARY
+              fi
+            fi
+            
+            echo "<details>" >> $GITHUB_STEP_SUMMARY
+            echo "<summary>View full plan output</summary>" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Use diff syntax for color highlighting (+ green, - red, ~ handled as !)
+            echo '```diff' >> $GITHUB_STEP_SUMMARY
+            
+            # Process the plan output to format for diff syntax
+            # Lines starting with + will be green
+            # Lines starting with - will be red  
+            # Lines starting with ~ will be shown with ! (yellow in many renderers)
+            echo "$PLAN_OUTPUT" | while IFS= read -r line; do
+              if [[ "$line" =~ ^[[:space:]]*\+[[:space:]] ]]; then
+                # Addition - keep the + for green
+                echo "$line"
+              elif [[ "$line" =~ ^[[:space:]]*-[[:space:]] ]]; then
+                # Deletion - keep the - for red
+                echo "$line"
+              elif [[ "$line" =~ ^[[:space:]]*~[[:space:]] ]]; then
+                # Change - replace ~ with ! for yellow/orange
+                echo "$line" | sed 's/~/!/'
+              else
+                # Regular line - add space to make it neutral
+                echo "  $line"
+              fi
+            done >> $GITHUB_STEP_SUMMARY
+           
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "</details>" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+        fi
+       
+        # Configuration details
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Configuration" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Setting | Value |" >> $GITHUB_STEP_SUMMARY
+        echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
+        echo "| **Working Directory** | \`${{ inputs.working_directory }}\` |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Plan File** | \`${{ inputs.plan_file_name }}\` |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Variables File** | \`${{ inputs.var_file }}\` |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Backend Key** | \`${{ inputs.backend_azure_rm_key }}\` |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Init Status** | \`${{ inputs.init_outcome }}\` |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Plan Status** | \`${{ inputs.plan_outcome }}\` |" >> $GITHUB_STEP_SUMMARY
+      working-directory: ${{ inputs.working_directory }}
+      shell: bash
+

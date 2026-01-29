@@ -25,8 +25,7 @@ jobs:
     with:
       tf_version: 'latest'
       working_directory: 'terraform/'
-      environment: 'dev'
-      # gh_environment: 'nonprod'
+      gh_environment: 'dev'
       backend_azure_rm_resource_group_name: 'rg-terraform-ops'
       backend_azure_rm_storage_account_name: 'casadevopsterraform'
       backend_azure_rm_container_name: 'ops-terraform-state'
