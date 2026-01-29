@@ -68,7 +68,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Initialize Terraform
-        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/init@updates
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/init@main
         with:
           tf_version: ${{ inputs.tf_version }}
           working_directory: ${{ inputs.working_directory }}
@@ -81,12 +81,12 @@ jobs:
           azure_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       - name: Validate Terraform
-        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/validate@updates
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/validate@main
         with:
           working_directory: ${{ inputs.working_directory }}
 
       - name: Run Security Inspection
-        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/inspect@updates
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/inspect@main
         with:
           gh_environment: ${{ inputs.gh_environment }}
       
@@ -106,7 +106,7 @@ jobs:
 
       - name: Initialize Terraform
         id: init
-        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/init@updates
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/init@main
         with:
           tf_version: ${{ inputs.tf_version }}
           working_directory: ${{ inputs.working_directory }}
@@ -120,7 +120,7 @@ jobs:
 
       - name: Create Terraform Plan
         id: plan
-        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/plan@updates
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/plan@main
         with:
           gh_environment: ${{ inputs.gh_environment }}
           working_directory: ${{ inputs.working_directory }}
@@ -154,7 +154,7 @@ jobs:
 
       - name: Generate Plan Summary
         if: always()
-        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/plan-summary@updates
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/plan-summary@main
         with:
           plan_file_name: ${{ inputs.plan_file_name }}
           working_directory: ${{ inputs.working_directory }}
@@ -181,7 +181,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Initialize Terraform
-        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/init@updates
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/init@main
         with:
           tf_version: ${{ inputs.tf_version }}
           working_directory: ${{ inputs.working_directory }}
@@ -194,7 +194,7 @@ jobs:
           azure_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       - name: Apply Terraform Changes
-        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/apply@updates
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/apply@main
         with:
           working_directory: ${{ inputs.working_directory }}
           plan_file_name: ${{ inputs.plan_file_name }}
