@@ -150,7 +150,7 @@ Scanned for common patterns:
 #### ✅ Results
 - No insecure HTTP URLs in critical code paths
 - LICENSE file contains http:// links (acceptable - license references)
-- Documentation contains http://semver.org (acceptable - reference link)
+- Documentation contains https://semver.org reference
 
 ### 8. Access Control
 
@@ -248,7 +248,7 @@ The terraform-code-standards repository demonstrates **excellent security practi
 
 - [Microsoft Security DevOps](https://github.com/microsoft/security-devops-action)
 - [GitHub Security Best Practices](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions)
-- [OIDC with Azure](https://docs.microsoft.com/en-us/azure/active-directory/develop/workload-identity-federation)
+- [OIDC with Azure](https://learn.microsoft.com/en-us/azure/active-directory/develop/workload-identity-federation)
 - [Terraform Security Best Practices](https://www.terraform.io/docs/cloud/guides/recommended-practices/index.html)
 
 ---
