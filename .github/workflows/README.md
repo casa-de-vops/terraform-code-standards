@@ -43,12 +43,11 @@ permissions:
 jobs:
   terraform:
     name: Terraform CI/CD Orchestration
-    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_orchestration.yml@main
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/azure-template.yml@main
     secrets: inherit
     with:
       tf_version: 'latest'
       working_directory: 'terraform/'
-      environment: 'dev'
       gh_environment: 'nonprod'
       backend_azure_rm_resource_group_name: 'rg-terraform-ops'
       backend_azure_rm_storage_account_name: 'casadevopsterraform'
