@@ -1,0 +1,201 @@
+# .github/workflows/terraform-azure-template.yml
+name: Terraform CI/CD Orchestration
+
+on:
+  workflow_call:
+    inputs:
+      tf_version:
+        description: 'Terraform version'
+        required: false
+        default: 'latest'
+        type: string
+      working_directory:
+        description: 'Working directory'
+        required: true
+        type: string
+      gh_environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: string
+      backend_azure_rm_resource_group_name:
+        description: 'Azure Resource Group Name'
+        required: true
+        type: string
+      backend_azure_rm_storage_account_name:
+        description: 'Azure Storage Account Name'
+        required: true
+        type: string
+      backend_azure_rm_container_name:
+        description: 'Azure Container Name'
+        required: true
+        type: string
+      backend_azure_rm_key:
+        description: 'Azure Key'
+        required: true
+        type: string
+      plan_file_name:
+        description: 'Terraform plan file name'
+        required: false
+        default: 'terraform.tfplan'
+        type: string
+      var_file:
+        description: 'Terraform variables file'
+        required: false
+        default: ''
+        type: string
+      command_option_args:
+        description: 'Terraform command options'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Terraform
+    environment: validate-${{ inputs.gh_environment }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - name: Checkout calling repository
+        uses: actions/checkout@v5
+
+      - name: Initialize Terraform
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/init@updates
+        with:
+          tf_version: ${{ inputs.tf_version }}
+          working_directory: ${{ inputs.working_directory }}
+          backend_azure_rm_storage_account_name: ${{ inputs.backend_azure_rm_storage_account_name }}
+          backend_azure_rm_container_name: ${{ inputs.backend_azure_rm_container_name }}
+          backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
+          backend_azure_rm_resource_group_name: ${{ inputs.backend_azure_rm_resource_group_name }}
+          azure_client_id: ${{ vars.AZURE_CLIENT_ID }}
+          azure_tenant_id: ${{ vars.AZURE_TENANT_ID }}
+          azure_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Validate Terraform
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/validate@updates
+        with:
+          working_directory: ${{ inputs.working_directory }}
+
+      - name: Run Security Inspection
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/inspect@updates
+        with:
+          gh_environment: ${{ inputs.gh_environment }}
+      
+  plan:
+    name: Terraform Plan
+    needs: validate
+    environment: plan-${{ inputs.gh_environment }}
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.plan.outputs.has_changes }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout calling repository
+        uses: actions/checkout@v5
+
+      - name: Initialize Terraform
+        id: init
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/init@updates
+        with:
+          tf_version: ${{ inputs.tf_version }}
+          working_directory: ${{ inputs.working_directory }}
+          backend_azure_rm_storage_account_name: ${{ inputs.backend_azure_rm_storage_account_name }}
+          backend_azure_rm_container_name: ${{ inputs.backend_azure_rm_container_name }}
+          backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
+          backend_azure_rm_resource_group_name: ${{ inputs.backend_azure_rm_resource_group_name }}
+          azure_client_id: ${{ vars.AZURE_CLIENT_ID }}
+          azure_tenant_id: ${{ vars.AZURE_TENANT_ID }}
+          azure_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Create Terraform Plan
+        id: plan
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/plan@updates
+        with:
+          gh_environment: ${{ inputs.gh_environment }}
+          working_directory: ${{ inputs.working_directory }}
+          plan_file_name: ${{ inputs.plan_file_name }}
+          var_file: ${{ inputs.var_file }}
+          command_option_args: ${{ inputs.command_option_args }}
+
+      - name: Retrieve LLM Configuration from Key Vault
+        id: get_llm_config
+        if: vars.llm_keyvault != ''
+        continue-on-error: true
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            # Get secrets from Key Vault
+            OPENAI_ENDPOINT=$(az keyvault secret show --vault-name "${{ vars.llm_keyvault }}" --name azure-openai-endpoint --query value -o tsv 2>/dev/null || echo "")
+            OPENAI_KEY=$(az keyvault secret show --vault-name "${{ vars.llm_keyvault }}" --name azure-openai-key --query value -o tsv 2>/dev/null || echo "")
+            OPENAI_MODEL=$(az keyvault secret show --vault-name "${{ vars.llm_keyvault }}" --name azure-openai-model-name --query value -o tsv 2>/dev/null || echo "")
+            
+            # Only set outputs if all secrets were retrieved
+            if [ -n "$OPENAI_ENDPOINT" ] && [ -n "$OPENAI_KEY" ] && [ -n "$OPENAI_MODEL" ]; then
+              echo "openai_endpoint=$OPENAI_ENDPOINT" >> $GITHUB_OUTPUT
+              echo "::add-mask::$OPENAI_KEY"
+              echo "openai_key=$OPENAI_KEY" >> $GITHUB_OUTPUT
+              echo "openai_model=$OPENAI_MODEL" >> $GITHUB_OUTPUT
+              echo "config_available=true" >> $GITHUB_OUTPUT
+            else
+              echo "One or more Key Vault secrets not found, LLM summary will be skipped"
+              echo "config_available=false" >> $GITHUB_OUTPUT
+            fi
+
+      - name: Generate Plan Summary
+        if: always()
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/plan-summary@updates
+        with:
+          plan_file_name: ${{ inputs.plan_file_name }}
+          working_directory: ${{ inputs.working_directory }}
+          var_file: ${{ inputs.var_file }}
+          backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
+          init_outcome: ${{ steps.init.outputs.outcome }}
+          plan_outcome: ${{ steps.plan.outputs.outcome }}
+          plan_has_changes: ${{ steps.plan.outputs.has_changes }}
+          llm_base_url: ${{ steps.get_llm_config.outcome == 'success' && steps.get_llm_config.outputs.config_available == 'true' && steps.get_llm_config.outputs.openai_endpoint || '' }}
+          llm_api_key: ${{ steps.get_llm_config.outcome == 'success' && steps.get_llm_config.outputs.config_available == 'true' && steps.get_llm_config.outputs.openai_key || '' }}
+          llm_model_name: ${{ steps.get_llm_config.outcome == 'success' && steps.get_llm_config.outputs.config_available == 'true' && steps.get_llm_config.outputs.openai_model || '' }}
+
+  apply:
+    name: Apply Terraform
+    needs: plan
+    if: (startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/release/')) && needs.plan.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.gh_environment }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout calling repository
+        uses: actions/checkout@v5
+
+      - name: Initialize Terraform
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/init@updates
+        with:
+          tf_version: ${{ inputs.tf_version }}
+          working_directory: ${{ inputs.working_directory }}
+          backend_azure_rm_storage_account_name: ${{ inputs.backend_azure_rm_storage_account_name }}
+          backend_azure_rm_container_name: ${{ inputs.backend_azure_rm_container_name }}
+          backend_azure_rm_key: ${{ inputs.backend_azure_rm_key }}
+          backend_azure_rm_resource_group_name: ${{ inputs.backend_azure_rm_resource_group_name }}
+          azure_client_id: ${{ vars.AZURE_CLIENT_ID }}
+          azure_tenant_id: ${{ vars.AZURE_TENANT_ID }}
+          azure_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Apply Terraform Changes
+        uses: casa-de-vops/terraform-code-standards/.github/actions/azure/apply@updates
+        with:
+          working_directory: ${{ inputs.working_directory }}
+          plan_file_name: ${{ inputs.plan_file_name }}
+          gh_environment: ${{ inputs.gh_environment }}

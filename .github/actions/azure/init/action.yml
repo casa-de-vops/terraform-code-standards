@@ -1,0 +1,74 @@
+# .github/workflows/azure/init/action.yml
+name: Terraform Init
+description: Initialize Terraform with Azure backend
+
+inputs:
+  tf_version:
+    required: false
+    description: "Terraform version"
+    default: "latest"
+  working_directory:
+    required: true
+    description: "Working directory for Terraform"
+  backend_azure_rm_storage_account_name:
+    required: true
+    description: "Azure Storage Account Name"
+  backend_azure_rm_container_name:
+    required: true
+    description: "Azure Container Name"
+  backend_azure_rm_key:
+    required: true
+    description: "Azure Key"
+  backend_azure_rm_resource_group_name:
+    required: true
+    description: "Azure Resource Group Name"
+  azure_client_id:
+    required: true
+    description: "Azure Client ID"
+  azure_tenant_id:
+    required: true
+    description: "Azure Tenant ID"
+  azure_subscription_id:
+    required: true
+    description: "Azure Subscription ID"
+
+outputs:
+  outcome:
+    description: "Outcome of the terraform init step"
+    value: ${{ steps.init.outcome }}
+
+runs:
+  using: composite
+  steps:
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        client-id: ${{ inputs.azure_client_id }}
+        tenant-id: ${{ inputs.azure_tenant_id }}
+        subscription-id: ${{ inputs.azure_subscription_id }}
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: ${{ inputs.tf_version }}
+
+    - name: Set Azure Environment Variables
+      shell: bash
+      run: |
+        echo "ARM_CLIENT_ID=${{ inputs.azure_client_id }}" >> $GITHUB_ENV
+        echo "ARM_TENANT_ID=${{ inputs.azure_tenant_id }}" >> $GITHUB_ENV
+        echo "ARM_SUBSCRIPTION_ID=${{ inputs.azure_subscription_id }}" >> $GITHUB_ENV
+        echo "ARM_USE_OIDC=true" >> $GITHUB_ENV
+
+    - name: Initialize Terraform
+      id: init
+      shell: bash
+      run: |
+        set -x
+        terraform init -input=false \
+        -backend-config="storage_account_name=${{ inputs.backend_azure_rm_storage_account_name }}" \
+        -backend-config="container_name=${{ inputs.backend_azure_rm_container_name }}" \
+        -backend-config="key=${{ inputs.backend_azure_rm_key }}" \
+        -backend-config="resource_group_name=${{ inputs.backend_azure_rm_resource_group_name }}" \
+        -backend-config="use_oidc=true"
+      working-directory: ${{ inputs.working_directory }}

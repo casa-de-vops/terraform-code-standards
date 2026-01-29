@@ -43,12 +43,11 @@ permissions:
 jobs:
   terraform:
     name: Terraform CI/CD Orchestration
-    uses: casa-de-vops/terraform-code-standards/.github/workflows/tf_orchestration.yml@main
+    uses: casa-de-vops/terraform-code-standards/.github/workflows/azure-template.yml@main
     secrets: inherit
     with:
       tf_version: 'latest'
       working_directory: 'terraform/'
-      environment: 'dev'
       gh_environment: 'nonprod'
       backend_azure_rm_resource_group_name: 'rg-terraform-ops'
       backend_azure_rm_storage_account_name: 'casadevopsterraform'
@@ -86,18 +85,18 @@ The workflow can be customized using the following inputs:
 
 2. **Azure Authentication Setup:**
    - **GitHub Actions Environment:**
-     - Create a GitHub Actions environment and define the required secrets for authenticating with Azure. This ensures that sensitive information is securely stored and managed.
+     - Create a GitHub Actions environment and define the required variables for authenticating with Azure. This ensures that sensitive information is securely stored and managed.
 
    - **Federated Credentials (Recommended):**
-     - Use [Federated Credentials](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust?pivots=identity-wif-apps-methods-azp#configure-a-federated-identity-credential-on-an-app) for secure, passwordless authentication. With federated credentials, store the following secrets in your GitHub Actions environment:
+     - Use [Federated Credentials](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust?pivots=identity-wif-apps-methods-azp#configure-a-federated-identity-credential-on-an-app) for secure, passwordless authentication. With federated credentials, store the following as **repository or environment variables** in your GitHub Actions environment:
        - `AZURE_CLIENT_ID`: The client ID of the Azure service principal.
        - `AZURE_TENANT_ID`: The tenant ID of your Azure Active Directory.
        - `AZURE_SUBSCRIPTION_ID`: The subscription ID where resources will be managed.
      
    - **Alternative Authentication Methods:**
-     - If necessary, you can use other forms of authentication, such as secret-based authentication. For these methods, in addition to the secrets above, also store the following:
+     - If necessary, you can use other forms of authentication, such as secret-based authentication. For these methods, in addition to the variables above, also store the following as a **secret**:
        - `AZURE_CLIENT_SECRET`: The client secret of the Azure service principal.
-     - These secrets can be used with the [Azure Login GitHub Action](https://github.com/Azure/login#readme) to authenticate during your workflows.
+     - These can be used with the [Azure Login GitHub Action](https://github.com/Azure/login#readme) to authenticate during your workflows.
 
 3. **Terraform Installation:**
    - Terraform must be installed on the agent running the workflow.
