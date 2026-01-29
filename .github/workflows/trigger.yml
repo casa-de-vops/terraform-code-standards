@@ -15,21 +15,32 @@ permissions:
   # Write access for security-events is only required for customers looking for MSDO results to appear in the codeQL security alerts tab on GitHub (Requires GHAS)
   security-events: write
 
-
 jobs:
   terraform:
-    name: Terraform CI/CD Orchestration
+    name: Terraform CI/CD - ${{ matrix.name }}
+    concurrency:
+      group: terraform-${{ matrix.name }}-${{ github.ref }}
+      cancel-in-progress: false
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: dev
+            backend_azure_rm_container_name: 'ops-terraform-state'
+            backend_azure_rm_key: 'pipeline-test.dev.tfstate'
+            var_file: '../environments/dev.tfvars'
+            command_option_args: '-var pipeline_variable="success"'
     # uses: casa-de-vops/terraform-code-standards/.github/workflows/azure-template.yml@main
     uses: ./.github/workflows/azure-template.yml
     secrets: inherit
     with:
       tf_version: 'latest'
       working_directory: 'terraform/'
-      gh_environment: 'dev'
+      gh_environment: ${{ matrix.name }}
       backend_azure_rm_resource_group_name: 'rg-terraform-ops'
       backend_azure_rm_storage_account_name: 'casadevopsterraform'
-      backend_azure_rm_container_name: 'ops-terraform-state'
-      backend_azure_rm_key: 'pipeline-test.dev.tfstate'
+      backend_azure_rm_container_name: ${{ matrix.backend_azure_rm_container_name }}
+      backend_azure_rm_key: ${{ matrix.backend_azure_rm_key }}
       plan_file_name: 'terraform.tfplan'
-      var_file: '../environments/dev.tfvars'
-      command_option_args: '-var pipeline_variable="success"'
+      var_file: ${{ matrix.var_file }}
+      command_option_args: ${{ matrix.command_option_args }}

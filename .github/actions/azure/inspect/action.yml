@@ -3,8 +3,8 @@ name: Security Inspection with Microsoft Defender
 description: Inspect Terraform code for security issues
 
 inputs:
-  location:
-    description: 'Location identifier for unique artifact naming'
+  gh_environment:
+    description: 'GitHub environment identifier for unique artifact naming'
     required: false
     default: ''
 
@@ -36,7 +36,7 @@ runs:
     - name: Upload alerts file as a workflow artifact
       uses: actions/upload-artifact@v4
       with:
-        name: alerts${{ inputs.location != '' && format('-{0}', inputs.location) || '' }}
+        name: alerts${{ inputs.gh_environment != '' && format('-{0}', inputs.gh_environment) || '' }}
         path: ${{ steps.msdo.outputs.sarifFile }}
 
     # Parse SARIF and write security summary

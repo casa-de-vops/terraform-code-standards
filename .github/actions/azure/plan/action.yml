@@ -21,10 +21,6 @@ inputs:
     required: false
     description: "Additional Terraform command options"
     default: ""
-  location:
-    required: false
-    description: "Location identifier for unique artifact naming"
-    default: ""
 
 outputs:
   outcome:
@@ -88,5 +84,5 @@ runs:
       if: steps.plan.outcome == 'success'
       uses: actions/upload-artifact@v4
       with:
-        name: terraform-plan${{ inputs.location != '' && format('-{0}', inputs.location) || '' }}
+        name: terraform-plan${{ inputs.gh_environment != '' && format('-{0}', inputs.gh_environment) || '' }}
         path: ${{ inputs.working_directory }}/${{ inputs.plan_file_name }}

@@ -9,9 +9,9 @@ inputs:
   plan_file_name:
     required: true
     description: "Terraform plan file name"
-  location:
+  gh_environment:
     required: false
-    description: "Location identifier for unique artifact naming"
+    description: "GitHub environment identifier for unique artifact naming"
     default: ""
 
 runs:
@@ -20,7 +20,7 @@ runs:
     - name: Download Terraform plan
       uses: actions/download-artifact@v4
       with:
-        name: terraform-plan${{ inputs.location != '' && format('-{0}', inputs.location) || '' }}
+        name: terraform-plan${{ inputs.gh_environment != '' && format('-{0}', inputs.gh_environment) || '' }}
         path: ${{ inputs.working_directory }}
 
     - name: Apply Terraform Plan

@@ -48,11 +48,6 @@ on:
         required: false
         default: ''
         type: string
-      location:
-        description: 'Deployment location identifier for unique artifact naming'
-        required: false
-        default: ''
-        type: string
 
 permissions:
   id-token: write
@@ -61,7 +56,7 @@ permissions:
 jobs:
   validate:
     name: Validate Terraform
-    environment: validate-${{ inputs.location }}
+    environment: validate-${{ inputs.gh_environment }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -93,12 +88,12 @@ jobs:
       - name: Run Security Inspection
         uses: casa-de-vops/terraform-code-standards/.github/actions/azure/inspect@updates
         with:
-          location: ${{ inputs.location }}
+          gh_environment: ${{ inputs.gh_environment }}
       
   plan:
     name: Terraform Plan
     needs: validate
-    environment: plan-${{ inputs.location }}
+    environment: plan-${{ inputs.gh_environment }}
     runs-on: ubuntu-latest
     outputs:
       has_changes: ${{ steps.plan.outputs.has_changes }}
@@ -132,7 +127,6 @@ jobs:
           plan_file_name: ${{ inputs.plan_file_name }}
           var_file: ${{ inputs.var_file }}
           command_option_args: ${{ inputs.command_option_args }}
-          location: ${{ inputs.location }}
 
       - name: Retrieve LLM Configuration from Key Vault
         id: get_llm_config
@@ -178,7 +172,7 @@ jobs:
     needs: plan
     if: (startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/release/')) && needs.plan.outputs.has_changes == 'true'
     runs-on: ubuntu-latest
-    environment: ${{ inputs.gh_environment }}-${{ inputs.location }}
+    environment: ${{ inputs.gh_environment }}
     permissions:
       id-token: write
       contents: read
@@ -204,4 +198,4 @@ jobs:
         with:
           working_directory: ${{ inputs.working_directory }}
           plan_file_name: ${{ inputs.plan_file_name }}
-          location: ${{ inputs.location }}
+          gh_environment: ${{ inputs.gh_environment }}
