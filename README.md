@@ -29,7 +29,7 @@ This project aims to establish a comprehensive set of Terraform coding standards
 - [Azure DevOps Workflows](#azure-devops-workflows)
   - [Workflow Overview](./.azuredevops/README.md)
   - [Terraform CI/CD Workflow](./.azuredevops/docs/DEPLOY.md)
-  - [Terraform Force-Unlock Workflow](.azuredevops/docs/UNLOCK.md)
+  - [Terraform Force-Unlock Workflow](./.azuredevops/docs/UNLOCK.md)
 - [Contributing](#contributing)
 - [License](#license)
 

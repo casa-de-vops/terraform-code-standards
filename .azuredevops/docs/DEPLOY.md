@@ -22,7 +22,7 @@ The deployment pipeline uses the following parameters:
 | `working_directory`      | The directory where Terraform configuration files are located.       | `string`      | `'terraform'`                              | no       |
 | `tf_version`             | The version of Terraform to use.                                     | `string`      | `'latest'`                                 | no       |
 | `securevars_file`        | The path to a secure variables file.                                 | `string`      | `''`                                       | no       |
-| `plan_file_name`         | The name of the Terraform plan file. 
+| `plan_file_name`         | The name of the Terraform plan file.                                 | `string`      | `'terraform.tfplan'`                       | no       |
 
 [^ table of contents ^](#table-of-contents)
 
@@ -61,7 +61,7 @@ Each environment specified in the `environments` parameter should contain the fo
      - **Configure Pipeline:**
        - Configure this variable group in the pipeline to ensure the agent has the necessary SSH credentials.
      - **Optional Configuration:**
-       - If the modules are public or local, set the `install_ssh` parameter to **false** in the [variables](../.azuredevops/variables/) files for your environment.
+       - If the modules are public or local, set the `install_ssh` parameter to **false** in the [variables](../variables/) files for your environment.
 
 3. **Backend Service Connection:**
    - A separate service connection should be used for managing the backend layer of the Terraform environment.
@@ -108,7 +108,7 @@ The Inspect Stage performs security scans on the Terraform configuration using t
 
 - **Stage Name:** `InspectStage${{ environment.environment }}`
 - **Depends On:**
-  - `InspectStage`
+  - `ValidateStage`
   - `PlanStage`
 - **Job:**
   - **Terraform Inspect Job:** Runs security tools to scan the Terraform configuration for vulnerabilities.
@@ -117,7 +117,7 @@ The Inspect Stage performs security scans on the Terraform configuration using t
   1. **Run `tfsec`:** Perform static analysis security scanning on the Terraform files using `tfsec`.
   2. **Optional Security Checks:** Optionally, run Microsoft Defender for Cloud checks to assess security compliance.
 
-    Configure these checks by setting the following variables in the [variables](./variables/) file:
+    Configure these checks by setting the following variables in the [variables](../variables/) file:
     - `run_tfsec`: `true`
     - `security_tools`: `"iacfilescanner, trivy, terrascan"` *(comma-separated list of security tools to run by Azure Defender for DevOps)*
 
@@ -169,6 +169,7 @@ validation = {
     }
   + pipeline_variable    = "command_option_nonprod"
 }
+```
 
 ### Steps to Validate:
 
